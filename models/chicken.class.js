@@ -1,35 +1,59 @@
-class chicken extends moveableObject{
-   y=380;
-   height=60;
-   width=80;
-   WALKING_IMAGES =[
-    'img/img/3_enemies_chicken/chicken_normal/1_walk/1_w.png',
-    'img/img/3_enemies_chicken/chicken_normal/1_walk/2_w.png',
-    'img/img/3_enemies_chicken/chicken_normal/1_walk/3_w.png'
-   ];
+class chicken extends moveableObject {
+    y = 380;
+    height = 60;
+    width = 80;
+    energy = 100; // 💥 add energy
+    isDead = false; // 💥 to check if chicken is dead
 
-    constructor(){
+    WALKING_IMAGES = [
+        'img/img/3_enemies_chicken/chicken_normal/1_walk/1_w.png',
+        'img/img/3_enemies_chicken/chicken_normal/1_walk/2_w.png',
+        'img/img/3_enemies_chicken/chicken_normal/1_walk/3_w.png'
+    ];
+
+    DEAD_IMAGE = 'img/img/3_enemies_chicken/chicken_normal/2_dead/dead.png'; 
+
+    constructor() {
         super().loadimage('img/img/4_enemie_boss_chicken/1_walk/G1.png');
         this.loadimages(this.WALKING_IMAGES);
-        this.x =200 + Math.random() * 500;
+        this.x = 400 + Math.random() * 700;
         this.speed = 0.15 + Math.random() * 0.5;
         this.animate();
-
-        
     }
-    animate(){
+
+    animate() {
         setInterval(() => {
-            this.moveLeft()
-        }, 1000/60);
-        ;
+            if (!this.isDead) { // 💥 Only move when alive
+                this.moveLeft();
+            }
+        }, 1000 / 60);
+
         setInterval(() => {
-            this.playAnimation(this.WALKING_IMAGES);
-            
+            if (!this.isDead) { // 💥 Only play walking animation when alive
+                this.playAnimation(this.WALKING_IMAGES);
+            }
         }, 200);
     }
 
-   
+    hit() {
+        this.energy -= 100; // one bottle kills
+        if (this.energy <= 0) {
+            this.die();
+        }
+    }
 
-
+    die() {
+        this.isDead = true;
+        this.speed = 0;
+        this.loadimage(this.DEAD_IMAGE); 
+    
+        setTimeout(() => {
+            const index = world.level.enemies.indexOf(this);
+            if (index > -1) {
+                world.level.enemies.splice(index, 1); 
+            }
+        }, 2000); 
+    }
+    
 
 }

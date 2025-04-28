@@ -30,5 +30,29 @@ const level1 = new Level([
     new BackgroundObject('img/img/5_background/layers/3_third_layer/2.png',819*3),
     new BackgroundObject('img/img/5_background/layers/2_second_layer/2.png',819*3),
     new BackgroundObject('img/img/5_background/layers/1_first_layer/2.png',819*3),
-   ]
+   ],
+
+   [
+    
+    new Collectible('coin', 400, 200),
+    new Collectible('coin', 700, 150),
+    new Collectible('coin', 1100, 120),
+    new Collectible('coin', 1700, 270),
+    new Collectible('coin', 2100, 210),
+    
+    new Collectible('bottle', 550, 270),
+    new Collectible('bottle', 900, 200),
+    new Collectible('bottle', 1350, 300),    
+    new Collectible('bottle', 1750, 300),    
+    new Collectible('bottle', 2300, 150),
+    
+    
+    new Collectible('life', 700, 280),
+    new Collectible('life', 900, 100),
+    new Collectible('life', 1800, 100),
+    new Collectible('life', 1800, 100),
+    new Collectible('life', 2550, 250),
+],
+
+
 );
