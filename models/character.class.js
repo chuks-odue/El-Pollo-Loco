@@ -50,7 +50,7 @@ class Character extends moveableObject {
         walk: new Audio('audio/concrete-footsteps-6752.mp3'),
         jump: new Audio('audio/slime_jump.mp3'),
         throw: new Audio('audio/throw.mp3'),
-        hurt: new Audio('audio/1.mp3'),
+        hurt: new Audio('audio/5.ogg'),
         win: new Audio('audio/win.mp3'),
         fall: new Audio('audio/walking.mp3')
 
@@ -92,9 +92,11 @@ class Character extends moveableObject {
         setInterval(() => {
             if (this.isDead()) {
                  this.playAnimation(this.DEAD_IMAGES);
+                 
                 
             } else if (this.isHurt()) {
                 this.playAnimation(this.HURT_IMAGES);
+                
                 
                 
             } else if (this.isAboveGround()) {

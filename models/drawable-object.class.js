@@ -4,7 +4,7 @@ class DrawableObject{
     img;
     width= 100;
     height = 150;
-    imsgeCache = {};
+    imageCache = {};
     currentImage = 0;
     
 
@@ -14,15 +14,19 @@ class DrawableObject{
         this.img.src = path;
     }
 
-    draw(ctx){
-        ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+    draw(ctx) {
+        if (this.img && this.img.complete) {
+            ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+        }
+        
     }
+    
 
     loadimages(arr){
         arr.forEach((path) => {
             let img =new Image();
             img.src = path;
-            this.imsgeCache[path]=img;
+            this.imageCache[path]=img;
     
             
         });

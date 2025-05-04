@@ -23,20 +23,20 @@ class chicken extends moveableObject {
 
     animate() {
         setInterval(() => {
-            if (!this.isDead) { // 💥 Only move when alive
+            if (!this.isDead) { 
                 this.moveLeft();
             }
         }, 1000 / 60);
 
         setInterval(() => {
-            if (!this.isDead) { // 💥 Only play walking animation when alive
+            if (!this.isDead) { 
                 this.playAnimation(this.WALKING_IMAGES);
             }
         }, 200);
     }
 
     hit() {
-        this.energy -= 100; // one bottle kills
+        this.energy -= 100; 
         if (this.energy <= 0) {
             this.die();
         }
