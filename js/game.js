@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const startButton = document.getElementById('startButton');
-        function startGame() {
+    function startGame() {
         const startSound = new Audio('audio/S31-Winning the Race.ogg');
         startSound.volume = 0.5;
         startSound.play().catch(err => console.error('Failed to play start sound:', err));        
@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('inGameMenu').classList.remove('hidden');    
         init(); 
     }
-        startButton.addEventListener('click', () => {
+    startButton.addEventListener('click', () => {
         startGame();
     });
 });
@@ -63,40 +63,6 @@ window.addEventListener("keynotpress", (e) => {
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    const soundButton = document.getElementById('soundButton');
-    const settingsPanel = document.getElementById('settingsPanel');
-    const toggleSoundBtn = document.getElementById('toggleSoundBtn');
-    const soundIcon = document.getElementById('soundIcon');
-
-    let soundEnabled = false;
-
-    // Show/Hide settings panel
-    soundButton.addEventListener('click', (e) => {
-        e.stopPropagation(); // Prevent bubbling to document
-        settingsPanel.classList.toggle('hidden');
-    });
-
-    // Toggle sound state
-    toggleSoundBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        soundEnabled = !soundEnabled;
-        soundIcon.src = soundEnabled ? 'img/assets/Mic-Off.svg' : 'img/assets/Mic-On.svg';
-        toggleSoundBtn.innerText = soundEnabled ? 'Enable Sound' : 'Disable Sound';
-        toggleSoundBtn.prepend(soundIcon);
-    });
-
-    // Close panel when clicking outside
-    document.addEventListener('click', (e) => {
-        if (!settingsPanel.classList.contains('hidden')) {
-            if (!settingsPanel.contains(e.target) && e.target !== soundButton) {
-                settingsPanel.classList.add('hidden');
-            }
-        }
-    });
-});
-document.addEventListener('DOMContentLoaded', () => {
-    // ...existing sound/setting panel code
-
     const helpButton = document.getElementById('helpButton');
     const helpPopup = document.getElementById('helpPopup');
 
@@ -117,7 +83,13 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded', () => {
     const fullscreenButton = document.getElementById('fullscreenButton');
     const restartButton = document.getElementById('restartButton');
+    const soundButtonInGame = document.getElementById('soundButtonInGame');
+    const settingsPanelInGame = document.getElementById('settingsPanelInGame');
+    const toggleSoundBtnInGame = document.getElementById('toggleSoundBtnInGame');
+    const soundIconInGame = document.getElementById('soundIconInGame');
     const canvas = document.getElementById('canvas');
+
+    let soundEnabled = false;
 
     fullscreenButton.addEventListener('click', () => {
         if (canvas.requestFullscreen) {
@@ -130,9 +102,29 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     restartButton.addEventListener('click', () => {
-        restartGame(); // ✅ Soft restart
+        restartGame(); // Soft restart
     });
-    
+
+    soundButtonInGame.addEventListener('click', (e) => {
+        e.stopPropagation(); 
+        settingsPanelInGame.classList.toggle('hidden');
+    });
+
+    toggleSoundBtnInGame.addEventListener('click', (e) => {
+        e.stopPropagation();
+        soundEnabled = !soundEnabled;
+        soundIconInGame.src = soundEnabled ? 'img/assets/Mic-Off.svg' : 'img/assets/Mic-On.svg';
+        toggleSoundBtnInGame.innerText = soundEnabled ? 'Disable Sound' : 'Enable Sound';
+        toggleSoundBtnInGame.prepend(soundIconInGame);
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!settingsPanelInGame.classList.contains('hidden')) {
+            if (!settingsPanelInGame.contains(e.target) && e.target !== soundButtonInGame) {
+                settingsPanelInGame.classList.add('hidden');
+            }
+        }
+    });
 });
 function restartGame() {
     if (world && typeof world.stop === 'function') {
@@ -144,15 +136,3 @@ function restartGame() {
      world = new World(canvas, keyboard); 
     console.log('Game restarted');
 }
-
-
-
-
-
-
-
-
-
-
-
-
