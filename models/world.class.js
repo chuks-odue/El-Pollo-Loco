@@ -12,7 +12,9 @@ class World {
     sounds = {
         'throw': new Audio('audio/SHOOT011.mp3'),
         'collect-bottle': new Audio('audio/collect-bottle.wav'),
-        'collect-life': new Audio('audio/collect-life.ogg')
+        'collect-life': new Audio('audio/collect-life.ogg'),
+        'win': new Audio('audio/Won!.wav'),
+        
     };
     gameOverImage = new Image();
     gameOverImageShown = false;
@@ -83,9 +85,6 @@ class World {
                     if (bottle.owner !== enemy && bottle.isColliding(enemy) && !enemy.isDead) {
                         enemy.hit(); 
                         this.throwableObjects.splice(bottleIndex, 1);
-                        if (enemy instanceof Endboss && enemy.isDead) {
-                            this.showGameOverImage('win');
-                        }
                     }
                 });
             });
@@ -130,16 +129,16 @@ class World {
         this.ctx.translate(this.camera_x, 0);
         this.ctx.translate(-this.camera_x, 0);
     
-        if (this.gameOverImageShown) {
-            console.log('Drawing game over image');
+        if (this.gameOverImageShown && this.gameOverImage.complete) {
+            console.log('Drawing game over image', this.gameOverImage.src);
             this.ctx.save();
             this.ctx.setTransform(1, 0, 0, 1, 0, 0);
             this.ctx.drawImage(this.gameOverImage, this.canvas.width / 2 - 200, this.canvas.height / 2 - 100, 400, 200);
             this.ctx.restore();
-        } else {
-            console.log('Game over image not shown');
-        }
-    
+            console.log('Game over image drawn');
+        } else if (this.gameOverImageShown && !this.gameOverImage.complete) {
+            console.log('Game over image not loaded yet', this.gameOverImage.src);
+        }    
         if (!this.gameOver) {
             let self = this;
             requestAnimationFrame(function() {
@@ -185,14 +184,20 @@ class World {
             sound.play().catch(err => console.error('Sound error:', err));
         }
     }
-
     showGameOverImage(result) {
         console.log('Showing game over image');
         this.gameOver = true;
         this.gameOverImage.src = result === 'win' ? 'img/img/You won, you lost/You Won B.png' : 'img/img/You won, you lost/You Lost B.png';
+        if (result === 'win') {
+            this.playSound('win');
+        } else {
+            this.sounds['lose'] = new Audio('audio/lose.wav'); 
+            this.playSound('lose');
+        }
         this.gameOverImage.onload = () => {
             console.log('Game over image loaded');
             this.gameOverImageShown = true;
+            this.draw(); // Force the canvas to update
         };
         this.gameOverImage.onerror = () => {
             console.log('Error loading game over image');

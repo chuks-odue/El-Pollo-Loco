@@ -85,23 +85,18 @@ class Endboss extends moveableObject {
         }
         
         setTimeout(() => {
-            this.startFalling(() => {
-                world.showGameOverImage('win');
-            });
+            this.startFalling();
         }, 2000);
     }    
 
-    startFalling(callback) {
+    startFalling() {
         this.fallInterval = setInterval(() => {
-            if (this.y < 100) {
+            if (this.y < 350) {
                 this.y += 5;
             } else {
                 clearInterval(this.fallInterval);
                 this.hasFallen = true; 
-                if (this.shouldShowWinImage) {
-                    world.showGameOverImage('win');
-                }
-                callback(); 
+                world.showGameOverImage('win');
             }
         }, 1000 / 30);
     }
