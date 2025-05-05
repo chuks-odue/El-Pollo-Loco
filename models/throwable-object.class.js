@@ -5,6 +5,8 @@ class ThrowableObject extends moveableObject {
     bottleCount = 5; 
     isSplash = false; // 💥 to know if it's splashing
     splashStarted = false;
+    finishedSplash = false;
+    hasHit = false;
 
     SPINNING_BOTTLE = [
         'img/img/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png',
@@ -53,16 +55,23 @@ class ThrowableObject extends moveableObject {
         
     }
 
+    splash() {
+        if (this.hasHit) return;
+        
+        this.hasHit = true;
+        this.speed = 0;
+        this.velocityY = 0;
+        clearInterval(this.gravityInterval);
+        
+        this.isSplash = true;
+        this.currentImage = 0; 
+        this.finishedSplash = false; // Reset finishedSplash
+        console.log('Splash triggered');
+    }
 
     animate() {
         this.animationInterval = setInterval(() => {
             if (this.isSplash) {
-                if (!this.splashStarted) {
-                    this.splashStarted = true;
-                    this.currentImage = 0;
-                    console.log('Splash started');
-                }
-    
                 if (this.currentImage < this.SPLASH_BOTTLE.length) {
                     const path = this.SPLASH_BOTTLE[this.currentImage];
                     this.img = this.imageCache[path];
@@ -70,8 +79,8 @@ class ThrowableObject extends moveableObject {
                     this.currentImage++;
                 } else {
                     console.log('Splash animation ended');
+                    this.finishedSplash = true;
                     clearInterval(this.animationInterval);
-                    this.img = this.imageCache[this.SPLASH_BOTTLE[this.SPLASH_BOTTLE.length - 1]];
                 }
             } else {
                 if (this.currentImage >= this.SPINNING_BOTTLE.length) {
@@ -84,21 +93,10 @@ class ThrowableObject extends moveableObject {
             }
         }, 100);
     }
-    
 
-    splash() {
-        if (this.hasHit) return;
-    
-        this.hasHit = true;
-        this.speed = 0;
-        this.velocityY = 0;
-        clearInterval(this.gravityInterval);
-    
-        this.isSplash = true;
-        this.splashStarted = false;
-        this.currentImage = 0; // <- Ensure this reset here too
-        console.log('Splash triggered');
-    }
+
+
+   
     
     
   

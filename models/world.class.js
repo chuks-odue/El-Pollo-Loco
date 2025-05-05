@@ -1,4 +1,6 @@
 class World {
+    soundEnabled = true; 
+
     character = new Character();
     level = level1;
     canvas;
@@ -19,6 +21,7 @@ class World {
     gameOverImage = new Image();
     gameOverImageShown = false;
     gameOver = false;
+    
 
 
     constructor(canvas, keyboard) {
@@ -42,6 +45,7 @@ class World {
 
     checkCollision() {
         setInterval(() => {
+            if (this.gameOver) return; 
             this.level.enemies.forEach((enemy) => {
                 if (!enemy.isDead && this.character.isColliding(enemy)) {
                     this.character.hit();
@@ -80,14 +84,19 @@ class World {
                 }
             });
 
-            this.throwableObjects.forEach((bottle, bottleIndex) => {
+            for (let i = this.throwableObjects.length - 1; i >= 0; i--) {
+                const bottle = this.throwableObjects[i];
                 this.level.enemies.forEach((enemy) => {
-                    if (bottle.owner !== enemy && bottle.isColliding(enemy) && !enemy.isDead) {
+                    if (bottle.owner !== enemy && bottle.isColliding(enemy) && !enemy.isDead && !bottle.hasHit) {
+                        bottle.splash(); 
+                        bottle.hasHit = true; // Set the flag to true
                         enemy.hit(); 
-                        this.throwableObjects.splice(bottleIndex, 1);
                     }
                 });
-            });
+                if (bottle.finishedSplash) {
+                    this.throwableObjects.splice(i, 1);
+                }
+            }
                         
         }, 1000/66);
     }
@@ -175,6 +184,7 @@ class World {
         mo.x = mo.x * -1;
         this.ctx.restore();
     }
+    
 
     playSound(name) {
         const sound = this.sounds[name];
@@ -187,6 +197,10 @@ class World {
     showGameOverImage(result) {
         console.log('Showing game over image');
         this.gameOver = true;
+        this.level.enemies.forEach((enemy) => {
+            enemy.speed = 0; // Stop the enemies from moving
+        });
+    
         this.gameOverImage.src = result === 'win' ? 'img/img/You won, you lost/You Won B.png' : 'img/img/You won, you lost/You Lost B.png';
         if (result === 'win') {
             this.playSound('win');
