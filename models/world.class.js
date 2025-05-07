@@ -17,6 +17,7 @@ class World {
         'collect-life': new Audio('audio/collect-life.ogg'),
         'explode': new Audio('audio/8bit_bomb_explosion.wav'),
         'win': new Audio('audio/Won!.wav'),
+        'bottle-hit': new Audio('audio/1.mp3'),
         
     };
     gameOverImage = new Image();
@@ -90,11 +91,25 @@ class World {
                 this.level.enemies.forEach((enemy) => {
                     if (bottle.owner !== enemy && bottle.isColliding(enemy) && !enemy.isDead && !bottle.hasHit) {
                         bottle.splash(); 
-                        bottle.hasHit = true; // Set the flag to true
+                        bottle.hasHit = true; 
                         enemy.hit(); 
                         this.playSound('explode');
                     }
                 });
+            
+                // Check if the bottle hits the character
+                if (bottle.owner instanceof Endboss && bottle.isColliding(this.character) && !bottle.hasHit) {
+                    bottle.splash(); 
+                    bottle.splash(); 
+                    bottle.hasHit = true; 
+                    this.character.hit();
+                    this.playSound('bottle-hit');
+                    this.statusBar.setPercentage(this.character.energy);
+                    if (this.character.energy <= 0) {
+                        this.showGameOverImage('lose');
+                    }
+                }
+            
                 if (bottle.finishedSplash) {
                     this.throwableObjects.splice(i, 1);
                 }

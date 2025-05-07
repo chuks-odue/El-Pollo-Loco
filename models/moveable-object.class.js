@@ -19,26 +19,48 @@ class moveableObject extends DrawableObject{
     
     isAboveGround(){
         return this.y < 180;
-    }    
+    }  
+    
+    isColliding(mo) {
+        let thisRect = {
+            x: this.x + 50, // adjust the x position of the rectangle
+            y: this.y + 50, // adjust the y position of the rectangle
+            width: this.width - 100, // adjust the width of the rectangle
+            height: this.height - 100 // adjust the height of the rectangle
+        };
+    
+        let moRect = {
+            x: mo.x,
+            y: mo.y,
+            width: mo.width,
+            height: mo.height
+        };
+    
+        return  thisRect.x + thisRect.width > moRect.x &&
+                thisRect.x < moRect.x + moRect.width &&
+                thisRect.y + thisRect.height > moRect.y &&
+                thisRect.y < moRect.y + moRect.height;
+    }
 
 
         
-    isColliding (mo) {
+    /*isColliding (mo) {
             return  this.x + this.width > mo.x &&  
                     this.y + this.height > mo.y  &&
                     this.x < mo.x &&
                     this.y < mo.y + mo.height
     
-    }
+    }*/
 
-    hit(){
-            this.energy -= 5;
-            if (this.energy < 0) {
-                this.energy = 0;                
-            }else{
-                this.lastHit = new Date().getTime();
-            }
-    }
+                    hit(){
+                        if (new Date().getTime() - this.lastHit > 700) { // 500ms cooldown
+                            this.energy -= 20;
+                            if (this.energy < 0) {
+                                this.energy = 0;                
+                            }
+                            this.lastHit = new Date().getTime();
+                        }
+                    }
 
     isHurt(){
         let timepassed = new Date().getTime() - this.lastHit;
