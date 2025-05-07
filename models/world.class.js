@@ -15,6 +15,7 @@ class World {
         'throw': new Audio('audio/SHOOT011.mp3'),
         'collect-bottle': new Audio('audio/collect-bottle.wav'),
         'collect-life': new Audio('audio/collect-life.ogg'),
+        'explode': new Audio('audio/8bit_bomb_explosion.wav'),
         'win': new Audio('audio/Won!.wav'),
         
     };
@@ -91,6 +92,7 @@ class World {
                         bottle.splash(); 
                         bottle.hasHit = true; // Set the flag to true
                         enemy.hit(); 
+                        this.playSound('explode');
                     }
                 });
                 if (bottle.finishedSplash) {
@@ -187,13 +189,16 @@ class World {
     
 
     playSound(name) {
-        const sound = this.sounds[name];
-        if (sound) {
-            sound.currentTime = 0;
-            sound.volume = 0.5;
-            sound.play().catch(err => console.error('Sound error:', err));
+        if (soundEnabled) {
+            const sound = this.sounds[name];
+            if (sound) {
+                sound.currentTime = 0;
+                sound.volume = 0.5;
+                sound.play().catch(err => console.error('Sound error:', err));
+            }
         }
     }
+
     showGameOverImage(result) {
         console.log('Showing game over image');
         this.gameOver = true;

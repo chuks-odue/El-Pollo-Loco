@@ -1,17 +1,21 @@
 document.addEventListener('DOMContentLoaded', () => {
     const startButton = document.getElementById('startButton');
     function startGame() {
-        const startSound = new Audio('audio/S31-Winning the Race.ogg');
-        startSound.volume = 0.5;
-        startSound.play().catch(err => console.error('Failed to play start sound:', err));        
-        setTimeout(() => {
-            startSound.pause();
-            startSound.currentTime = 0;
-        }, 3000);     
+        console.log('Starting game, sound enabled:', soundEnabled);
+
+        if (soundEnabled) {
+            const startSound = new Audio('audio/S31-Winning the Race.ogg');
+            startSound.volume = 0.5;
+            startSound.play().catch(err => console.error('Failed to play start sound:', err));        
+            setTimeout(() => {
+                startSound.pause();
+                startSound.currentTime = 0;
+            }, 3000);     
+        }
         
         document.getElementById('startScreen').style.display = 'none';
         document.querySelector('h1').style.display = 'none'; 
-
+    
         canvas.style.display = 'block';
         document.getElementById('inGameMenu').classList.remove('hidden');    
         init(); 
@@ -25,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
 let canvas;
 let world;
 let keyboard = new Keyboard();
+let soundEnabled = true;
 
 
 
@@ -40,7 +45,6 @@ function init() {
 window.addEventListener("keydown", (e) => {
     if (e.key === "ArrowRight") keyboard.RIGHT = true;
     if (e.key === "ArrowLeft") keyboard.LEFT = true;
-    if (e.key === " ") keyboard.SPACE = true;
     if (e.key === "ArrowDown") keyboard.DOWN = true;
     if (e.key === "ArrowUp") keyboard.UP = true;
     if (e.key.toLowerCase() === 'd') keyboard.D = true;
@@ -50,7 +54,6 @@ window.addEventListener("keydown", (e) => {
 window.addEventListener("keyup", (e) => {
     if (e.key === "ArrowRight") keyboard.RIGHT = false;
     if (e.key === "ArrowLeft") keyboard.LEFT = false;
-    if (e.key === " ") keyboard.SPACE = false;
     if (e.key === "ArrowDown") keyboard.DOWN = false;
     if (e.key === "ArrowUp") keyboard.UP = false;
     if (e.key.toLowerCase() === 'd') keyboard.D = false;
@@ -84,12 +87,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const fullscreenButton = document.getElementById('fullscreenButton');
     const restartButton = document.getElementById('restartButton');
     const soundButtonInGame = document.getElementById('soundButtonInGame');
-    const settingsPanelInGame = document.getElementById('settingsPanelInGame');
-    const toggleSoundBtnInGame = document.getElementById('toggleSoundBtnInGame');
     const soundIconInGame = document.getElementById('soundIconInGame');
     const canvas = document.getElementById('canvas');
 
-    let soundEnabled = false;
+   
 
     fullscreenButton.addEventListener('click', () => {
         if (canvas.requestFullscreen) {
@@ -102,28 +103,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     restartButton.addEventListener('click', () => {
-        restartGame(); // Soft restart
+        restartGame(); 
     });
 
     soundButtonInGame.addEventListener('click', (e) => {
-        e.stopPropagation(); 
-        settingsPanelInGame.classList.toggle('hidden');
-    });
-
-    toggleSoundBtnInGame.addEventListener('click', (e) => {
-        e.stopPropagation();
         soundEnabled = !soundEnabled;
-        soundIconInGame.src = soundEnabled ? 'img/assets/Mic-Off.svg' : 'img/assets/Mic-On.svg';
-        toggleSoundBtnInGame.innerText = soundEnabled ? 'Disable Sound' : 'Enable Sound';
-        toggleSoundBtnInGame.prepend(soundIconInGame);
-    });
-
-    document.addEventListener('click', (e) => {
-        if (!settingsPanelInGame.classList.contains('hidden')) {
-            if (!settingsPanelInGame.contains(e.target) && e.target !== soundButtonInGame) {
-                settingsPanelInGame.classList.add('hidden');
-            }
-        }
+        console.log('Sound enabled:', soundEnabled);
+        soundIconInGame.src = soundEnabled ? 'img/assets/Mic-On.svg' : 'img/assets/Mic-Off.svg';
+        e.stopPropagation();
     });
 });
 function restartGame() {

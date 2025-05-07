@@ -81,7 +81,7 @@ class Character extends moveableObject {
                 this.stopWalkingSound();
             }
 
-            if (this.world.keyboard.SPACE && !this.isAboveGround()) {
+            if (this.world.keyboard.UP && !this.isAboveGround()) {
                 this.jump();
                 this.playSound('jump');
             }
@@ -112,11 +112,11 @@ class Character extends moveableObject {
     
 
     playWalkingSound() {
-        if (this.sounds.walk.paused) {
+        if (soundEnabled && this.sounds.walk.paused) {
             this.sounds.walk.play();
         }
     }
-
+    
     stopWalkingSound() {
         if (!this.sounds.walk.paused) {
             this.sounds.walk.pause();
@@ -125,15 +125,18 @@ class Character extends moveableObject {
     }
 
     playSound(name) {
-        const sound = this.sounds[name];
-        if (sound) {
-            sound.currentTime = 0;
-            sound.play();
+        if (soundEnabled) {
+            const sound = this.sounds[name];
+            if (sound) {
+                sound.currentTime = 0;
+                sound.play();
+            }
         }
     }
-
     jump() {
         this.speedY = 50;
-        this.playSound('jump');
+        if (soundEnabled) {
+            this.playSound('jump');
+        }
     }
 }
