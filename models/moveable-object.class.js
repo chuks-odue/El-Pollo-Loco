@@ -51,17 +51,23 @@ class moveableObject extends DrawableObject{
                     this.y < mo.y + mo.height
     
     }*/
+   hit(){
+    if (new Date().getTime() - this.lastHit > 500) { 
+        this.energy -= 20;
+        if (this.energy < 0) {
+            this.energy = 0;                
+        }
+        this.lastHit = new Date().getTime();
+        this.world.coinBar.percentage -= 20;
+        if (this.world.coinBar.percentage < 0) {
+            this.world.coinBar.percentage = 0;
+        }
+        this.world.coinBar.setPercentage(this.world.coinBar.percentage);
+        //this.world.playSound('coin-lost');
+      }
+    }
 
-                    hit(){
-                        if (new Date().getTime() - this.lastHit > 700) { // 500ms cooldown
-                            this.energy -= 20;
-                            if (this.energy < 0) {
-                                this.energy = 0;                
-                            }
-                            this.lastHit = new Date().getTime();
-                        }
-                    }
-
+                    
     isHurt(){
         let timepassed = new Date().getTime() - this.lastHit;
          timepassed = timepassed / 1000;

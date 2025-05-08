@@ -19,6 +19,7 @@ class World {
         'win': new Audio('audio/Won!.wav'),
         'bottle-hit': new Audio('audio/1.mp3'),
         
+        
     };
     gameOverImage = new Image();
     gameOverImageShown = false;
@@ -61,15 +62,24 @@ class World {
     
             this.level.collectibles.forEach((collectible, index) => {
                 if (this.character.isColliding(collectible)) {
-                    if (collectible.type === 'bottle') {
+                    if (collectible.type === 'coin') {
+                        if (this.coinBar.percentage < 100) {
+                            this.coinBar.percentage += 20;
+                            if (this.coinBar.percentage > 100) {
+                                this.coinBar.percentage = 100;
+                            }
+                            this.coinBar.setPercentage(this.coinBar.percentage);
+                            this.level.collectibles.splice(index, 1);
+                            
+                        }
+                    } else if (collectible.type === 'bottle') {
                         if (this.character.bottleCount < 5) {
                             this.character.bottleCount++;
                             this.bottleBar.setPercentage(this.character.bottleCount * 20);
                             this.level.collectibles.splice(index, 1);
                             this.playSound('collect-bottle');
                         }
-                    } 
-                    else if (collectible.type === 'life') {
+                    } else if (collectible.type === 'life') {
                         if (this.character.energy < 100) { 
                             this.character.energy += 20;   
                             if (this.character.energy > 100) {
@@ -85,7 +95,6 @@ class World {
                     }
                 }
             });
-
             for (let i = this.throwableObjects.length - 1; i >= 0; i--) {
                 const bottle = this.throwableObjects[i];
                 this.level.enemies.forEach((enemy) => {
