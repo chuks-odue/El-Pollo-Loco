@@ -51,7 +51,7 @@ class moveableObject extends DrawableObject{
                     this.y < mo.y + mo.height
     
     }*/
-   hit(){
+  hit(){
     if (new Date().getTime() - this.lastHit > 500) { 
         this.energy -= 20;
         if (this.energy < 0) {
@@ -63,9 +63,12 @@ class moveableObject extends DrawableObject{
             this.world.coinBar.percentage = 0;
         }
         this.world.coinBar.setPercentage(this.world.coinBar.percentage);
-        //this.world.playSound('coin-lost');
-      }
+        let droppedCoin = new DroppedCoin(this.x, this.y);
+        droppedCoin.world = this.world;
+        this.world.droppedCoins.push(droppedCoin);
+        this.world.playSound('coin-lost');
     }
+}
 
                     
     isHurt(){
