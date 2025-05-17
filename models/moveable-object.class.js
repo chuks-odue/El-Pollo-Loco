@@ -20,20 +20,19 @@ class moveableObject extends DrawableObject{
     isAboveGround(){
         return this.y < 180;
     }  
-    
     isColliding(mo) {
         let thisRect = {
-            x: this.x + 50, // adjust the x position of the rectangle
-            y: this.y + 50, // adjust the y position of the rectangle
-            width: this.width - 100, // adjust the width of the rectangle
-            height: this.height - 100 // adjust the height of the rectangle
+            x: this.x + (this.width * 0.1), 
+            y: this.y + (this.height * 0.1), 
+            width: this.width * 0.8, 
+            height: this.height * 0.8 
         };
     
         let moRect = {
-            x: mo.x,
-            y: mo.y,
-            width: mo.width,
-            height: mo.height
+            x: mo.x + (mo.width * 0.1),
+            y: mo.y + (mo.height * 0.1),
+            width: mo.width * 0.8,
+            height: mo.height * 0.8
         };
     
         return  thisRect.x + thisRect.width > moRect.x &&
@@ -41,7 +40,6 @@ class moveableObject extends DrawableObject{
                 thisRect.y + thisRect.height > moRect.y &&
                 thisRect.y < moRect.y + moRect.height;
     }
-
 
         
     /*isColliding (mo) {

@@ -1,5 +1,5 @@
 class SmallChicken extends moveableObject {
-    y = 380;
+    y = 400;
     width = 40;
     height = 40;
     speed = 0.2 + Math.random() * 0.3; // random speed between 0.2 and 0.5
@@ -56,10 +56,10 @@ class SmallChicken extends moveableObject {
 
     updatePosition() {
         this.y += this.speedY;
-        if (this.y < 380) {
+        if (this.y < 400) {
             this.speedY += 1;
         } else {
-            this.y = 380;
+            this.y = 400;
             this.speedY = 0;
         }
     }
@@ -81,7 +81,7 @@ class SmallChicken extends moveableObject {
     die() {
         this.isDead = true;
         this.speed = 0;
-        this.loadimage(this.DEAD_IMAGES[0]);
+        this.loadimage(this.DEAD_IMAGES);
 
         setTimeout(() => {
             const index = world.level.enemies.indexOf(this);

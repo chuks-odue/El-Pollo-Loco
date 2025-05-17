@@ -17,7 +17,7 @@ body{
 }
 canvas {
     position: absolute;
-    top: 50%;
+    top: 55%;
     left: 50%;
     transform: translate(-50%, -50%);
 }
@@ -27,6 +27,7 @@ h1{
     letter-spacing: 3px;
     margin-top: 5px;
 }
+
 
 canvas{
     background-color: rgb(30, 52, 52);
@@ -85,7 +86,7 @@ canvas{
 }
 .help-Popup-left {
     position: fixed;
-    top: 20%;
+    top: 10%;
     left: 0%;
     color: black; /* Change text color to black */
     padding: 20px;
@@ -94,9 +95,12 @@ canvas{
     background: none; /* Remove background */
     border: none; /* Remove border */
     box-shadow: none; /* Remove box shadow */
-    font-size: 24px;
+    font-size: 28px;
+    letter-spacing: 1px;
     gap: 50px;
 }
+
+    
 
 
 
@@ -125,39 +129,21 @@ canvas{
     width: 24px;
     height: 24px;
 }
-.help-popup {
-    position: absolute;
-    top: 20%;
-    left: 25%;
-    background: #333;
-    color: white;
-    border: 2px solid #555;
-    padding: 20px;
-    border-radius: 10px;
-    width: 300px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.5);
-    z-index: 3000;
-}
 
-.help-popup ul {
-    padding-left: 20px;
-}
 
-.help-popup li {
-    margin-bottom: 8px;
-}
+
 
 .hidden {
     display: none;
 }
 .in-game-menu {
     position: absolute;
-    top: 10px;
+    top: 7px;
     right: 10px;
     display: flex;
     gap: 10px;
-    background-color: rgba(255, 165, 0, 0.7); /* Orange background with some transparency */
-    padding: 10px;
+    background-color: rgba(119, 0, 255, 0.7); /* Orange background with some transparency */
+    padding: 7px;
     border-radius: 10px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
 }
@@ -166,7 +152,7 @@ canvas{
     background-color:#0c627a;
     color: #ffa500; /* Orange text color */
     border: none;
-    padding: 10px 20px;
+    padding: 5px 10px;
     font-size: 16px;
     cursor: pointer;
     border-radius: 5px;
@@ -187,7 +173,11 @@ canvas{
     width: 24px;
     height: 24px;
 }
-
+.icon {
+    width: 24px;
+    height: 24px;
+    vertical-align: middle;
+}
 
 .hidden{
     display: none;
@@ -203,5 +193,122 @@ canvas{
   .hide {
     display: none;
   }
+  .in-game-help {
+    position: absolute;
+    letter-spacing: 2px;
+    top: 100px; /* adjust the top position to fit your needs */
+    left: 10px;
+    font-size: 24px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    display: none;
+}
+
+.in-game-help ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.in-game-help li {
+    margin-bottom: 10px;
+}
+  /*test*/
   
+/* Add this at the end of your CSS */
+:fullscreen {
+    background-image: url('img/assets/sunrise-1590214_1280.jpg');
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+:-webkit-full-screen {
+    background-image: url('img/assets/sunrise-1590214_1280.jpg');
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.in-game-menu {
+    position: fixed;
+    z-index: 1000;
+}
   
+ 
+  
+
+  #touch-controls {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 820px; /* same width as the canvas */
+    height: 480px; /* same height as the canvas */
+    pointer-events: none;
+}
+
+.touch-button {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: auto;
+}
+
+#left-button {
+    bottom: -20px;
+    left: 20px;
+}
+
+#right-button {
+    bottom: -20px;
+    left: 90px;
+}
+
+#jump-button {
+    bottom: -25px;
+    right: 70px;
+}
+
+#throw-button {
+    bottom: -20px;
+    right: 20px;
+}
+
+.info-overlay {
+    position: fixed;
+    top: 10%;
+    left: 50%;
+    
+    width: 250px;
+    height: 220px;
+    background-color: rgb(87, 162, 212);
+    display: none;
+    padding: 20px;
+    border: #ff0095 solid 2px;
+    text-align: center;
+    z-index: 1000;
+}
+
+.info-content {
+    display: block;
+    
+    align-items: center;
+    justify-content:flex-start;
+    font-size: 18px;
+    margin-left:-15px;
+    font-family: 'Times New Roman', Times, serif !important;
+    
+}
+

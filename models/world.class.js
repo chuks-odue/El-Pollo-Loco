@@ -20,7 +20,7 @@ class World {
         'explode': new Audio('audio/8bit_bomb_explosion.wav'),
         'win': new Audio('audio/Won!.wav'),
         'bottle-hit': new Audio('audio/1.mp3'),
-        'coin-lost': new Audio(''),
+        
         
         
     };
@@ -37,6 +37,12 @@ class World {
         this.setWorld();
         this.checkCollision();
         this.checkThrowBottle(); 
+        document.addEventListener('throwBottle', () => {
+        if (this.character.bottleCount > 0 && !this.gameOver) {
+            this.throwBottle();
+            this.playSound('throw');
+        }
+    });
         this.bottleBar.setPercentage(this.character.bottleCount * 20); 
 
         this.draw();
@@ -48,34 +54,46 @@ class World {
     setWorld() {
         this.character.world = this;
     }
+    
+    
 
     checkCollision() {
         setInterval(() => {
             if (this.gameOver) return; 
-            this.level.enemies.forEach((enemy) => {
-                if (!enemy.isDead && this.character.isColliding(enemy)) {
-                    this.character.hit();
-                    this.statusBar.setPercentage(this.character.energy);
-                    if (this.character.energy <= 0) {
-                        this.showGameOverImage('lose');
-                    }
+       this.level.enemies.forEach((enemy) => {
+         if (!enemy.isDead && this.character.isColliding(enemy)) {
+                if (this.character.y < enemy.y && this.character.speedY >= 0) {
+                 enemy.die();
+                 
+                 this.character.speedY = -10; 
+                 // bounce the character
+                } else {
+                    
+                  this.character.hit();
+                   this.statusBar.setPercentage(this.character.energy);
+                if     (this.character.energy <= 0) {
+                   this.showGameOverImage('lose');
+                  }
                 }
-            });
+            }
+        });
+           
             
     
             this.level.collectibles.forEach((collectible, index) => {
                 if (this.character.isColliding(collectible)) {
-                    if (collectible.type === 'coin') {
-                        if (this.coinBar.percentage < 100) {
-                            this.coinBar.percentage += 20;
-                            if (this.coinBar.percentage > 100) {
-                                this.coinBar.percentage = 100;
-                            }
-                            this.coinBar.setPercentage(this.coinBar.percentage);
-                            this.level.collectibles.splice(index, 1);
-                            
-                        }
-                    } else if (collectible.type === 'bottle') {
+                   if (collectible.type === 'coin') {
+    if (this.coinBar.percentage >= 100) {
+        this.playSound('coin-lost');
+    } else {
+        this.coinBar.percentage += 20;
+        if (this.coinBar.percentage > 100) {
+            this.coinBar.percentage = 100;
+        }
+        this.coinBar.setPercentage(this.coinBar.percentage);
+    }
+    this.level.collectibles.splice(index, 1);
+} else if (collectible.type === 'bottle') {
                         if (this.character.bottleCount < 5) {
                             this.character.bottleCount++;
                             this.bottleBar.setPercentage(this.character.bottleCount * 20);
@@ -241,7 +259,7 @@ class World {
         if (result === 'win') {
             this.playSound('win');
         } else {
-            this.sounds['lose'] = new Audio('audio/lose.wav'); 
+            
             this.playSound('lose');
         }
         this.gameOverImage.onload = () => {
@@ -254,3 +272,30 @@ class World {
         };
     }
 }
+
+
+
+/*this.level.enemies.forEach((enemy) => {
+    if (!enemy.isDead && this.character.isColliding(enemy)) {
+        if (this.character.speedY > 0 && this.character.y + this.character.height * 0.8 < enemy.y + enemy.height) {
+            enemy.die();
+            this.character.speedY = -10; // bounce the character
+        } else {
+            this.character.hit();
+            this.statusBar.setPercentage(this.character.energy);
+            if (this.character.energy <= 0) {
+                this.showGameOverImage('lose');
+            }
+        }
+    }
+});*/
+// the original kill enemy logic
+ /*this.level.enemies.forEach((enemy) => {
+                if (!enemy.isDead && this.character.isColliding(enemy)) {
+                    this.character.hit();
+                    this.statusBar.setPercentage(this.character.energy);
+                    if (this.character.energy <= 0) {
+                        this.showGameOverImage('lose');
+                    }
+                }
+            });*/

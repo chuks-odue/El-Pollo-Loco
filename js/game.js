@@ -15,9 +15,13 @@ document.addEventListener('DOMContentLoaded', () => {
         
         document.getElementById('startScreen').style.display = 'none';
         document.querySelector('h1').style.display = 'none'; 
+        
     
         canvas.style.display = 'block';
         document.getElementById('inGameMenu').classList.remove('hidden');    
+        document.getElementById('inGameHelp').style.display = 'block';
+        document.getElementById('restartButton').style.display = 'block';
+        
         init(); 
     }
     startButton.addEventListener('click', () => {
@@ -63,53 +67,132 @@ window.addEventListener("keyup", (e) => {
 window.addEventListener("keynotpress", (e) => {
     keyboard[e.key] = false;
 });
+document.addEventListener('DOMContentLoaded', function() {
+    const infoButton = document.getElementById('infoButton');
+    const infoOverlay = document.getElementById('infoOverlay');
+    const closeInfoOverlay = document.getElementById('closeInfoOverlay');
 
+    if (infoButton) {
+        infoButton.addEventListener('click', () => {
+            infoOverlay.style.display = 'block';
+        });
+    }
 
-document.addEventListener('DOMContentLoaded', () => {
-    const helpButton = document.getElementById('helpButton');
-    const helpPopup = document.getElementById('helpPopup');
+    if (closeInfoOverlay) {
+        closeInfoOverlay.addEventListener('click', () => {
+            infoOverlay.style.display = 'none';
+        });
+    }
 
-    helpButton.addEventListener('click', (e) => {
-        e.stopPropagation(); // Prevent closing immediately
-        helpPopup.classList.toggle('hidden');
-    });
-
-    // Close help popup when clicking outside
-    document.addEventListener('click', (e) => {
-        if (!helpPopup.classList.contains('hidden')) {
-            if (!helpPopup.contains(e.target) && e.target !== helpButton) {
-                helpPopup.classList.add('hidden');
-            }
+    document.addEventListener('click', (event) => {
+        if (infoOverlay.style.display === 'block' && !infoOverlay.contains(event.target) && event.target !== infoButton) {
+            infoOverlay.style.display = 'none';
         }
     });
 });
+
 document.addEventListener('DOMContentLoaded', () => {
     const fullscreenButton = document.getElementById('fullscreenButton');
+    const fullscreenIcon = document.getElementById('fullscreenIcon');
     const restartButton = document.getElementById('restartButton');
     const soundButtonInGame = document.getElementById('soundButtonInGame');
     const soundIconInGame = document.getElementById('soundIconInGame');
+    const gameContainer = document.querySelector('.game-container'); // Changed to container
     const canvas = document.getElementById('canvas');
 
-   
-
-    fullscreenButton.addEventListener('click', () => {
-        if (canvas.requestFullscreen) {
-            canvas.requestFullscreen();
-        } else if (canvas.webkitRequestFullscreen) {
-            canvas.webkitRequestFullscreen();
-        } else if (canvas.msRequestFullscreen) {
-            canvas.msRequestFullscreen();
+    // Fullscreen functionality
+    function toggleFullscreen() {
+        if (!isFullscreen()) {
+            enterFullscreen();
+        } else {
+            exitFullscreen();
         }
+    }
+
+    function isFullscreen() {
+        // Check if game container is the fullscreen element
+        return !!(
+            document.fullscreenElement === gameContainer ||
+            document.webkitFullscreenElement === gameContainer ||
+            document.mozFullScreenElement === gameContainer ||
+            document.msFullscreenElement === gameContainer
+        );
+    }
+
+    function enterFullscreen() {
+        try {
+            if (gameContainer.requestFullscreen) { // Changed to gameContainer
+                gameContainer.requestFullscreen();
+            } else if (gameContainer.webkitRequestFullscreen) {
+                gameContainer.webkitRequestFullscreen();
+            } else if (gameContainer.mozRequestFullScreen) {
+                gameContainer.mozRequestFullScreen();
+            } else if (gameContainer.msRequestFullscreen) {
+                gameContainer.msRequestFullscreen();
+            }
+        } catch (error) {
+            console.error('Fullscreen failed:', error);
+        }
+    }
+
+    function exitFullscreen() {
+        try {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
+        } catch (error) {
+            console.error('Exit fullscreen failed:', error);
+        }
+    }
+
+    function updateFullscreenIcon() {
+        const iconPath = isFullscreen() 
+            ? 'img/assets/fullscreen_exit_24.svg'
+            : 'img/assets/fullscreen_icon.svg';
+        
+        // Verify icon exists before setting source
+        fetch(iconPath)
+            .then(response => {
+                if (response.ok) {
+                    fullscreenIcon.src = iconPath;
+                } else {
+                    console.error('Icon not found:', iconPath);
+                }
+            })
+            .catch(error => console.error('Icon fetch error:', error));
+    }
+
+    // Event listeners
+    fullscreenButton.addEventListener('click', toggleFullscreen);
+    
+    // Fullscreen change events
+    [
+        'fullscreenchange',
+        'webkitfullscreenchange',
+        'mozfullscreenchange',
+        'MSFullscreenChange'
+    ].forEach(event => {
+        document.addEventListener(event, updateFullscreenIcon);
     });
 
-    restartButton.addEventListener('click', () => {
-        restartGame(); 
-    });
+    // Initial setup
+    updateFullscreenIcon();
+
+    // Rest of your code remains the same
+    restartButton.addEventListener('click', restartGame);
 
     soundButtonInGame.addEventListener('click', (e) => {
         soundEnabled = !soundEnabled;
         console.log('Sound enabled:', soundEnabled);
-        soundIconInGame.src = soundEnabled ? 'img/assets/Mic-On.svg' : 'img/assets/Mic-Off.svg';
+        soundIconInGame.src = soundEnabled 
+            ? 'img/assets/Mic-On.svg' 
+            : 'img/assets/Mic-Off.svg';
         e.stopPropagation();
     });
 });
