@@ -21,8 +21,21 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('inGameMenu').classList.remove('hidden');    
         document.getElementById('inGameHelp').style.display = 'block';
         document.getElementById('restartButton').style.display = 'block';
-        
+            document.getElementById('play-pause-controls').style.display = 'block';        
         init(); 
+        canvas.addEventListener('click', (e) => {
+    let rect = canvas.getBoundingClientRect();
+    let x = e.clientX - rect.left;
+    let y = e.clientY - rect.top;
+    if (world.gameOver) {
+        world.restartButton.handleClick(x, y);
+    } else {
+        world.playPauseButton.handleClick(x, y, world);
+    }
+});
+
+
+
     }
     startButton.addEventListener('click', () => {
         startGame();

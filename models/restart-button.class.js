@@ -1,28 +1,23 @@
-class Button {
+class RestartButton {
     x;
     y;
     width;
     height;
     ctx;
-    icon;
+    text;
 
-    constructor(x, y, width, height, ctx, pausedIcon, playIcon) {
+    constructor(x, y, width, height, ctx, text) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
         this.ctx = ctx;
-        this.pausedIcon = pausedIcon;
-        this.playIcon = playIcon;
-        this.icon = this.pausedIcon;
-        
-        this.backgroundColor = 'rgba(119, 0, 255, 0.7)';
-        this.buttonColor = 'darkorange';
-        this.padding = 5;
+        this.text = text;
     }
-    draw() {
+
+   draw() {
     // Draw the background
-    this.ctx.fillStyle = 'rgba(119, 0, 255, 0.7)'; // purple background
+    this.ctx.fillStyle = 'black'; // purple background
     this.ctx.fillRect(this.x - 5, this.y - 5, this.width + 10, this.height + 10);
 
     // Draw the button with rounded corners
@@ -39,24 +34,17 @@ class Button {
     this.ctx.arcTo(this.x, this.y, this.x + 5, this.y, 5);
     this.ctx.fill();
 
-    // Draw the icon
-    this.ctx.drawImage(this.icon, this.x + 10, this.y + 10, 20, 20);
+    // Draw the text
+    this.ctx.font = '20px Arial';
+    this.ctx.fillStyle = 'Black';
+    this.ctx.textAlign = 'center';
+    this.ctx.textBaseline = 'middle';
+    this.ctx.fillText(this.text, this.x + this.width / 2, this.y + this.height / 2);
 }
 
-
-    handleClick(x, y, world) {
-    if (x > this.x && x < this.x + this.width && y > this.y && y < this.y + this.height) {
-        if (world.paused) {
-            world.resume();
-            this.icon = world.pausedIcon;
-            this.draw();
-        } else {
-            world.pause();
-            this.icon = world.playIcon;
-            this.draw();
+    handleClick(x, y) {
+        if (x > this.x && x < this.x + this.width && y > this.y && y < this.y + this.height) {
+            restartGame();
         }
     }
-}
-
-
 }

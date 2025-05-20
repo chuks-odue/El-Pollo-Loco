@@ -12,6 +12,13 @@ class World {
     bottleBar = new StatusBar('bottle');
     throwableObjects = []; 
     droppedCoins = [];
+    playPauseButton;
+    pausedIcon = new Image();
+    playIcon = new Image();
+    gameOverImage = new Image();
+    gameOverImageShown = false;
+    gameOver = false;
+    paused = false;
 
     sounds = {
         'throw': new Audio('audio/SHOOT011.mp3'),
@@ -20,13 +27,7 @@ class World {
         'explode': new Audio('audio/8bit_bomb_explosion.wav'),
         'win': new Audio('audio/Won!.wav'),
         'bottle-hit': new Audio('audio/1.mp3'),
-        
-        
-        
     };
-    gameOverImage = new Image();
-    gameOverImageShown = false;
-    gameOver = false;
     
 
 
@@ -37,63 +38,72 @@ class World {
         this.setWorld();
         this.checkCollision();
         this.checkThrowBottle(); 
-        document.addEventListener('throwBottle', () => {
-        if (this.character.bottleCount > 0 && !this.gameOver) {
-            this.throwBottle();
-            this.playSound('throw');
-        }
-    });
-        this.bottleBar.setPercentage(this.character.bottleCount * 20); 
+        this.restartButton = new RestartButton(650, 10, 100, 30, this.ctx, 'Replay');
 
-        this.draw();
+        this.pausedIcon.src = 'img/assets/pause.svg';
+        this.playIcon.src = 'img/assets/smart_play__WHITE.svg';
+
+        let self = this;
+        let imagesLoaded = 0;
+        function imageLoaded() {
+            imagesLoaded++;
+            if (imagesLoaded === 2) {
+                self.playPauseButton = new Button(770, 10, 40, 40, self.ctx, self.pausedIcon, self.playIcon);
+                self.playPauseButton.icon = self.pausedIcon;
+                document.addEventListener('click', (e) => {
+                    let rect = canvas.getBoundingClientRect();
+                    let x = e.clientX - rect.left;
+                    let y = e.clientY - rect.top;
+                    if (self.gameOver) {
+                        self.restartButton.handleClick(x, y);
+                    } else {
+                        self.playPauseButton.handleClick(x, y, self);
+                    }
+                });
+                self.draw();
+            }
+        }
+        this.pausedIcon.onload = imageLoaded;
+        this.playIcon.onload = imageLoaded;
     }
-    
-    
-    
 
     setWorld() {
         this.character.world = this;
     }
-    
-    
 
     checkCollision() {
         setInterval(() => {
-            if (this.gameOver) return; 
-       this.level.enemies.forEach((enemy) => {
-         if (!enemy.isDead && this.character.isColliding(enemy)) {
-                if (this.character.y < enemy.y && this.character.speedY >= 0) {
-                 enemy.die();
-                 
-                 this.character.speedY = -10; 
-                 // bounce the character
-                } else {
-                    
-                  this.character.hit();
-                   this.statusBar.setPercentage(this.character.energy);
-                if     (this.character.energy <= 0) {
-                   this.showGameOverImage('lose');
-                  }
+            if (this.gameOver || this.paused) return; 
+            if (!this.paused) 
+            this.level.enemies.forEach((enemy) => {
+                if (!enemy.isDead && this.character.isColliding(enemy)) {
+                    if (this.character.y < enemy.y && this.character.speedY >= 0) {
+                        enemy.die();
+                        this.character.speedY = -10; 
+                    } else {
+                        this.character.hit();
+                        this.statusBar.setPercentage(this.character.energy);
+                        if (this.character.energy <= 0) {
+                            this.showGameOverImage('lose');
+                        }
+                    }
                 }
-            }
-        });
-           
-            
-    
+            });
+
             this.level.collectibles.forEach((collectible, index) => {
                 if (this.character.isColliding(collectible)) {
-                   if (collectible.type === 'coin') {
-    if (this.coinBar.percentage >= 100) {
-        this.playSound('coin-lost');
-    } else {
-        this.coinBar.percentage += 20;
-        if (this.coinBar.percentage > 100) {
-            this.coinBar.percentage = 100;
-        }
-        this.coinBar.setPercentage(this.coinBar.percentage);
-    }
-    this.level.collectibles.splice(index, 1);
-} else if (collectible.type === 'bottle') {
+                    if (collectible.type === 'coin') {
+                        if (this.coinBar.percentage >= 100) {
+                            this.playSound('coin-lost');
+                        } else {
+                            this.coinBar.percentage += 20;
+                            if (this.coinBar.percentage > 100) {
+                                this.coinBar.percentage = 100;
+                            }
+                            this.coinBar.setPercentage(this.coinBar.percentage);
+                        }
+                        this.level.collectibles.splice(index, 1);
+                    } else if (collectible.type === 'bottle') {
                         if (this.character.bottleCount < 5) {
                             this.character.bottleCount++;
                             this.bottleBar.setPercentage(this.character.bottleCount * 20);
@@ -110,12 +120,12 @@ class World {
                             this.level.collectibles.splice(index, 1);
                             this.playSound('collect-life');
                         }
-                    }
-                    else {
+                    } else {
                         this.level.collectibles.splice(index, 1);
                     }
                 }
             });
+
             for (let i = this.throwableObjects.length - 1; i >= 0; i--) {
                 const bottle = this.throwableObjects[i];
                 this.level.enemies.forEach((enemy) => {
@@ -126,8 +136,7 @@ class World {
                         this.playSound('explode');
                     }
                 });
-            
-                // Check if the bottle hits the character
+
                 if (bottle.owner instanceof Endboss && bottle.isColliding(this.character) && !bottle.hasHit) {
                     bottle.splash(); 
                     bottle.splash(); 
@@ -139,23 +148,29 @@ class World {
                         this.showGameOverImage('lose');
                     }
                 }
-            
+
                 if (bottle.finishedSplash) {
                     this.throwableObjects.splice(i, 1);
                 }
             }
-                        
         }, 1000/66);
     }
-    
+
     checkThrowBottle() {
         document.addEventListener('keydown', (event) => {
-            if (event.key === 'd' && this.character.bottleCount > 0 && !this.gameOver) {
+            if (event.key === 'd' && this.character.bottleCount > 0 && !this.gameOver && !this.paused) {
+                this.throwBottle();
+                this.playSound('throw');
+            }
+        });
+        document.addEventListener('throwBottle', () => {
+            if (this.character.bottleCount > 0 && !this.gameOver && !this.paused) {
                 this.throwBottle();
                 this.playSound('throw');
             }
         });
     }
+
     throwBottle() {
         let bottle = new ThrowableObject(this.character.x + 50, this.character.y + 50, this.character.otherDirection);
         this.throwableObjects.push(bottle);
@@ -163,28 +178,34 @@ class World {
         this.bottleBar.setPercentage(this.character.bottleCount * 20);
     }
 
-    draw() {
+       draw() {
+        if (this.paused) return;
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.ctx.translate(this.camera_x, 0);
-    
+
         this.addObjectsToMap(this.level.backgroundobjects); 
         this.addToMap(this.character); 
         this.addObjectsToMap(this.level.collectibles);      
         this.addObjectsToMap(this.level.enemies);
         this.addObjectsToMap(this.level.clouds);
-    
+
         this.throwableObjects.forEach((bottle) => bottle.move());
         this.addObjectsToMap(this.throwableObjects);
-    
+
         this.ctx.translate(-this.camera_x, 0);
-    
+
         this.addToMap(this.bottleBar);
         this.addToMap(this.statusBar);
         this.addToMap(this.coinBar);
-    
+
         this.ctx.translate(this.camera_x, 0);
         this.ctx.translate(-this.camera_x, 0);
-    
+        if (!this.gameOver) {
+            this.playPauseButton.draw();
+        } else {
+            this.restartButton.draw();
+        }
+
         if (this.gameOverImageShown && this.gameOverImage.complete) {
             console.log('Drawing game over image', this.gameOverImage.src);
             this.ctx.save();
@@ -206,6 +227,8 @@ class World {
             this.addToMap(coin);
         });
     }
+
+
 
     addObjectsToMap(objects) {
         objects.forEach(o => {
@@ -230,15 +253,28 @@ class World {
         this.ctx.scale(-1, 1);
         mo.x = mo.x * -1;
     }
+    pause() {
+        this.paused = true;
+        this.level.enemies.forEach((enemy) => {
+        enemy.speed = 0;
+       });
+    }
+
+  resume() {
+       this.paused = false;
+       this.level.enemies.forEach((enemy) => {
+        enemy.speed = enemy.originalSpeed; // assuming you have an originalSpeed property
+       });
+        this.draw();
+    }
 
     flipImageBack(mo) {
         mo.x = mo.x * -1;
         this.ctx.restore();
     }
-    
 
     playSound(name) {
-        if (soundEnabled) {
+        if (this.soundEnabled) {
             const sound = this.sounds[name];
             if (sound) {
                 sound.currentTime = 0;
@@ -252,20 +288,19 @@ class World {
         console.log('Showing game over image');
         this.gameOver = true;
         this.level.enemies.forEach((enemy) => {
-            enemy.speed = 0; // Stop the enemies from moving
+            enemy.speed = 0; 
         });
-    
+
         this.gameOverImage.src = result === 'win' ? 'img/img/You won, you lost/You Won B.png' : 'img/img/You won, you lost/You Lost B.png';
         if (result === 'win') {
             this.playSound('win');
         } else {
-            
             this.playSound('lose');
         }
         this.gameOverImage.onload = () => {
             console.log('Game over image loaded');
             this.gameOverImageShown = true;
-            this.draw(); // Force the canvas to update
+            this.draw(); 
         };
         this.gameOverImage.onerror = () => {
             console.log('Error loading game over image');

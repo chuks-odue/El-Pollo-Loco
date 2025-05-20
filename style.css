@@ -64,11 +64,6 @@ canvas{
     transition: background 0.3s;
 }
 
-.start-button:hover {
-    background: rgb(18, 50, 22);
-    transform: scale(1.05);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-}
 
 
 .start-screen {

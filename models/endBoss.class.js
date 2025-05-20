@@ -25,6 +25,7 @@ class Endboss extends moveableObject {
         this.loadimages(this.Endboss_DEAD); // 💥 Load dead images too
         this.x = 2800;
         this.speed = 0.15 + Math.random() * 0.5;
+        this.originalSpeed = this.speed;
         this.animate();
         this.throwBottles();
     }
