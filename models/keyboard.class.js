@@ -72,12 +72,12 @@ class Keyboard {
             this.RIGHT = false;
         });
 
-        window.addEventListener('load', () => {
+        /*window.addEventListener('load', () => {
             this.addButtonEventListeners();
-        });
+        });*/
     }
 
-    addButtonEventListeners() {
+    /*addButtonEventListeners() {
         const leftButton = document.getElementById('left-button');
         const rightButton = document.getElementById('right-button');
         const jumpButton = document.getElementById('jump-button');
@@ -114,7 +114,7 @@ class Keyboard {
         } else {
             console.error('One or more buttons not found');
         }
-    }
+    }*/
 
     throwBottle() {
         // Code to throw the bottle goes here

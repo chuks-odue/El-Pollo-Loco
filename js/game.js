@@ -1,5 +1,32 @@
+let canvas;
+let world;
+let keyboard = new Keyboard();
+let soundEnabled = true;
+
+// Initialize game
+function init() {
+    canvas = document.getElementById('canvas');
+    initLevel(); 
+    world = new World(canvas, keyboard);
+    console.log('my character is', world.character);
+    
+}
+
+function restartGame() {
+    if (world && typeof world.stop === 'function') {
+        world.stop(); 
+    }
+
+    keyboard = new Keyboard();   
+    initLevel();                 
+    world = new World(canvas, keyboard); 
+    
+    console.log('Game restarted');
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const startButton = document.getElementById('startButton');
+    let canvas; 
     function startGame() {
         console.log('Starting game, sound enabled:', soundEnabled);
 
@@ -13,51 +40,47 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 3000);     
         }
         
-        document.getElementById('startScreen').style.display = 'none';
-        document.querySelector('h1').style.display = 'none'; 
+        const startScreen = document.getElementById('startScreen');
+        if (startScreen) {
+            startScreen.style.display = 'none';
+            canvas = document.getElementById('canvas'); 
+            if (canvas) canvas.style.display = 'block';
+        } else {
+            canvas = document.getElementById('canvas'); 
+            if (canvas) canvas.style.display = 'block';
+        }
         
-    
-        canvas.style.display = 'block';
-        document.getElementById('inGameMenu').classList.remove('hidden');    
-        document.getElementById('inGameHelp').style.display = 'block';
-        document.getElementById('restartButton').style.display = 'block';
-            document.getElementById('play-pause-controls').style.display = 'block';        
-        init(); 
-        canvas.addEventListener('click', (e) => {
-    let rect = canvas.getBoundingClientRect();
-    let x = e.clientX - rect.left;
-    let y = e.clientY - rect.top;
-    if (world.gameOver) {
-        world.restartButton.handleClick(x, y);
-    } else {
-        world.playPauseButton.handleClick(x, y, world);
-    }
-});
+        const h1 = document.querySelector('h1');
+        if (h1) h1.style.display = 'none'; 
+        
+        const inGameMenu = document.getElementById('inGameMenu');
+        if (inGameMenu) inGameMenu.classList.remove('hidden');    
+            
+        const inGameHelp = document.getElementById('inGameHelp');
+        if (inGameHelp) inGameHelp.style.display = 'block';
+            
+        const playPauseControls = document.getElementById('play-pause-controls');
+        if (playPauseControls) playPauseControls.style.display = 'block';        
 
+        init();
 
-
+        if (canvas) {
+            canvas.addEventListener('click', (e) => {
+                let rect = canvas.getBoundingClientRect();
+                let x = e.clientX - rect.left;
+                let y = e.clientY - rect.top;
+                if (world.gameOver) {
+                    world.restartButton.handleClick(x, y);
+                } else {
+                    world.playPauseButton.handleClick(x, y, world);
+                }
+            });
+        }
     }
     startButton.addEventListener('click', () => {
         startGame();
     });
 });
-
-
-let canvas;
-let world;
-let keyboard = new Keyboard();
-let soundEnabled = true;
-
-
-
-// Initialize game
-function init() {
-    canvas = document.getElementById('canvas');
-    initLevel(); // Ensure level1 is loaded
-    world = new World(canvas, keyboard);
-    console.log('my character is', world.character);
-}
-
 // Keydown event listener
 window.addEventListener("keydown", (e) => {
     if (e.key === "ArrowRight") keyboard.RIGHT = true;
@@ -107,7 +130,6 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('DOMContentLoaded', () => {
     const fullscreenButton = document.getElementById('fullscreenButton');
     const fullscreenIcon = document.getElementById('fullscreenIcon');
-    const restartButton = document.getElementById('restartButton');
     const soundButtonInGame = document.getElementById('soundButtonInGame');
     const soundIconInGame = document.getElementById('soundIconInGame');
     const gameContainer = document.querySelector('.game-container'); // Changed to container
@@ -166,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateFullscreenIcon() {
         const iconPath = isFullscreen() 
-            ? 'img/assets/fullscreen_exit_24.svg'
+            ? 'img/assets/fullscreen_exit.svg'
             : 'img/assets/fullscreen_icon.svg';
         
         // Verify icon exists before setting source
@@ -197,9 +219,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initial setup
     updateFullscreenIcon();
 
-    // Rest of your code remains the same
-    restartButton.addEventListener('click', restartGame);
-
     soundButtonInGame.addEventListener('click', (e) => {
         soundEnabled = !soundEnabled;
         console.log('Sound enabled:', soundEnabled);
@@ -209,13 +228,3 @@ document.addEventListener('DOMContentLoaded', () => {
         e.stopPropagation();
     });
 });
-function restartGame() {
-    if (world && typeof world.stop === 'function') {
-        world.stop(); 
-    }
-
-    keyboard = new Keyboard();   
-    initLevel();                 
-     world = new World(canvas, keyboard); 
-    console.log('Game restarted');
-}

@@ -30,8 +30,8 @@ h1{
 
 
 canvas{
-    background-color: rgb(30, 52, 52);
-    display: none;
+    
+    display:none;
 }
 
 
@@ -145,7 +145,7 @@ canvas{
 
 .in-game-menu button {
     background-color:#0c627a;
-    color: #ffa500; /* Orange text color */
+    color: white; /* Orange text color */
     border: none;
     padding: 5px 10px;
     font-size: 16px;
@@ -306,4 +306,5 @@ canvas{
     font-family: 'Times New Roman', Times, serif !important;
     
 }
+
 

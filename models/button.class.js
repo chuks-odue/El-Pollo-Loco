@@ -26,7 +26,7 @@ class Button {
     this.ctx.fillRect(this.x - 5, this.y - 5, this.width + 10, this.height + 10);
 
     // Draw the button with rounded corners
-    this.ctx.fillStyle = 'darkorange';
+    this.ctx.fillStyle = '#0c627a';
     this.ctx.beginPath();
     this.ctx.moveTo(this.x + 5, this.y);
     this.ctx.lineTo(this.x + this.width - 5, this.y);
@@ -57,6 +57,5 @@ class Button {
         }
     }
 }
-
 
 }

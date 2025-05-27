@@ -21,16 +21,18 @@
     <script src="../models/cloud.class.js"></script>    
     <script src="../models/world.class.js"></script>
     <script src="../models/keyboard.class.js"></script>
-    <script src="../models/level.class.js"></script>   
+    <script src="../models/touch-control.class.js"></script>
+    <script src="../models/level.class.js"></script>
     <script src="../levels/level1.js"></script>
     <script src="../models/button.class.js"></script>
+    <script src="../models/quit-button.class.js"></script>
     <script src="../models/restart-button.class.js"></script>
     <script src="../js/endscreen.js"></script>
     <script src="../js/game.js"></script>
     
    
 </head>
-<body onload="init()">
+<body>
 
     <div class="game-container" id="gameContainer">
 
@@ -48,7 +50,7 @@
             <ul>
                 <li><img src="img/assets/arrow_left.svg" width="20" height="20"> Move Left</li>
                 <li><img src="img/assets/arrow_right.svg" width="20" height="20"> Move Right</li>
-                <li><img src="img/assets/arrow_Up.svg" width="20" height="20"> Jump up</li>
+                <li><img src="img/assets/arrow-Up.svg" width="20" height="20"> Jump up</li>
                 <li><b>D</b> Throw Weapon</li> 
             
             </ul>
@@ -102,13 +104,13 @@
         <ul>
             <li><img src="img/assets/arrow_left.svg" width="20" height="20"> Move Left</li>
             <li><img src="img/assets/arrow_right.svg" width="20" height="20"> Move Right</li>
-            <li><img src="img/assets/arrow_Up.svg" width="20" height="20"> Jump up</li>
+            <li><img src="img/assets/arrow-Up.svg" width="20" height="20"> Jump up</li>
             <li><b>D</b> Throw Weapon</li>
             
         </ul>
       </div>
     </div> 
-    <div id="touch-controls">
+   <!--- <div id="touch-controls">
     <div id="left-button" class="touch-button">
         <img src="img/assets/arrow_left.svg" width="70" height="70">
     </div>
@@ -122,7 +124,7 @@
                <img src="img/assets/weapon1.png" width="30" height="30">
 
     </div>
-   </div>
+   </div>-->
 
     
 

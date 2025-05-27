@@ -46,8 +46,7 @@ class World {
         this.checkCollision();
         this.checkThrowBottle(); 
         this.restartButton = new RestartButton(650, 10, 100, 30, this.ctx, 'Replay');
-        
-        this.quitButton = new QuitButton(770, 10, 40, 40, this.ctx, 'Quit');
+        this.quitButton = new QuitButton(630, 10, 100, 30, this.ctx, 'Quit Game');
         //this.touchControls = new TouchControls(this.ctx, this.canvas);
         this.touchControls = new TouchControls(this.ctx, this.canvas);
         this.touchControls.handleTouchEvents(canvas, keyboard);
@@ -60,7 +59,7 @@ class World {
         function imageLoaded() {
             imagesLoaded++;
             if (imagesLoaded === 2) {
-                self.playPauseButton = new Button(680, 10, 40, 40, self.ctx, self.pausedIcon, self.playIcon);
+                self.playPauseButton = new Button(750, 10, 40, 40, self.ctx, self.pausedIcon, self.playIcon);
                 self.playPauseButton.icon = self.pausedIcon;
 
                 
@@ -202,57 +201,59 @@ document.addEventListener('click', (e) => {
     }
 
     draw() {
-    if (this.paused) return;
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    this.ctx.translate(this.camera_x, 0);
+        if (this.paused) return;
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.translate(this.camera_x, 0);
 
-    this.addObjectsToMap(this.level.backgroundobjects); 
-    this.addToMap(this.character); 
-    this.addObjectsToMap(this.level.collectibles);      
-    this.addObjectsToMap(this.level.enemies);
-    this.addObjectsToMap(this.level.clouds);
+        this.addObjectsToMap(this.level.backgroundobjects); 
+        this.addToMap(this.character); 
+        this.addObjectsToMap(this.level.collectibles);      
+        this.addObjectsToMap(this.level.enemies);
+        this.addObjectsToMap(this.level.clouds);
 
-    this.throwableObjects.forEach((bottle) => bottle.move());
-    this.addObjectsToMap(this.throwableObjects);
+        this.throwableObjects.forEach((bottle) => bottle.move());
+        this.addObjectsToMap(this.throwableObjects);
 
-    this.ctx.translate(-this.camera_x, 0);
+        this.ctx.translate(-this.camera_x, 0);
 
-    this.addToMap(this.bottleBar);
-    this.addToMap(this.statusBar);
-    this.addToMap(this.coinBar);
-    this.touchControls.draw();
+        this.addToMap(this.bottleBar);
+        this.addToMap(this.statusBar);
+        this.addToMap(this.coinBar);
+        this.touchControls.draw();
 
 
-    this.ctx.translate(this.camera_x, 0);
-    this.ctx.translate(-this.camera_x, 0);
-    if (!this.gameOver) {
-        this.playPauseButton.draw();
-    } else {
-        this.restartButton.draw();
-    }
-    if (this.quitButton) this.quitButton.draw();
+        this.ctx.translate(this.camera_x, 0);
+        this.ctx.translate(-this.camera_x, 0);
+        if (!this.gameOver) {
+            this.playPauseButton.draw();
+            if (this.quitButton) this.quitButton.draw();
+        } else {
+            this.restartButton.draw();
+        }
 
-    if (this.gameOverImageShown && this.gameOverImage.complete) {
-        console.log('Drawing game over image', this.gameOverImage.src);
-        this.ctx.save();
-        this.ctx.setTransform(1, 0, 0, 1, 0, 0);
-        this.ctx.drawImage(this.gameOverImage, this.canvas.width / 2 - 200, this.canvas.height / 2 - 100, 400, 200);
-        this.ctx.restore();
-        console.log('Game over image drawn');
-    } else if (this.gameOverImageShown && !this.gameOverImage.complete) {
-        console.log('Game over image not loaded yet', this.gameOverImage.src);
-    }    
-    if (!this.gameOver) {
-        let self = this;
-        requestAnimationFrame(function() {
-            self.draw();
+        if (this.gameOverImageShown && this.gameOverImage.complete) {
+            console.log('Drawing game over image', this.gameOverImage.src);
+            this.ctx.save();
+            this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+            this.ctx.drawImage(this.gameOverImage, this.canvas.width / 2 - 200, this.canvas.height / 2 - 100, 400, 200);
+            this.ctx.restore();
+            console.log('Game over image drawn');
+        } else if (this.gameOverImageShown && !this.gameOverImage.complete) {
+            console.log('Game over image not loaded yet', this.gameOverImage.src);
+        }    
+        if (!this.gameOver) {
+            let self = this;
+            requestAnimationFrame(function() {
+                self.draw();
+            });
+        }
+        this.droppedCoins.forEach((coin) => {
+            coin.update();
+            this.addToMap(coin);
         });
     }
-    this.droppedCoins.forEach((coin) => {
-        coin.update();
-        this.addToMap(coin);
-    });
-}
+
+
 
     addObjectsToMap(objects) {
         objects.forEach(o => {
