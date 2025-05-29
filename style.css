@@ -31,7 +31,7 @@ h1{
 
 canvas{
     
-    display:none;
+    display:block;
 }
 
 
@@ -288,12 +288,13 @@ canvas{
     
     width: 250px;
     height: 220px;
-    background-color: rgb(87, 162, 212);
+    background-color: darkorange;
     display: none;
     padding: 20px;
-    border: #ff0095 solid 2px;
+    border: lightskyblue solid 2px;
     text-align: center;
     z-index: 1000;
+    border-radius: 15px;
 }
 
 .info-content {
@@ -307,4 +308,15 @@ canvas{
     
 }
 
-
+@media only screen and(max-width:820px) {
+    canvas{
+        width: 100%;
+    }
+    
+}
+@media only screen and(max-height:480px) {
+    canvas{
+        height: 100vh;
+    }
+    
+}

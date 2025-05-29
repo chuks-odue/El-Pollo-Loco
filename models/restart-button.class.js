@@ -5,6 +5,11 @@ class RestartButton {
     height;
     ctx;
     text;
+    text;
+    blinkTimer = 0; // Initialize blinkTimer
+   isBlinking = false; // Initialize isBlinking
+   
+
     
 
 
@@ -16,24 +21,30 @@ class RestartButton {
         this.height = height;
         this.ctx = ctx;
         this.text = text;
+            this.isBlinking = false;
+    setInterval(() => {
+      this.isBlinking = !this.isBlinking;
+    }, 100); // Toggle every 500ms
+
     }
 
    draw() {
     this.blinkTimer++;
-    if (this.blinkTimer > 30) {
+    if (this.blinkTimer > 500) {
         this.isBlinking = !this.isBlinking;
         this.blinkTimer = 0;
+        
     }
 
     // Draw the background
-    this.ctx.fillStyle = 'black'; 
+    this.ctx.fillStyle = 'rgba(119, 0, 255, 0.7)'; 
     this.ctx.fillRect(this.x - 5, this.y - 5, this.width + 10, this.height + 10);
 
     // Draw the button with rounded corners
     if (this.isBlinking) {
         this.ctx.fillStyle = 'orange';
     } else {
-        this.ctx.fillStyle = 'darkorange';
+        this.ctx.fillStyle = '#0c727a';
     }
     this.ctx.beginPath();
     this.ctx.moveTo(this.x + 5, this.y);
@@ -57,7 +68,7 @@ class RestartButton {
 
     handleClick(x, y) {
         if (x > this.x && x < this.x + this.width && y > this.y && y < this.y + this.height) {
-            restartGame();
+            replayGame();
         }
     }
 }

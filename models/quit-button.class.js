@@ -8,15 +8,25 @@ class QuitButton {
         this.text = text;
         this.backgroundColor = 'rgba(119, 0, 255, 0.7)';
         this.buttonColor = '#0c627a';
+        this.addEventListener();
     }
+    
+  addEventListener() {
+    let self = this;
+    document.addEventListener('click', (e) => {
+      let rect = world.canvas.getBoundingClientRect();
+      let x = e.clientX - rect.left;
+      let y = e.clientY - rect.top;
+      self.handleClick(x, y, world);
+    });
+  }
 
-    handleClick(x, y, world) {
+  handleClick(x, y, world) {
+    if (x > this.x && x < this.x + this.width && y > this.y && y < this.y + this.height) {
+      world.quitGame();
         console.log('Quit button clicked');
-        if (x > this.x && x < this.x + this.width && y > this.y && y < this.y + this.height) {
-            console.log('Quit game logic executed');
-            world.quitGame();
-        }
     }
+  }
 
     draw() {
         // Draw the background

@@ -12,16 +12,17 @@ function init() {
     
 }
 
-function restartGame() {
-    if (world && typeof world.stop === 'function') {
-        world.stop(); 
-    }
+function replayGame() {
+  if (world && typeof world.stop === 'function') {
+    world.stop(); 
+  }
 
-    keyboard = new Keyboard();   
-    initLevel();                 
-    world = new World(canvas, keyboard); 
-    
-    console.log('Game restarted');
+  keyboard = new Keyboard();   
+  initLevel();                 
+  world = new World(canvas, keyboard); 
+
+  world.gameOver = false;
+  world.gameOverImageShown = false;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -221,6 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     soundButtonInGame.addEventListener('click', (e) => {
         soundEnabled = !soundEnabled;
+          world.soundEnabled = soundEnabled; 
         console.log('Sound enabled:', soundEnabled);
         soundIconInGame.src = soundEnabled 
             ? 'img/assets/Mic-On.svg' 

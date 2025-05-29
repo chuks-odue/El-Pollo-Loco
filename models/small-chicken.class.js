@@ -29,7 +29,7 @@ class SmallChicken extends moveableObject {
 
     animate() {
         setInterval(() => {
-            if (!this.isDead) {
+            if (!this.isDead && !world.gameOver) {
                 this.moveLeft();
                 this.updatePosition();
             }
