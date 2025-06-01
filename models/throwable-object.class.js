@@ -1,7 +1,7 @@
 class ThrowableObject extends moveableObject {
-    speed = 5;         // Speed flying forward
-    gravity = 0.5;      // Strength of gravity
-    velocityY = 10;      // Speed falling downward
+    speed = 5;      // Speed flying forward
+    gravity = 0.5;    // Strength of gravity
+    velocityY = 10;     // Speed falling downward
     bottleCount = 5; 
     isSplash = false; // 💥 to know if it's splashing
     splashStarted = false;
@@ -33,7 +33,7 @@ class ThrowableObject extends moveableObject {
         this.width = 50;
         this.height = 190;
         this.otherDirection = otherDirection;
-        this.owner = owner; // 👈 Add owner here
+        this.owner = owner; 
     
         this.animate();
     }
@@ -66,7 +66,7 @@ class ThrowableObject extends moveableObject {
         this.isSplash = true;
         this.currentImage = 0; 
         this.finishedSplash = false; // Reset finishedSplash
-        console.log('Splash triggered');
+        
     }
 
     animate() {
@@ -75,10 +75,10 @@ class ThrowableObject extends moveableObject {
                 if (this.currentImage < this.SPLASH_BOTTLE.length) {
                     const path = this.SPLASH_BOTTLE[this.currentImage];
                     this.img = this.imageCache[path];
-                    console.log('Drawing splash image:', path);
+                    
                     this.currentImage++;
                 } else {
-                    console.log('Splash animation ended');
+                    
                     this.finishedSplash = true;
                     clearInterval(this.animationInterval);
                 }
@@ -88,28 +88,9 @@ class ThrowableObject extends moveableObject {
                 }
                 const path = this.SPINNING_BOTTLE[this.currentImage];
                 this.img = this.imageCache[path];
-                console.log('Drawing spinning bottle image:', path);
+                
                 this.currentImage++;
             }
         }, 100);
     }
-
-
-
-   
-    
-    
-  
-    
-
-    /*animate() {
-        setInterval(() => {
-            this.currentImage++;
-            if (this.currentImage >= this.SPINNING_BOTTLE.length) {
-                this.currentImage = 0;
-            }
-            let path = this.SPINNING_BOTTLE[this.currentImage];
-            this.img = this.imageCache[path];
-        }, 50); // Speed of rotation (100ms = fast spin)
-    }*/
 }

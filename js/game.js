@@ -50,6 +50,33 @@ document.addEventListener('DOMContentLoaded', () => {
             canvas = document.getElementById('canvas'); 
             if (canvas) canvas.style.display = 'block';
         }
+         document.body.classList.add('game-started');
+      if (window.innerWidth <= 920) {
+    const inGameHelp = document.getElementById('inGameHelp');
+    if (inGameHelp) {
+        inGameHelp.style.display = 'none';
+    }
+
+    const inGameMenu = document.getElementById('inGameMenu');
+    if (inGameMenu) {
+        inGameMenu.style.display = 'none';
+    }
+}
+
+window.addEventListener('resize', () => {
+    const inGameMenu = document.getElementById('inGameMenu');
+    if (window.innerWidth <= 1020) {
+        inGameMenu.classList.add('hide-on-mobile');
+    } else {
+        inGameMenu.classList.remove('hide-on-mobile');
+    }
+});
+
+
+          
+
+
+
         
         const h1 = document.querySelector('h1');
         if (h1) h1.style.display = 'none'; 
@@ -108,25 +135,30 @@ document.addEventListener('DOMContentLoaded', function() {
     const infoButton = document.getElementById('infoButton');
     const infoOverlay = document.getElementById('infoOverlay');
     const closeInfoOverlay = document.getElementById('closeInfoOverlay');
+    let isInfoOverlayVisible = false;
 
     if (infoButton) {
         infoButton.addEventListener('click', () => {
-            infoOverlay.style.display = 'block';
+            isInfoOverlayVisible = !isInfoOverlayVisible;
+            infoOverlay.style.display = isInfoOverlayVisible ? 'block' : 'none';
         });
     }
 
     if (closeInfoOverlay) {
         closeInfoOverlay.addEventListener('click', () => {
             infoOverlay.style.display = 'none';
+            isInfoOverlayVisible = false;
         });
     }
 
     document.addEventListener('click', (event) => {
-        if (infoOverlay.style.display === 'block' && !infoOverlay.contains(event.target) && event.target !== infoButton) {
+        if (isInfoOverlayVisible && !infoOverlay.contains(event.target) && event.target !== infoButton) {
             infoOverlay.style.display = 'none';
+            isInfoOverlayVisible = false;
         }
     });
 });
+
 
 document.addEventListener('DOMContentLoaded', () => {
     const fullscreenButton = document.getElementById('fullscreenButton');
@@ -220,13 +252,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initial setup
     updateFullscreenIcon();
 
+   
     soundButtonInGame.addEventListener('click', (e) => {
-        soundEnabled = !soundEnabled;
-          world.soundEnabled = soundEnabled; 
-        console.log('Sound enabled:', soundEnabled);
-        soundIconInGame.src = soundEnabled 
-            ? 'img/assets/Mic-On.svg' 
-            : 'img/assets/Mic-Off.svg';
-        e.stopPropagation();
-    });
+    soundEnabled = !soundEnabled;
+    if (world) {
+        world.soundEnabled = soundEnabled;
+    }
+    console.log('Sound enabled:', soundEnabled);
+    soundIconInGame.src = soundEnabled 
+        ? 'img/assets/Mic-On.svg' 
+        : 'img/assets/Mic-Off.svg';
+    e.stopPropagation();
+});
 });

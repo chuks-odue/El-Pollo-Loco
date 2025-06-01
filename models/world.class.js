@@ -1,5 +1,6 @@
 class World {
     soundEnabled = true;
+    
 
     character = new Character();
     level = level1;
@@ -40,6 +41,7 @@ class World {
         this.setWorld();
         this.checkCollision();
         this.checkThrowBottle();
+          this.soundEnabled = soundEnabled; 
 
         this.restartButton = new RestartButton(650, 10, 100, 30, this.ctx, 'Replay');
         this.quitButton = new QuitButton(770, 10, 40, 40, this.ctx, 'Quit');
@@ -164,6 +166,7 @@ class World {
         document.addEventListener('throwBottle', () => {
             if (this.character.bottleCount > 0 && !this.gameOver && !this.paused) {
                 this.throwBottle();
+                
                 this.playSound('throw');
             }
         });
