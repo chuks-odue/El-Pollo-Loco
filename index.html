@@ -6,7 +6,8 @@
     <title>EL POLLO LOCO</title>
     <link rel="stylesheet" href="style.css">
     <link rel="shortcut icon" href="img/img/9_intro_outro_screens/start/startscreen_1.png" type="image/x-icon">
-    
+
+    <!-- Scripts -->
     <script src="../models/drawable-object.class.js"></script>
     <script src="../models/moveable-object.class.js"></script>
     <script src="../models/dropped-coin.class.js"></script>
@@ -16,9 +17,9 @@
     <script src="../models/background-object.class.js"></script>
     <script src="../models/chicken.class.js"></script>
     <script src="../models/small-chicken.class.js"></script>
-    <script src="../models/endBoss.class.js"></script>   
-    <script src="../models/character.class.js"></script>   
-    <script src="../models/cloud.class.js"></script>    
+    <script src="../models/endBoss.class.js"></script>
+    <script src="../models/character.class.js"></script>
+    <script src="../models/cloud.class.js"></script>
     <script src="../models/world.class.js"></script>
     <script src="../models/keyboard.class.js"></script>
     <script src="../models/touch-control.class.js"></script>
@@ -29,111 +30,53 @@
     <script src="../models/restart-button.class.js"></script>
     <script src="../js/endscreen.js"></script>
     <script src="../js/game.js"></script>
-    
-   
 </head>
 <body>
-
     <div class="game-container" id="gameContainer">
+        <h1>El Pollo Loco</h1>
 
-       <h1>El Pollo Loco</h1>
-
-     <div id="startScreen" class="start-screen">
-        
-            
-
-            
-            
-    
-       <!--- <div id="" class="help-Popup-left">
-            <h3>Keyboard Controls</h3>
-            <ul>
-                <li><img src="img/assets/arrow_left.svg" width="20" height="20"> Move Left</li>
-                <li><img src="img/assets/arrow_right.svg" width="20" height="20"> Move Right</li>
-                <li><img src="img/assets/arrow-Up.svg" width="20" height="20"> Jump up</li>
-                <li><b>D</b> Throw Weapon</li> 
-            
-            </ul>
-        </div>-->
-
-
-           
-
-        <div class="start-image-container">
-            <img src="img/img/9_intro_outro_screens/start/startscreen_2.png" class="start-image">
-            <button id="startButton" class="start-button">Start Game</button>
+        <div id="startScreen" class="start-screen">
+            <div class="start-image-container">
+                <img src="img/img/9_intro_outro_screens/start/startscreen_2.png" class="start-image">
+                <button id="startButton" class="start-button">Start Game</button>
+            </div>
         </div>
 
-    </div>
-    
+        <div id="infoOverlay" class="info-overlay">
+            <div class="info-content">
+                <ul>
+                    <li><p>Smaller chicken dies only after being hit by a weapon (Bottle)</p></li>
+                    <li><p>The normal chicken can be killed by either jumping on it or throwing bottle at it</p></li>
+                    <li><p>EndBoss chicken dies only after being hit by multiple bottles</p></li>
+                </ul>
+                <ul class="mobile-overlay">
+                    <li><img src="img/assets/arrow_left.svg" width="20" height="20"> == Move Left</li>
+                    <li><img src="img/assets/arrow_right.svg" width="20" height="20">== Move Right</li>
+                    <li><img src="img/assets/arrow-Up.svg" width="20" height="20">== Jump up</li>
+                    <li><b>D</b>== Throw Weapon</li>
+                </ul>
+            </div>
+        </div>
 
-    
-    
-    <div id="infoOverlay" class="info-overlay">
-    <div class="info-content">
-        
-        <ul>
-            <li><p>Smaller chicken dies only after being hit by a weapon (Bottle)</p></li>
-            <li><p>The normal chicken can be killed by either jumping on it or throwing bottle at it</p></li>
-            <li><p>EndBoss chicken dies only after being hit by multiple bottles</p></li>
-        </ul>
-         <ul class="mobile-overlay">
-            <li><img src="img/assets/arrow_left.svg" width="20" height="20"> == Move Left</li>
-            <li><img src="img/assets/arrow_right.svg" width="20" height="20">== Move Right</li>
-            <li><img src="img/assets/arrow-Up.svg" width="20" height="20">== Jump up</li>
-            <li><b>D</b>== Throw Weapon</li>
-            
-        </ul>
-        
-    </div>
-   </div>
-
-         
-                          
-
-
-    
         <canvas id="canvas" width="820" height="480"></canvas>
         <div id="inGameMenu" class="in-game-menu ">
             <button id="fullscreenButton" class="menu-button">
                 <img id="fullscreenIcon" src="img/assets/fullscreen_icon.svg" class="icon">
             </button>
             <button id="infoButton">INFO</button>
-            
             <button id="soundButtonInGame" class="menu-button sound-button">
                 <img id="soundIconInGame" src="img/assets/Mic-On.svg" class="sound-icon">
             </button>
         </div>
-    
 
-      <div id="inGameHelp" class="in-game-help">
-        <h3>Keyboard Controls</h3>
-        <ul>
-            <li><img src="img/assets/arrow_left.svg" width="20" height="20"> == Move Left</li>
-            <li><img src="img/assets/arrow_right.svg" width="20" height="20">== Move Right</li>
-            <li><img src="img/assets/arrow-Up.svg" width="20" height="20">== Jump up</li>
-            <li><b>D</b>== Throw Weapon</li>
-            
-        </ul>
-      </div>
-    </div> 
-   <!--- <div id="touch-controls">
-    <div id="left-button" class="touch-button">
-        <img src="img/assets/arrow_left.svg" width="70" height="70">
+        <div id="inGameHelp" class="in-game-help">
+            <ul>
+                <li><img src="img/assets/arrow_left.svg" width="20" height="20">Move Left</li>
+                <li><img src="img/assets/arrow_right.svg" width="20" height="20">Move Right</li>
+                <li><img src="img/assets/arrow-Up.svg" width="20" height="20"> Jump up</li>
+                <li><b>D</b> -- Throw Weapon</li>
+            </ul>
+        </div>
     </div>
-    <div id="right-button" class="touch-button">
-        <img src="img/assets/arrow_right.svg" width="70" height="70">
-    </div>
-    <div id="jump-button" class="touch-button">
-        <img src="img/assets/arrow_Up.svg" width="70" height="80">
-    </div>
-    <div id="throw-button" class="touch-button">
-               <img src="img/assets/weapon1.png" width="30" height="30">
-
-    </div>
-   </div>-->
-
-    
-
 </body>
 </html>

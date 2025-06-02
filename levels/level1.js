@@ -45,11 +45,13 @@ function initLevel() {
             new BackgroundObject('img/img/5_background/layers/1_first_layer/2.png', 819 * 3),
         ],
         [
-            new Collectible('coin', 400, 200),
-            new Collectible('coin', 700, 150),
-            new Collectible('coin', 1100, 120),
-            new Collectible('coin', 1700, 270),
-            new Collectible('coin', 2100, 210),
+            new Collectible('coin', 10, 130),
+            new Collectible('coin', 600, 150),
+            new Collectible('coin', 900, 120),
+            new Collectible('coin', 1300, 270),
+            new Collectible('coin', 1700, 170),
+            new Collectible('coin', 2000, 80),
+            new Collectible('coin', 2200, 190),
 
             new Collectible('bottle', 550, 270),
             new Collectible('bottle', 900, 200),

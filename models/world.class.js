@@ -32,6 +32,7 @@ class World {
         'win': new Audio('audio/Won!.wav'),
         'bottle-hit': new Audio('audio/1.mp3'),
         'lose': new Audio('audio/vgdeathsound.ogg'),
+        'coin': new Audio('audio/collect-coin.mp3'),
     };
 
     constructor(canvas, keyboard) {
@@ -103,6 +104,8 @@ class World {
                             this.coinBar.setPercentage(this.coinBar.percentage);
                         }
                         this.level.collectibles.splice(index, 1);
+                        this.playSound('coin');
+
                     } else if (collectible.type === 'bottle') {
                         if (this.character.bottleCount < 5) {
                             this.character.bottleCount++;

@@ -50,23 +50,18 @@ document.addEventListener('DOMContentLoaded', () => {
             canvas = document.getElementById('canvas'); 
             if (canvas) canvas.style.display = 'block';
         }
-         
+         document.body.classList.add('game-started');
       if (window.innerWidth <= 920) {
-    const inGameMenu = document.getElementById('inGameMenu');
-    if (inGameMenu) {
-        inGameMenu.style.display = 'none';
-    }
     const inGameHelp = document.getElementById('inGameHelp');
     if (inGameHelp) {
         inGameHelp.style.display = 'none';
     }
-} else {
-    const inGameHelp = document.getElementById('inGameHelp');
-    if (inGameHelp) {
-        inGameHelp.style.display = 'block';
+
+    const inGameMenu = document.getElementById('inGameMenu');
+    if (inGameMenu) {
+        inGameMenu.style.display = 'none';
     }
 }
-
 
 window.addEventListener('resize', () => {
     const inGameMenu = document.getElementById('inGameMenu');
@@ -74,13 +69,6 @@ window.addEventListener('resize', () => {
         inGameMenu.classList.add('hide-on-mobile');
     } else {
         inGameMenu.classList.remove('hide-on-mobile');
-    }
-
-    const inGameHelp = document.getElementById('inGameHelp');
-    if (window.innerWidth <= 920) {
-        inGameHelp.style.display = 'none';
-    } else {
-        inGameHelp.style.display = 'block';
     }
 });
 
@@ -96,7 +84,8 @@ window.addEventListener('resize', () => {
         const inGameMenu = document.getElementById('inGameMenu');
         if (inGameMenu) inGameMenu.classList.remove('hidden');    
             
-
+        const inGameHelp = document.getElementById('inGameHelp');
+        if (inGameHelp) inGameHelp.style.display = 'block';
             
         const playPauseControls = document.getElementById('play-pause-controls');
         if (playPauseControls) playPauseControls.style.display = 'block';        
