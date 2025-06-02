@@ -103,18 +103,30 @@ window.addEventListener('resize', () => {
 
         init();
 
-        if (canvas) {
-            canvas.addEventListener('click', (e) => {
-                let rect = canvas.getBoundingClientRect();
-                let x = e.clientX - rect.left;
-                let y = e.clientY - rect.top;
-                if (world.gameOver) {
-                    world.restartButton.handleClick(x, y);
-                } else {
+        if (!canvas._clickHandlerAdded) {
+        canvas.addEventListener('click', function (event) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+
+            const x = (event.clientX - rect.left) * scaleX;
+            const y = (event.clientY - rect.top) * scaleY;
+
+            if (world) {
+                if (world.playPauseButton) {
                     world.playPauseButton.handleClick(x, y, world);
                 }
-            });
-        }
+                if (world.quitButton) {
+                    world.quitButton.handleClick(x, y, world);
+                }
+                if (world.restartButton && world.gameOver) {
+                    world.restartButton.handleClick(x, y, world);
+                }
+            }
+        });
+        canvas._clickHandlerAdded = true; // Prevent adding multiple listeners
+    }
+
     }
     startButton.addEventListener('click', () => {
         startGame();

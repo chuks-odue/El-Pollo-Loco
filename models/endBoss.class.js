@@ -92,7 +92,7 @@ class Endboss extends moveableObject {
 
     startFalling() {
         this.fallInterval = setInterval(() => {
-            if (this.y < 350) {
+            if (this.y < 150) {
                 this.y += 5;
             } else {
                 clearInterval(this.fallInterval);
