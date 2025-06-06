@@ -10,7 +10,7 @@ class DrawableObject{
 
 
     loadimage(path){
-        this.img = new Image() // same as saying this.img = document.getElementById('');
+        this.img = new Image() 
         this.img.src = path;
     }
 
@@ -38,3 +38,4 @@ class DrawableObject{
 
 
 }
+//done

@@ -4,6 +4,7 @@ class Character extends moveableObject {
     y = 0;
     speed = 10;
     bottleCount = 5; 
+    world;
 
 
     WALKING_IMAGES = [
@@ -27,6 +28,7 @@ class Character extends moveableObject {
         'img/img/2_character_pepe/3_jump/J-38.png',
         'img/img/2_character_pepe/3_jump/J-39.png'
     ];
+
     DEAD_IMAGES =[
         'img/img/2_character_pepe/5_dead/D-51.png',
         'img/img/2_character_pepe/5_dead/D-52.png',
@@ -41,18 +43,13 @@ class Character extends moveableObject {
         'img/img/2_character_pepe/4_hurt/H-41.png',
         'img/img/2_character_pepe/4_hurt/H-42.png',
         'img/img/2_character_pepe/4_hurt/H-43.png'
-    ];
-
-
-    world;
+    ];    
 
     sounds = {
         walk: new Audio('audio/concrete-footsteps-6752.mp3'),
         jump: new Audio('audio/slime_jump.mp3'),
         
         hurt: new Audio('audio/5.ogg'),
-        
-
     };
 
     constructor() {
@@ -66,46 +63,64 @@ class Character extends moveableObject {
         this.animate();
     }
 
+    updateMovement() {
+    if  (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
+          this.otherDirection = false;
+          this.moveRight();
+          this.playWalkingSound();
+        } else if (this.world.keyboard.LEFT && this.x > 0) {
+          this.otherDirection = true;
+          this.moveLeft();
+          this.playWalkingSound();
+        } else {
+           this.stopWalkingSound();
+        }
+    }
+
+    updateJumping() {
+     if (this.world.keyboard.UP && !this.isAboveGround()) {
+            this.jump();
+            this.playSound('jump');
+        }
+    }
+
+    updateCamera() {
+         this.world.camera_x = -this.x + 100;
+    }
+
+    updateMainGameLoop() {
+      if (!this.world.gameOver) {
+            this.updateMovement();
+            this.updateJumping();
+            this.updateCamera();
+        }
+    }
+
+    updateAnimation() {
+     if (this.isDead()) {
+            this.playAnimation(this.DEAD_IMAGES);
+        } else if (this.isHurt()) {
+             this.playAnimation(this.HURT_IMAGES);
+        } else if (this.isAboveGround()) {
+            this.playAnimation(this.JUMPING_IMAGES);
+        } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT && !this.world.gameOver) {
+            this.playAnimation(this.WALKING_IMAGES);
+        }
+    }
+
     animate() {
-        setInterval(() => {
-            if (!this.world.gameOver) {
-                if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
-                    this.otherDirection = false;
-                    this.moveRight();
-                    this.playWalkingSound();
-                } else if (this.world.keyboard.LEFT && this.x > 0) {
-                    this.otherDirection = true;
-                    this.moveLeft();
-                    this.playWalkingSound();
-                } else {
-                    this.stopWalkingSound();
-                }
-
-                if (this.world.keyboard.UP && !this.isAboveGround()) {
-                    this.jump();
-                    this.playSound('jump');
-                }
-            }
-
-            if (!this.world.gameOver) {
-                this.world.camera_x = -this.x + 100;
+       setInterval(() => {
+           if (!this.world.gameOver) {
+                this.updateMainGameLoop();
+            } else {
+               this.updateCamera();
             }
         }, 1000 / 60);
-
         setInterval(() => {
-            if (this.isDead()) {
-                this.playAnimation(this.DEAD_IMAGES);
-            } else if (this.isHurt()) {
-                this.playAnimation(this.HURT_IMAGES);
-            } else if (this.isAboveGround()) {
-                this.playAnimation(this.JUMPING_IMAGES);
-            } else {
-                if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT && !this.world.gameOver) {
-                    this.playAnimation(this.WALKING_IMAGES);
-                }
-            }
+           this.updateAnimation();
         }, 50);
     }
+
 
 
     
@@ -132,6 +147,7 @@ class Character extends moveableObject {
             }
         }
     }
+    
     jump() {
         this.speedY = 50;
         if (soundEnabled) {

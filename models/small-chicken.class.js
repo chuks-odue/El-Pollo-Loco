@@ -34,19 +34,12 @@ class SmallChicken extends moveableObject {
                 this.updatePosition();
             }
         }, 1000 / 60);
-
         setInterval(() => {
-            if (!this.isDead && Math.random() < 0.05) { 
-                this.jump();
-            }
+            if (!this.isDead && Math.random() < 0.05) { this.jump(); }
         }, 1000/60); 
-
         setInterval(() => {
-            if (this.isDead) {
-                this.playAnimation(this.DEAD_IMAGES);
-            } else {
-                this.playAnimation(this.WALKING_IMAGES);
-            }
+            if (this.isDead) {this.playAnimation(this.DEAD_IMAGES);
+            } else { this.playAnimation(this.WALKING_IMAGES); }
         }, 200);
     }
 
@@ -84,7 +77,6 @@ class SmallChicken extends moveableObject {
         this.isDead = true;
         this.speed = 0;
         this.loadimage(this.DEAD_IMAGES);
-
         setTimeout(() => {
             const index = world.level.enemies.indexOf(this);
             if (index > -1) {

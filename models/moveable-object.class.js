@@ -22,51 +22,33 @@ class moveableObject extends DrawableObject{
     }  
     isColliding(mo) {
         let thisRect = {
-            x: this.x + (this.width * 0.1), 
-            y: this.y + (this.height * 0.1), 
-            width: this.width * 0.8, 
-            height: this.height * 0.8 
-        };
-    
+            x: this.x + (this.width * 0.1), y: this.y + (this.height * 0.1), 
+            width: this.width * 0.8, height: this.height * 0.8 
+        };    
         let moRect = {
-            x: mo.x + (mo.width * 0.1),
-            y: mo.y + (mo.height * 0.1),
-            width: mo.width * 0.8,
-            height: mo.height * 0.8
-        };
-    
+            x: mo.x + (mo.width * 0.1), y: mo.y + (mo.height * 0.1),
+            width: mo.width * 0.8, height: mo.height * 0.8
+        };    
         return  thisRect.x + thisRect.width > moRect.x &&
                 thisRect.x < moRect.x + moRect.width &&
                 thisRect.y + thisRect.height > moRect.y &&
                 thisRect.y < moRect.y + moRect.height;
-    }
-
-        
-    /*isColliding (mo) {
-            return  this.x + this.width > mo.x &&  
-                    this.y + this.height > mo.y  &&
-                    this.x < mo.x &&
-                    this.y < mo.y + mo.height
+    }        
     
-    }*/
   hit(){
     if (new Date().getTime() - this.lastHit > 500) { 
         this.energy -= 20;
-        if (this.energy < 0) {
-            this.energy = 0;                
-        }
+        if (this.energy < 0) { this.energy = 0;}
         this.lastHit = new Date().getTime();
         this.world.coinBar.percentage -= 20;
-        if (this.world.coinBar.percentage < 0) {
-            this.world.coinBar.percentage = 0;
-        }
+        if (this.world.coinBar.percentage < 0) {this.world.coinBar.percentage = 0;}
         this.world.coinBar.setPercentage(this.world.coinBar.percentage);
         let droppedCoin = new DroppedCoin(this.x, this.y);
         droppedCoin.world = this.world;
         this.world.droppedCoins.push(droppedCoin);
         this.world.playSound('coin-lost');
     }
-}
+   }
 
                     
     isHurt(){

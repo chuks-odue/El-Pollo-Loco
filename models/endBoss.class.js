@@ -39,29 +39,20 @@ class Endboss extends moveableObject {
                 world.throwableObjects.push(bottle);
             }
         }, 3000);
-    }
-    
-    
+    }   
 
     animate() {
         setInterval(() => {
-            if (!this.isDead) {
-                this.moveLeft();
-            }
+            if (!this.isDead) {this.moveLeft(); }
         }, 1000 / 60);
-
         setInterval(() => {
             if (this.isDead) {
                 if (!this.hasFallen) {
-                    this.playAnimation(this.Endboss_DEAD); // Play animation while falling
-                } else {
-                    // Show final frame after landing
-                    const lastFrame = this.Endboss_DEAD[this.Endboss_DEAD.length - 1];
+                    this.playAnimation(this.Endboss_DEAD);
+                } else {const lastFrame = this.Endboss_DEAD[this.Endboss_DEAD.length - 1];
                     this.loadimage(lastFrame);
                 }
-            } else {
-                this.playAnimation(this.WALKING_IMAGES_ENDBOSS);
-            }
+                } else {this.playAnimation(this.WALKING_IMAGES_ENDBOSS);}
         }, 200);
     }
 
@@ -77,14 +68,11 @@ class Endboss extends moveableObject {
 
     die() {
         this.isDead = true;
-        this.speed = 0;
-        
-        // Stop throwing bottles
+        this.speed = 0;             
         if (this.bottleThrowInterval) {
             clearInterval(this.bottleThrowInterval);
             this.bottleThrowInterval = null;
-        }
-        
+        }        
         setTimeout(() => {
             this.startFalling();
         }, 2000);

@@ -72,52 +72,11 @@ class Keyboard {
             this.RIGHT = false;
         });
 
-        /*window.addEventListener('load', () => {
-            this.addButtonEventListeners();
-        });*/
-    }
-
-    /*addButtonEventListeners() {
-        const leftButton = document.getElementById('left-button');
-        const rightButton = document.getElementById('right-button');
-        const jumpButton = document.getElementById('jump-button');
-        const throwButton = document.getElementById('throw-button');
-
-        if (leftButton && rightButton && jumpButton && throwButton) {
-            leftButton.addEventListener('touchstart', () => {
-                this.LEFT = true;
-            });
-            leftButton.addEventListener('touchend', () => {
-                this.LEFT = false;
-            });
-
-            rightButton.addEventListener('touchstart', () => {
-                this.RIGHT = true;
-            });
-            rightButton.addEventListener('touchend', () => {
-                this.RIGHT = false;
-            });
-
-            jumpButton.addEventListener('touchstart', () => {
-                this.UP = true;
-            });
-            jumpButton.addEventListener('touchend', () => {
-                this.UP = false;
-            });
-              throwButton.addEventListener('touchstart', () => {
-               console.log('Throw button pressed');
-                const throwEvent = new CustomEvent('throwBottle');
-               document.dispatchEvent(throwEvent);
-            });
-
-
-        } else {
-            console.error('One or more buttons not found');
-        }
-    }*/
+        
+    }   
 
     throwBottle() {
-        // Code to throw the bottle goes here
+        
         this.D = true;
         setTimeout(() => {
             this.D = false;

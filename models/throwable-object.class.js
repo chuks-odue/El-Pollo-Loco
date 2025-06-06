@@ -69,28 +69,33 @@ class ThrowableObject extends moveableObject {
         
     }
 
-    animate() {
-        this.animationInterval = setInterval(() => {
-            if (this.isSplash) {
-                if (this.currentImage < this.SPLASH_BOTTLE.length) {
-                    const path = this.SPLASH_BOTTLE[this.currentImage];
-                    this.img = this.imageCache[path];
-                    
-                    this.currentImage++;
-                } else {
-                    
-                    this.finishedSplash = true;
-                    clearInterval(this.animationInterval);
-                }
-            } else {
-                if (this.currentImage >= this.SPINNING_BOTTLE.length) {
-                    this.currentImage = 0;
-                }
-                const path = this.SPINNING_BOTTLE[this.currentImage];
-                this.img = this.imageCache[path];
-                
-                this.currentImage++;
-            }
-        }, 100);
+   animateSplashFrame() {
+    if (this.currentImage < this.SPLASH_BOTTLE.length) {
+        const path = this.SPLASH_BOTTLE[this.currentImage];
+        this.img = this.imageCache[path];
+        this.currentImage++;
+    } else {
+        this.finishedSplash = true;
+        clearInterval(this.animationInterval);
     }
+}
+
+animateSpinningFrame() {
+    if (this.currentImage >= this.SPINNING_BOTTLE.length) {
+        this.currentImage = 0;
+    }
+    const path = this.SPINNING_BOTTLE[this.currentImage];
+    this.img = this.imageCache[path];
+    this.currentImage++;
+}
+
+animate() {
+    this.animationInterval = setInterval(() => {
+        if (this.isSplash) {
+            this.animateSplashFrame();
+        } else {
+            this.animateSpinningFrame();
+        }
+    }, 100);
+}
 }

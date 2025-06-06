@@ -72,92 +72,113 @@ class World {
         this.character.world = this;
     }
 
-    checkCollision() {
-        this.collisionInterval = setInterval(() => {
-            if (this.gameOver || this.paused) return;
-
-            this.level.enemies.forEach((enemy) => {
-                if (!enemy.isDead && this.character.isColliding(enemy)) {
-                    if (this.character.y < enemy.y && this.character.speedY >= 0) {
-                        enemy.die();
-                        this.character.speedY = -10;
-                    } else {
-                        this.character.hit();
-                        this.statusBar.setPercentage(this.character.energy);
-                        if (this.character.energy <= 0) {
-                            this.showGameOverImage('lose');
-                        }
-                    }
-                }
-            });
-
-            this.level.collectibles.forEach((collectible, index) => {
-                if (this.character.isColliding(collectible)) {
-                    if (collectible.type === 'coin') {
-                        if (this.coinBar.percentage >= 100) {
-                            this.playSound('coin-lost');
-                        } else {
-                            this.coinBar.percentage += 20;
-                            if (this.coinBar.percentage > 100) {
-                                this.coinBar.percentage = 100;
-                            }
-                            this.coinBar.setPercentage(this.coinBar.percentage);
-                        }
-                        this.level.collectibles.splice(index, 1);
-                        this.playSound('coin');
-
-                    } else if (collectible.type === 'bottle') {
-                        if (this.character.bottleCount < 5) {
-                            this.character.bottleCount++;
-                            this.bottleBar.setPercentage(this.character.bottleCount * 20);
-                            this.level.collectibles.splice(index, 1);
-                            this.playSound('collect-bottle');
-                        }
-                    } else if (collectible.type === 'life') {
-                        if (this.character.energy < 100) {
-                            this.character.energy += 20;
-                            if (this.character.energy > 100) {
-                                this.character.energy = 100;
-                            }
-                            this.statusBar.setPercentage(this.character.energy);
-                            this.level.collectibles.splice(index, 1);
-                            this.playSound('collect-life');
-                        }
-                    } else {
-                        this.level.collectibles.splice(index, 1);
-                    }
-                }
-            });
-
-            for (let i = this.throwableObjects.length - 1; i >= 0; i--) {
-                const bottle = this.throwableObjects[i];
-                this.level.enemies.forEach((enemy) => {
-                    if (bottle.owner !== enemy && bottle.isColliding(enemy) && !enemy.isDead && !bottle.hasHit) {
-                        bottle.splash();
-                        bottle.hasHit = true;
-                        enemy.hit();
-                        this.playSound('explode');
-                    }
-                });
-
-                if (bottle.owner instanceof Endboss && bottle.isColliding(this.character) && !bottle.hasHit) {
-                    bottle.splash();
-                    bottle.splash();
-                    bottle.hasHit = true;
-                    this.character.hit();
-                    this.playSound('bottle-hit');
-                    this.statusBar.setPercentage(this.character.energy);
-                    if (this.character.energy <= 0) {
-                        this.showGameOverImage('lose');
-                    }
-                }
-
-                if (bottle.finishedSplash) {
-                    this.throwableObjects.splice(i, 1);
+    checkEnemyCollision() {
+    this.level.enemies.forEach((enemy) => {
+        if (!enemy.isDead && this.character.isColliding(enemy)) {
+            if (this.character.y < enemy.y && this.character.speedY >= 0) {
+                enemy.die();
+                this.character.speedY = -10;
+            } else {
+                this.character.hit();
+                this.statusBar.setPercentage(this.character.energy);
+                if (this.character.energy <= 0) {
+                    this.showGameOverImage('lose');
                 }
             }
-        }, 1000 / 66);
+        }
+    });
+}
+
+checkCollectibleCollision() {
+    this.level.collectibles.forEach((collectible, index) => {
+        if (this.character.isColliding(collectible)) {
+            if (collectible.type === 'coin') {
+                this.collectCoin(collectible, index);
+            } else if (collectible.type === 'bottle') {
+                this.collectBottle(collectible, index);
+            } else if (collectible.type === 'life') {
+                this.collectLife(collectible, index);
+            } else {
+                this.level.collectibles.splice(index, 1);
+            }
+        }
+    });
+}
+
+collectCoin(collectible, index) {
+    if (this.coinBar.percentage < 100) {
+        this.coinBar.percentage += 20;
+        if (this.coinBar.percentage > 100) {
+            this.coinBar.percentage = 100;
+        }
+        this.coinBar.setPercentage(this.coinBar.percentage);
+        this.playSound('coin');
+        this.level.collectibles.splice(index, 1);
+    } else {
+        this.playSound('coin-lost');
     }
+}
+
+collectBottle(collectible, index) {
+    if (this.character.bottleCount < 5) {
+        this.character.bottleCount++;
+        this.bottleBar.setPercentage(this.character.bottleCount * 20);
+        this.level.collectibles.splice(index, 1);
+        this.playSound('collect-bottle');
+    }
+}
+
+collectLife(collectible, index) {
+    if (this.character.energy < 100) {
+        this.character.energy += 20;
+        if (this.character.energy > 100) {
+            this.character.energy = 100;
+        }
+        this.statusBar.setPercentage(this.character.energy);
+        this.level.collectibles.splice(index, 1);
+        this.playSound('collect-life');
+    }
+}
+
+checkThrowableCollision() {
+    for (let i = this.throwableObjects.length - 1; i >= 0; i--) {
+        const bottle = this.throwableObjects[i];
+        this.level.enemies.forEach((enemy) => {
+            if (bottle.owner !== enemy && bottle.isColliding(enemy) && !enemy.isDead && !bottle.hasHit) {
+                bottle.splash();
+                bottle.hasHit = true;
+                enemy.hit();
+                this.playSound('explode');
+            }
+        });
+
+        if (bottle.owner instanceof Endboss && bottle.isColliding(this.character) && !bottle.hasHit) {
+            bottle.splash();
+            bottle.splash();
+            bottle.hasHit = true;
+            this.character.hit();
+            this.playSound('bottle-hit');
+            this.statusBar.setPercentage(this.character.energy);
+            if (this.character.energy <= 0) {
+                this.showGameOverImage('lose');
+            }
+        }
+
+        if (bottle.finishedSplash) {
+            this.throwableObjects.splice(i, 1);
+        }
+    }
+}
+
+checkCollision() {
+    this.collisionInterval = setInterval(() => {
+        if (this.gameOver || this.paused) return;
+
+        this.checkEnemyCollision();
+        this.checkCollectibleCollision();
+        this.checkThrowableCollision();
+    }, 1000 / 66);
+}
 
     checkThrowBottle() {
         document.addEventListener('keydown', (event) => {
@@ -175,13 +196,13 @@ class World {
         });
     }
 
-    throwBottle() {
-        let bottle = new ThrowableObject(this.character.x + 50, this.character.y + 50, this.character.otherDirection);
-        this.throwableObjects.push(bottle);
-        this.character.bottleCount--;
-        this.bottleBar.setPercentage(this.character.bottleCount * 20);
-    }
-
+   throwBottle() {
+    let bottle = new ThrowableObject(this.character.x + 50, this.character.y + 50, this.character.otherDirection);
+    bottle.owner = this.character; // Set the owner property
+    this.throwableObjects.push(bottle);
+    this.character.bottleCount--;
+    this.bottleBar.setPercentage(this.character.bottleCount * 20);
+}
     draw() {
         if (this.paused && !this.gameOverImageShown) {
             this.animationFrameId = null;
@@ -231,9 +252,10 @@ class World {
         if (this.quitButton) this.quitButton.draw();
 
         if (this.gameOverImageShown && this.gameOverImage.complete) {
+            
             this.ctx.save();
             this.ctx.setTransform(1, 0, 0, 1, 0, 0);
-            this.ctx.drawImage(this.gameOverImage, this.canvas.width / 2 - 200, this.canvas.height / 2 - 100, 400, 200);
+            this.ctx.drawImage(this.gameOverImage, this.canvas.width / 2 - 200, this.canvas.height / 2 - 100, 300, 150);
             this.ctx.restore();
         }
 
@@ -318,20 +340,14 @@ class World {
         this.gameOver = true;
         this.paused = true;
         this.stop();
-
         this.gameOverImage.src = result === 'win' ? 'img/img/You won, you lost/You Won B.png' : 'img/img/You won, you lost/You Lost B.png';
         if (result === 'win') {
             this.playSound('win');
-        } else {
-            this.playSound('lose');
+        } else {this.playSound('lose');            
         }
-        this.gameOverImage.onload = () => {
-            this.gameOverImageShown = true;
-            this.draw();
+        this.gameOverImage.onload = () => {this.gameOverImageShown = true;this.draw();
         };
-        this.gameOverImage.onerror = () => {
-            this.gameOverImageShown = true;
-            this.draw();
+        this.gameOverImage.onerror = () => {this.gameOverImageShown = true; this.draw();
         };
     }
 
@@ -353,20 +369,16 @@ class World {
     ];
 
     allMovableObjects.forEach(obj => {
-        if (obj.animationInterval) {
-            clearInterval(obj.animationInterval);
+        if (obj.animationInterval) {clearInterval(obj.animationInterval);
             obj.animationInterval = null;
         }
-        if (obj.moveInterval) {
-            clearInterval(obj.moveInterval);
+        if (obj.moveInterval) { clearInterval(obj.moveInterval);
             obj.moveInterval = null;
         }
-        if (obj.gravityInterval) {
-            clearInterval(obj.gravityInterval);
+        if (obj.gravityInterval) { clearInterval(obj.gravityInterval);
             obj.gravityInterval = null;
         }
-        if (obj.speed !== undefined) {
-            obj.originalSpeed = obj.speed;
+        if (obj.speed !== undefined) { obj.originalSpeed = obj.speed;
             obj.speed = 0;
         }
     });
