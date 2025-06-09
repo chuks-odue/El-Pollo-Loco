@@ -3,15 +3,13 @@ let world;
 let keyboard = new Keyboard();
 let soundEnabled = true;
 
-// Initialize game
-function init() {
-    canvas = document.getElementById('canvas');
-    initLevel(); 
-    world = new World(canvas, keyboard);
-    console.log('my character is', world.character);
-    
+function init(callback) {
+  canvas = document.getElementById('canvas');
+  initLevel(); 
+  world = new World(canvas, keyboard);
+  console.log('my character is', world.character);
+  if (callback) callback();
 }
-
 
 function replayGame() {
   if (world && typeof world.stop === 'function') {
@@ -65,10 +63,42 @@ function handleInGameMenuDisplay() {
     }
 }
 
+function preloadImages(imageUrls) {
+  return new Promise((resolve, reject) => {
+    let loaded = 0;
+    let images = [];
+    imageUrls.forEach((url, index) => {
+      images[index] = new Image();
+      images[index].onload = () => {
+        loaded++;
+        if (loaded === imageUrls.length) resolve(images);
+      };
+      images[index].onerror = reject;
+      images[index].src = url;
+    });
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const startButton = document.getElementById('startButton');
+  startButton.addEventListener('click', () => {
+    const loadingScreen = document.getElementById('loadingScreen');
+    if (loadingScreen) loadingScreen.style.display = 'block';
+    preloadImages(World.imagesToLoad).then(() => {
+      if (loadingScreen) loadingScreen.style.display = 'none';
+      startGame();
+    }).catch(error => {
+      console.error('Error preloading images:', error);
+      if (loadingScreen) loadingScreen.style.display = 'none';
+      startGame(); 
+    });
+  });
+});
+
 function handleWindowResize() {
     window.addEventListener('resize', () => {
         const inGameMenu = document.getElementById('inGameMenu');
-        if (window.innerWidth <= 1020) {
+        if (window.innerWidth <= 1029) {
             inGameMenu.classList.add('hide-on-mobile');
         } else {
             inGameMenu.classList.remove('hide-on-mobile');
@@ -132,18 +162,34 @@ function addCanvasClickListener(canvas) {
 }
 
 function startGame() {
-    console.log('Starting game, sound enabled:', soundEnabled);
-    handleStartSound();
-    hideStartScreen();
-    handleInGameMenuDisplay();
-    handleWindowResize();
-    hideHeader();
-    showInGameMenu();
-    showPlayPauseControls();
-    const canvas = document.getElementById('canvas'); 
-    init();
+  console.log('Starting game, sound enabled:', soundEnabled);
+  handleStartSound();
+  hideStartScreen();
+  handleInGameMenuDisplay();
+  handleWindowResize();
+  hideHeader();
+  showInGameMenu();
+  showPlayPauseControls();
+
+  const canvas = document.getElementById('canvas');
+  if (canvas) canvas.style.display = 'none'; // Hide canvas initially
+
+  init(() => {
     addCanvasClickListener(canvas);
+
+    const intervalId = setInterval(() => {
+      if (world.gameInitialized) {
+        const loadingScreen = document.getElementById('loadingScreen');
+        if (loadingScreen) loadingScreen.style.display = 'none';
+
+        if (canvas) canvas.style.display = 'block'; // Show canvas only after game is ready
+
+        clearInterval(intervalId);
+      }
+    }, 1500);
+  });
 }
+
 
 document.addEventListener('DOMContentLoaded', () => {
     const startButton = document.getElementById('startButton');
