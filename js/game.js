@@ -15,13 +15,13 @@ function replayGame() {
   if (world && typeof world.stop === 'function') {
     world.stop(); 
   }
-
   keyboard = new Keyboard();   
   initLevel();                 
   world = new World(canvas, keyboard); 
-
   world.gameOver = false;
   world.gameOverImageShown = false;
+  handleStartSound();  
+  
 }
 
 function handleStartSound() {
@@ -62,11 +62,11 @@ function handleInGameMenuDisplay() {
         }
     }
 }
-
 function preloadImages(imageUrls) {
   return new Promise((resolve, reject) => {
     let loaded = 0;
     let images = [];
+
     imageUrls.forEach((url, index) => {
       images[index] = new Image();
       images[index].onload = () => {
@@ -170,23 +170,18 @@ function startGame() {
   hideHeader();
   showInGameMenu();
   showPlayPauseControls();
-
   const canvas = document.getElementById('canvas');
-  if (canvas) canvas.style.display = 'none'; // Hide canvas initially
-
+  if (canvas) canvas.style.display = 'none'; 
   init(() => {
     addCanvasClickListener(canvas);
-
     const intervalId = setInterval(() => {
       if (world.gameInitialized) {
         const loadingScreen = document.getElementById('loadingScreen');
         if (loadingScreen) loadingScreen.style.display = 'none';
-
-        if (canvas) canvas.style.display = 'block'; // Show canvas only after game is ready
-
+        if (canvas) canvas.style.display = 'block'; 
         clearInterval(intervalId);
       }
-    }, 1500);
+    }, 100);
   });
 }
 
@@ -344,5 +339,13 @@ function setupGameControls() {
 }
 
 document.addEventListener('DOMContentLoaded', setupGameControls);
+function isSmallScreen() {
+  return window.innerWidth <= 920;
+}
+window.addEventListener('resize', () => {
+    // Just redraw the world on resize — your game loop should already handle this
+    world.draw();
+});
+
 
                                             

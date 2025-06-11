@@ -22,19 +22,29 @@ class chicken extends moveableObject {
         this.animate();
     }
 
-    animate() {
-        setInterval(() => {
-            if (!this.isDead && !world.gameOver) { 
-                this.moveLeft();
-            }
-        }, 1000 / 60);
+     moveInterval;
+  animationInterval;
 
-        setInterval(() => {
-            if (!this.isDead&& !world.gameOver) { 
-                this.playAnimation(this.WALKING_IMAGES);
-            }
-        }, 200);
+  animate() {
+    if (this.moveInterval) {
+      clearInterval(this.moveInterval);
     }
+    if (this.animationInterval) {
+      clearInterval(this.animationInterval);
+    }
+    this.moveInterval = setInterval(() => {
+      if (!this.isDead && !world.gameOver && !world.paused) { 
+        this.moveLeft();
+      }
+    }, 1000 / 60);
+
+    this.animationInterval = setInterval(() => {
+      if (!this.isDead && !world.gameOver && !world.paused) { 
+        this.playAnimation(this.WALKING_IMAGES);
+      }
+    }, 200);
+  }
+
 
     hit() {
         this.energy -= 100; 

@@ -27,21 +27,43 @@ class SmallChicken extends moveableObject {
         this.animate();
     }
 
-    animate() {
-        setInterval(() => {
-            if (!this.isDead && !world.gameOver) {
-                this.moveLeft();
-                this.updatePosition();
-            }
-        }, 1000 / 60);
-        setInterval(() => {
-            if (!this.isDead && Math.random() < 0.05) { this.jump(); }
-        }, 1000/60); 
-        setInterval(() => {
-            if (this.isDead) {this.playAnimation(this.DEAD_IMAGES);
-            } else { this.playAnimation(this.WALKING_IMAGES); }
-        }, 200);
+     moveInterval;
+  jumpInterval;
+  animationInterval;
+
+  animate() {
+    if (this.moveInterval) {
+      clearInterval(this.moveInterval);
     }
+    if (this.jumpInterval) {
+      clearInterval(this.jumpInterval);
+    }
+    if (this.animationInterval) {
+      clearInterval(this.animationInterval);
+    }
+
+    this.moveInterval = setInterval(() => {
+      if (!this.isDead && !world.gameOver && !world.paused) {
+        this.moveLeft();
+        this.updatePosition();
+      }
+    }, 1000 / 60);
+
+    this.jumpInterval = setInterval(() => {
+      if (!this.isDead && !world.gameOver && !world.paused && Math.random() < 0.05) { 
+        this.jump(); 
+      }
+    }, 1000/60); 
+
+    this.animationInterval = setInterval(() => {
+      if (this.isDead) { 
+        this.playAnimation(this.DEAD_IMAGES);
+      } else { 
+        this.playAnimation(this.WALKING_IMAGES); 
+      }
+    }, 200);
+  }
+
 
     jump() {
         if (this.y >= 380) {

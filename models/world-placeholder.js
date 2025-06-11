@@ -96,7 +96,6 @@ class World {
     checkEnemyCollision() {
         this.level.enemies.forEach((enemy) => {
            if (!enemy.isDead && this.character.isColliding(enemy)) {
-            
                 if (this.character.y < enemy.y && this.character.speedY >= 0) {
                       enemy.die();
                       this.character.speedY = -10;
@@ -357,27 +356,15 @@ class World {
       }
     }
 
-  resumeEnemies() {
-  this.level.enemies.forEach((enemy) => {
-    if (enemy.originalSpeed) {
-      enemy.speed = enemy.originalSpeed;
+    resumeEnemies() {
+      this.level.enemies.forEach((enemy) => {
+           if (enemy.originalSpeed) {
+              enemy.speed = enemy.originalSpeed;
+            }
+           enemy.animate();
+        });
     }
-    if (enemy.moveInterval) {
-      clearInterval(enemy.moveInterval);
-      enemy.moveInterval = null;
-    }
-    if (enemy.animationInterval) {
-      clearInterval(enemy.animationInterval);
-      enemy.animationInterval = null;
-    }
-    if (enemy.bottleThrowInterval) {
-      clearInterval(enemy.bottleThrowInterval);
-      enemy.bottleThrowInterval = null;
-      enemy.throwBottles();
-    }
-    enemy.animate();
-  });
-}
+
     resumeClouds() {
         this.level.clouds.forEach((cloud) => {
           cloud.animate();
@@ -400,15 +387,16 @@ class World {
         }
     }
 
-    resume = () => {
-  this.paused = false;
-  this.resumeCharacter();
-  this.resumeEnemies();
-  this.resumeClouds();
-  this.resumeThrowableObjects();
-  this.startAnimation();
-  this.startCollisionDetection();
-}
+    resume() {
+      this.paused = false;
+      this.resumeCharacter();
+      this.resumeEnemies();
+      this.resumeClouds();
+      this.resumeThrowableObjects();
+      this.startAnimation();
+      this.startCollisionDetection();
+    }
+ 
 
 
     flipImageBack(mo) {

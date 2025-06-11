@@ -5,6 +5,11 @@ class Character extends moveableObject {
     speed = 10;
     bottleCount = 5; 
     world;
+    isHurtState = false;
+    hurtTimestamp = 0;
+   hurtDuration = 700; 
+
+    
 
 
     WALKING_IMAGES = [
@@ -95,6 +100,9 @@ class Character extends moveableObject {
             this.updateCamera();
         }
     }
+    bounce() {
+  this.speedY = -20;
+}
 
     updateAnimation() {
      if (this.isDead()) {
@@ -120,7 +128,7 @@ class Character extends moveableObject {
            this.updateAnimation();
         }, 50);
     }
-
+    
 
 
     

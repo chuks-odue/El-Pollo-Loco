@@ -47,6 +47,9 @@ class TouchControls {
     }
 
    draw() {
+    if (!isSmallScreen()) {            
+            return;
+        }
        this.drawLeftArrow();
        this.drawRightArrow();
        this.drawUpArrow();
