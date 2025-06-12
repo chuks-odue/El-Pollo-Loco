@@ -6,6 +6,11 @@ class moveableObject extends DrawableObject{
     acceleration = 2.5;
     energy = 100;
     lastHit = 0;
+        moveInterval = null;
+    animationInterval = null;
+    bottleThrowInterval = null; 
+    fallInterval = null;        
+
 
     applyGravity(){
         setInterval(() => {
@@ -87,7 +92,28 @@ class moveableObject extends DrawableObject{
         this.speedY = 50;
     }
 
-    
+        clearAllIntervals() {
+        if (this.moveInterval) {
+            clearInterval(this.moveInterval);
+            this.moveInterval = null;
+        }
+        if (this.animationInterval) {
+            clearInterval(this.animationInterval);
+            this.animationInterval = null;
+        }
+        
+        if (this.bottleThrowInterval) {
+            clearInterval(this.bottleThrowInterval);
+            this.bottleThrowInterval = null;
+        }
+        if (this.fallInterval) {
+            clearInterval(this.fallInterval);
+            this.fallInterval = null;
+        }
+        
+
+    }
+
        
    
 }

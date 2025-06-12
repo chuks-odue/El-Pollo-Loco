@@ -1,3 +1,4 @@
+
 class Character extends moveableObject {
     width = 250;
     height = 250;
@@ -104,18 +105,22 @@ class Character extends moveableObject {
   this.speedY = -20;
 }
 
-    updateAnimation() {
-     if (this.isDead()) {
-            this.playAnimation(this.DEAD_IMAGES);
-        } else if (this.isHurt()) {
-             this.playAnimation(this.HURT_IMAGES);
-        } else if (this.isAboveGround()) {
-            this.playAnimation(this.JUMPING_IMAGES);
-        } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT && !this.world.gameOver) {
-            this.playAnimation(this.WALKING_IMAGES);
-        }
+updateAnimation() {
+  if (this.isDead()) {
+    this.playAnimation(this.DEAD_IMAGES);
+  } else if (this.isHurt()) {
+    this.playAnimation(this.HURT_IMAGES);
+    if (Date.now() - this.hurtTimestamp > this.hurtDuration) {
+      this.isHurtState = false;
     }
-
+  } else if (this.isAboveGround()) {
+    this.playAnimation(this.JUMPING_IMAGES);
+  } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT && !this.world.gameOver) {
+    this.playAnimation(this.WALKING_IMAGES);
+  } else {
+    this.loadimage('img/img/2_character_pepe/1_idle/idle/I-1.png');
+  }
+}
     animate() {
        setInterval(() => {
            if (!this.world.gameOver) {
@@ -162,6 +167,14 @@ class Character extends moveableObject {
             this.playSound('jump');
         }
     }
+    stopAnimation() {
+  if (this.animationInterval) {
+    clearInterval(this.animationInterval);
+    this.animationInterval = null;
+  }
+}
+    
 
     
 }
+

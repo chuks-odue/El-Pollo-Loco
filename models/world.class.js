@@ -162,18 +162,30 @@ class World {
         }
     }
 
-    checkBottleEnemyCollision(bottle) {
-    this.level.enemies.forEach((enemy) => {
-        if (bottle.owner !== enemy && bottle.isColliding(enemy) && !enemy.isDead && !bottle.hasHit) {
-            bottle.splash();
-            bottle.hasHit = true;
-            enemy.hit();
-            this.playSound('explode');
-        }
-    });
-}
+ checkBottleEnemyCollision(bottle) {
+       
+        if (!bottle || typeof bottle !== 'object' || !('owner' in bottle)) return;
+
+        this.level.enemies.forEach((enemy) => {
+            const isBottleFromCharacter = bottle.owner instanceof Character;
+
+            if (bottle.isColliding(enemy) && !enemy.isDead && !bottle.hasHit) {
+               
+                if (isBottleFromCharacter && !(enemy instanceof Character)) {
+                    bottle.splash();
+                    bottle.hasHit = true;
+                    enemy.hit();
+                    this.playSound('explode');
+                }
+               
+            }
+        });
+        
+    }
+
 
     checkBottleCharacterCollision(bottle) {
+        if (!bottle || typeof bottle !== 'object') return;
         if (bottle.owner instanceof Endboss && bottle.isColliding(this.character) && !bottle.hasHit) {
             bottle.splash();
             bottle.hasHit = true;
@@ -229,14 +241,26 @@ class World {
             }
         });
     }
+    throwBottle() {
+    let bottle = new ThrowableObject(this.character.x + 50, this.character.y + 50, this.character.otherDirection);
+    bottle.owner = this.character;
+    this.throwableObjects.push(bottle); 
+    this.character.bottleCount--;
+    this.bottleBar.setPercentage(this.character.bottleCount * 20);
+}
 
-   throwBottle() {
-       let bottle = new ThrowableObject(this.character.x + 50, this.character.y + 50, this.character.otherDirection);
-       bottle.owner = this.character; 
-       this.throwableObjects.push(bottle);
-       this.character.bottleCount--;
-       this.bottleBar.setPercentage(this.character.bottleCount * 20);
+checkEndboss() {
+    if (this.endboss && !this.endboss.isDead) {
+        const bossInView = this.endboss.x < this.camera_x + this.canvas.width;
+
+        if (bossInView && !this.endboss.isActivated) {
+            this.endboss.isActivated = true;
+            this.endboss.throwBottles();
+        }
+
+        this.endboss.flipImage(this.character.otherDirection);
     }
+}
 
     drawBackground() {
        this.addObjectsToMap(this.level.backgroundobjects);
@@ -291,6 +315,36 @@ class World {
         }
          if (this.quitButton) this.quitButton.draw();
     }
+       checkEndbossActivation() {
+    this.level.enemies.forEach((enemy) => {
+        if (enemy instanceof Endboss && !enemy.isActivated && !enemy.isDead) {
+            const bossVisibleOnCanvasRight = enemy.x + this.camera_x < this.canvas.width;
+            const bossVisibleOnCanvasLeft = enemy.x + enemy.width + this.camera_x > 0;
+
+            if (bossVisibleOnCanvasRight && bossVisibleOnCanvasLeft) {
+                enemy.isActivated = true;
+                enemy.throwBottles();
+            }
+        }
+    });
+}
+
+
+
+   /* checkEndbossActivation() {
+    this.level.enemies.forEach((enemy) => {
+        if (enemy instanceof Endboss && !enemy.activated && !enemy.isDead) {
+            const endbossVisible = enemy.x + enemy.width > this.camera_x &&
+                                   enemy.x < this.camera_x + this.canvas.width;
+
+            if (endbossVisible) {
+                enemy.activated = true;
+                enemy.throwBottles(); // Start throwing
+            }
+        }
+    });
+}*/
+
 
    drawGameOverImage() {
        if (this.gameOverImageShown && this.gameOverImage.complete) {
@@ -307,7 +361,7 @@ class World {
           return;
         }
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.ctx.translate(this.camera_x, 0);this.drawBackground(); this.drawGameObjects();
+        this.ctx.translate(this.camera_x, 0);this.drawBackground(); this.checkEndbossActivation(); this.drawGameObjects();
         this.ctx.translate(-this.camera_x, 0);
         this.drawUI();this.drawButtons();
         this.drawGameOverImage();
@@ -384,9 +438,19 @@ class World {
         });
     }
 
-    resumeThrowableObjects() {
-      this.throwableObjects.forEach((bottle) => bottle.throw());
-    }
+    // In World class:
+resumeThrowableObjects() {
+    this.throwableObjects.forEach((bottle) => {
+        if (!bottle.animationInterval) {
+            bottle.animate(); 
+        }
+
+        if (!bottle.gravityInterval && !bottle.hasHit) {
+            bottle.applyGravity();
+        }
+
+    });
+}
 
    startAnimation() {
       if (!this.animationFrameId) {
@@ -431,7 +495,7 @@ class World {
             this.gameOver = true;
     this.paused = true;
     this.stop();
-    this.gameOverImage.src = result === 'win' ? 'img/img/You won, you lost/You Won B.png' : 'img/img/You won, you lost/You lost b.png';
+     this.gameOverImage.src = result === 'win' ? 'img/img/You won, you lost/You Won B.png' : 'img/img/You won, you lost/You lost b.png';
     World.imagesToLoad.push(result === 'win' ? 'img/img/You won, you lost/You Won B.png' : 'img/img/You won, you lost/You lost b.png');
 
         if (result === 'win') {
@@ -494,12 +558,60 @@ class World {
        this.droppedCoins = [];
     }
 
-   stop() {
-       this.stopAnimation();
-       this.stopCollisionInterval();
-       this.stopMovableObjects();
-       this.clearGameObjects();
+       stop() {
+        
+        
+        if (this.drawIntervalId) { 
+            clearInterval(this.drawIntervalId);
+            this.drawIntervalId = null;
+        }
+        if (this.animationFrameId) { 
+            cancelAnimationFrame(this.animationFrameId);
+            this.animationFrameId = null;
+        }
+
+        
+        if (this.collisionInterval) {
+            clearInterval(this.collisionInterval);
+            this.collisionInterval = null;
+        }
+
+        
+
+        
+        if (this.character && typeof this.character.clearAllIntervals === 'function') {
+            this.character.clearAllIntervals();
+        }
+
+        
+        if (this.level && this.level.enemies) {
+            this.level.enemies.forEach(enemy => {
+                if (enemy && typeof enemy.clearAllIntervals === 'function') {
+                    enemy.clearAllIntervals();
+                }
+            });
+        }
+
+        
+        if (this.throwableObjects) {
+            this.throwableObjects.forEach(bottle => {
+                if (bottle && typeof bottle.clearAllIntervals === 'function') {
+                    bottle.clearAllIntervals();
+                }
+            });
+        }
+        
+        if (this.level && this.level.clouds) {
+             this.level.clouds.forEach(cloud => {
+                 if (cloud && typeof cloud.clearAllIntervals === 'function') {
+                     cloud.clearAllIntervals();
+                 }
+             });
+        }
+        
+    
     }
+
 
     quitGame() {
         window.location.href = 'index.html';
