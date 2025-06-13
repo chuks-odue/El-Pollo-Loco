@@ -91,8 +91,34 @@ class moveableObject extends DrawableObject{
     jump(){
         this.speedY = 50;
     }
-
         clearAllIntervals() {
+        if (this.animationInterval) {
+            clearInterval(this.animationInterval);
+            this.animationInterval = null;
+        }
+        if (this.moveInterval) {
+            clearInterval(this.moveInterval);
+            this.moveInterval = null;
+        }
+        if (this.gravityInterval) {
+            clearInterval(this.gravityInterval);
+            this.gravityInterval = null;
+        }
+        
+        if (this.bottleThrowInterval) {
+            clearInterval(this.bottleThrowInterval);
+            this.bottleThrowInterval = null;
+        }
+                if (this.fallInterval) {
+            clearInterval(this.fallInterval);
+            this.fallInterval = null;
+        }
+
+        
+    }
+
+
+       /* clearAllIntervals() {
         if (this.moveInterval) {
             clearInterval(this.moveInterval);
             this.moveInterval = null;
@@ -112,7 +138,7 @@ class moveableObject extends DrawableObject{
         }
         
 
-    }
+    }*/
 
        
    

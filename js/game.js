@@ -1,12 +1,15 @@
 let canvas;
 let world;
 let keyboard = new Keyboard();
-let soundEnabled = true;
+let currentStartSound = null;
+let startSoundTimeoutId = null; // <--- ADD THIS NEW GLOBAL VARIABLE
+let soundEnabled = localStorage.getItem('soundEnabled') === 'false' ? false : true;
 
 function init(callback) {
   canvas = document.getElementById('canvas');
   initLevel(); 
   world = new World(canvas, keyboard);
+  world.soundEnabled = soundEnabled;
   console.log('my character is', world.character);
   if (callback) callback();
 }
@@ -17,7 +20,8 @@ function replayGame() {
   }
   keyboard = new Keyboard();   
   initLevel();                 
-  world = new World(canvas, keyboard); 
+  world = new World(canvas, keyboard);
+  world.soundEnabled = soundEnabled;  
   world.gameOver = false;
   world.gameOverImageShown = false;
   handleStartSound();  
@@ -25,14 +29,46 @@ function replayGame() {
 }
 
 function handleStartSound() {
+    // Clear any previously scheduled pause for the start sound
+    if (startSoundTimeoutId) {
+        clearTimeout(startSoundTimeoutId);
+        startSoundTimeoutId = null; // Reset the ID
+    }
+
     if (soundEnabled) {
+        // If a sound is currently playing or pending, stop it and reset it.
+        if (currentStartSound && !currentStartSound.paused) {
+            currentStartSound.pause();
+            currentStartSound.currentTime = 0;
+            currentStartSound = null;
+        }
+
         const startSound = new Audio('audio/S31-Winning the Race.ogg');
         startSound.volume = 0.5;
-        startSound.play().catch(err => console.error('Failed to play start sound:', err));        
-        setTimeout(() => {
-            startSound.pause();
-            startSound.currentTime = 0;
-        }, 3000);     
+        currentStartSound = startSound;
+
+        startSound.play().catch(err => {
+            if (err.name !== 'AbortError') {
+                console.error('Failed to play start sound:', err);
+            }
+        });
+
+        // Store the ID of this new setTimeout
+        startSoundTimeoutId = setTimeout(() => {
+            if (currentStartSound === startSound) {
+                startSound.pause();
+                startSound.currentTime = 0;
+                currentStartSound = null;
+                startSoundTimeoutId = null; // Clear the ID after execution
+            }
+        }, 3000);
+    } else {
+        // If sound is disabled, ensure any currently playing start sound is stopped
+        if (currentStartSound) {
+            currentStartSound.pause();
+            currentStartSound.currentTime = 0;
+            currentStartSound = null;
+        }
     }
 }
 
@@ -160,30 +196,33 @@ function addCanvasClickListener(canvas) {
         canvas._clickHandlerAdded = true; 
     }
 }
-
 function startGame() {
-  console.log('Starting game, sound enabled:', soundEnabled);
-  handleStartSound();
   hideStartScreen();
   handleInGameMenuDisplay();
   handleWindowResize();
   hideHeader();
   showInGameMenu();
   showPlayPauseControls();
+
   const canvas = document.getElementById('canvas');
-  if (canvas) canvas.style.display = 'none'; 
+  if (canvas) canvas.style.display = 'none';
+
   init(() => {
     addCanvasClickListener(canvas);
     const intervalId = setInterval(() => {
       if (world.gameInitialized) {
         const loadingScreen = document.getElementById('loadingScreen');
         if (loadingScreen) loadingScreen.style.display = 'none';
-        if (canvas) canvas.style.display = 'block'; 
+        if (canvas) canvas.style.display = 'block';
+        handleStartSound();
         clearInterval(intervalId);
       }
     }, 100);
   });
 }
+
+
+
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -315,15 +354,22 @@ function handleFullscreenButton(fullscreenButton, gameContainer, fullscreenIcon)
 function handleSoundButton(soundButtonInGame, soundIconInGame) {
     soundButtonInGame.addEventListener('click', (e) => {
         soundEnabled = !soundEnabled;
+        localStorage.setItem('soundEnabled', soundEnabled); // <-- Added this line
+
         if (world) {
             world.soundEnabled = soundEnabled;
         }
         console.log('Sound enabled:', soundEnabled);
-        soundIconInGame.src = soundEnabled 
-            ? 'img/assets/Mic-On.svg' 
+        soundIconInGame.src = soundEnabled
+            ? 'img/assets/Mic-On.svg'
             : 'img/assets/Mic-Off.svg';
         e.stopPropagation();
     });
+
+    // <-- Added this block below (initial icon setup)
+    soundIconInGame.src = soundEnabled
+        ? 'img/assets/Mic-On.svg'
+        : 'img/assets/Mic-Off.svg';
 }
 
 function setupGameControls() {
@@ -344,7 +390,9 @@ function isSmallScreen() {
 }
 window.addEventListener('resize', () => {
     // Just redraw the world on resize — your game loop should already handle this
-    world.draw();
+    if (world) { // <-- Add this check
+        world.draw();
+    }
 });
 
 

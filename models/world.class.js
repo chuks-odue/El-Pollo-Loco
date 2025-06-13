@@ -491,22 +491,30 @@ resumeThrowableObjects() {
         }
     } 
 
-    showGameOverImage(result) {
-            this.gameOver = true;
-    this.paused = true;
-    this.stop();
-     this.gameOverImage.src = result === 'win' ? 'img/img/You won, you lost/You Won B.png' : 'img/img/You won, you lost/You lost b.png';
-    World.imagesToLoad.push(result === 'win' ? 'img/img/You won, you lost/You Won B.png' : 'img/img/You won, you lost/You lost b.png');
+        showGameOverImage(result) {
+        this.gameOver = true;
+        this.paused = true; // Often useful to pause the game explicitly as well
+        this.stop(); // THIS IS CRUCIAL: Call stop to clear all intervals
+
+        this.gameOverImage.src = result === 'win' ? 'img/img/You won, you lost/You Won B.png' : 'img/img/You won, you lost/You lost b.png';
+        World.imagesToLoad.push(result === 'win' ? 'img/img/You won, you lost/You Won B.png' : 'img/img/You won, you lost/You lost b.png');
 
         if (result === 'win') {
             this.playSound('win');
-        } else {this.playSound('lose');            
+        } else {
+            this.playSound('lose');
         }
-        this.gameOverImage.onload = () => {this.gameOverImageShown = true;this.draw();
+
+        this.gameOverImage.onload = () => {
+            this.gameOverImageShown = true;
+            this.draw(); // Request one final draw to display the image
         };
-        this.gameOverImage.onerror = () => {this.gameOverImageShown = true; this.draw();
+        this.gameOverImage.onerror = () => {
+            this.gameOverImageShown = true;
+            this.draw(); // Request one final draw even if image fails to load
         };
     }
+
 
     stopAnimation() {
         if  (this.animationFrameId) {
@@ -558,32 +566,24 @@ resumeThrowableObjects() {
        this.droppedCoins = [];
     }
 
-       stop() {
-        
-        
-        if (this.drawIntervalId) { 
-            clearInterval(this.drawIntervalId);
-            this.drawIntervalId = null;
-        }
-        if (this.animationFrameId) { 
+        stop() {
+        // Stop the main game loop (animationFrameId)
+        if (this.animationFrameId) {
             cancelAnimationFrame(this.animationFrameId);
             this.animationFrameId = null;
         }
 
-        
+        // Stop the collision detection interval
         if (this.collisionInterval) {
             clearInterval(this.collisionInterval);
             this.collisionInterval = null;
         }
 
-        
-
-        
+        // Stop intervals for all movable objects by calling their clearAllIntervals method
         if (this.character && typeof this.character.clearAllIntervals === 'function') {
             this.character.clearAllIntervals();
         }
 
-        
         if (this.level && this.level.enemies) {
             this.level.enemies.forEach(enemy => {
                 if (enemy && typeof enemy.clearAllIntervals === 'function') {
@@ -592,7 +592,6 @@ resumeThrowableObjects() {
             });
         }
 
-        
         if (this.throwableObjects) {
             this.throwableObjects.forEach(bottle => {
                 if (bottle && typeof bottle.clearAllIntervals === 'function') {
@@ -600,17 +599,22 @@ resumeThrowableObjects() {
                 }
             });
         }
-        
+
         if (this.level && this.level.clouds) {
-             this.level.clouds.forEach(cloud => {
-                 if (cloud && typeof cloud.clearAllIntervals === 'function') {
-                     cloud.clearAllIntervals();
-                 }
-             });
+            this.level.clouds.forEach(cloud => {
+                if (cloud && typeof cloud.clearAllIntervals === 'function') {
+                    cloud.clearAllIntervals();
+                }
+            });
         }
-        
-    
+
+        // You might also want to stop any other global intervals or sounds here
+        if (this.character.sounds.walk && !this.character.sounds.walk.paused) {
+            this.character.sounds.walk.pause();
+            this.character.sounds.walk.currentTime = 0;
+        }
     }
+
 
 
     quitGame() {
