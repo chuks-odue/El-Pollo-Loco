@@ -2,7 +2,7 @@ let canvas;
 let world;
 let keyboard = new Keyboard();
 let currentStartSound = null;
-let startSoundTimeoutId = null; // <--- ADD THIS NEW GLOBAL VARIABLE
+let startSoundTimeoutId = null; 
 let soundEnabled = localStorage.getItem('soundEnabled') === 'false' ? false : true;
 
 function init(callback) {
@@ -29,14 +29,14 @@ function replayGame() {
 }
 
 function handleStartSound() {
-    // Clear any previously scheduled pause for the start sound
+    
     if (startSoundTimeoutId) {
         clearTimeout(startSoundTimeoutId);
-        startSoundTimeoutId = null; // Reset the ID
+        startSoundTimeoutId = null; 
     }
 
     if (soundEnabled) {
-        // If a sound is currently playing or pending, stop it and reset it.
+        
         if (currentStartSound && !currentStartSound.paused) {
             currentStartSound.pause();
             currentStartSound.currentTime = 0;
@@ -53,17 +53,17 @@ function handleStartSound() {
             }
         });
 
-        // Store the ID of this new setTimeout
+        
         startSoundTimeoutId = setTimeout(() => {
             if (currentStartSound === startSound) {
                 startSound.pause();
                 startSound.currentTime = 0;
                 currentStartSound = null;
-                startSoundTimeoutId = null; // Clear the ID after execution
+                startSoundTimeoutId = null; 
             }
         }, 3000);
     } else {
-        // If sound is disabled, ensure any currently playing start sound is stopped
+        
         if (currentStartSound) {
             currentStartSound.pause();
             currentStartSound.currentTime = 0;
@@ -231,7 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
         startGame();
     });
 });
-// Keydown event listener
+
 window.addEventListener("keydown", (e) => {
     if (e.key === "ArrowRight") keyboard.RIGHT = true;
     if (e.key === "ArrowLeft") keyboard.LEFT = true;
@@ -240,7 +240,7 @@ window.addEventListener("keydown", (e) => {
     if (e.key.toLowerCase() === 'd') keyboard.D = true;
 });
 
-// Keyup event listener
+
 window.addEventListener("keyup", (e) => {
     if (e.key === "ArrowRight") keyboard.RIGHT = false;
     if (e.key === "ArrowLeft") keyboard.LEFT = false;
@@ -255,16 +255,35 @@ window.addEventListener("keynotpress", (e) => {
 });
 document.addEventListener('DOMContentLoaded', function() {
     const infoButton = document.getElementById('infoButton');
-    const infoOverlay = document.getElementById('infoOverlay');    
-    let isInfoOverlayVisible = false;
-    if (infoButton) {infoButton.addEventListener('click', () => {isInfoOverlayVisible = !isInfoOverlayVisible;
-            infoOverlay.style.display = isInfoOverlayVisible ? 'block' : 'none';
-        });
-    }
-    document.addEventListener('click', (event) => {
-        if (isInfoOverlayVisible && !infoOverlay.contains(event.target) && event.target !== infoButton) {
+    const infoOverlay = document.getElementById('infoOverlay');
+    const closeInfoBtn = document.getElementById('closeInfoBtn'); 
+    let isInfoOverlayVisible = false;    
+    function closeInfoOverlay() {
+        if (infoOverlay) {
             infoOverlay.style.display = 'none';
-            isInfoOverlayVisible = false;
+        }
+        isInfoOverlayVisible = false;
+    }    
+    if (infoButton) {
+        infoButton.addEventListener('click', () => {
+            isInfoOverlayVisible = !isInfoOverlayVisible;
+            if (infoOverlay) {
+                infoOverlay.style.display = isInfoOverlayVisible ? 'block' : 'none';
+            }
+        });
+    }    
+    if (closeInfoBtn) { 
+        closeInfoBtn.addEventListener('click', () => {
+            closeInfoOverlay(); 
+        });
+    }    
+    document.addEventListener('click', (event) => {
+        if (isInfoOverlayVisible && 
+            infoOverlay && 
+            !infoOverlay.contains(event.target) && 
+            event.target !== infoButton) 
+        {
+            closeInfoOverlay(); 
         }
     });
 });
@@ -354,19 +373,13 @@ function handleFullscreenButton(fullscreenButton, gameContainer, fullscreenIcon)
 function handleSoundButton(soundButtonInGame, soundIconInGame) {
     soundButtonInGame.addEventListener('click', (e) => {
         soundEnabled = !soundEnabled;
-        localStorage.setItem('soundEnabled', soundEnabled); // <-- Added this line
-
-        if (world) {
-            world.soundEnabled = soundEnabled;
-        }
-        console.log('Sound enabled:', soundEnabled);
-        soundIconInGame.src = soundEnabled
+        localStorage.setItem('soundEnabled', soundEnabled);
+        if (world) {world.soundEnabled = soundEnabled;}
+                soundIconInGame.src = soundEnabled
             ? 'img/assets/Mic-On.svg'
             : 'img/assets/Mic-Off.svg';
         e.stopPropagation();
-    });
-
-    // <-- Added this block below (initial icon setup)
+    });    
     soundIconInGame.src = soundEnabled
         ? 'img/assets/Mic-On.svg'
         : 'img/assets/Mic-Off.svg';
@@ -389,8 +402,8 @@ function isSmallScreen() {
   return window.innerWidth <= 920;
 }
 window.addEventListener('resize', () => {
-    // Just redraw the world on resize — your game loop should already handle this
-    if (world) { // <-- Add this check
+    
+    if (world) { 
         world.draw();
     }
 });

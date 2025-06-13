@@ -1,7 +1,7 @@
 class Character extends moveableObject {
-    width = 250;
-    height = 250;
-    y = 0;
+    width = 120;
+    height = 240;
+    y = 30;
     speed = 10;
     bottleCount = 5;
     world;
