@@ -409,4 +409,32 @@ window.addEventListener('resize', () => {
 });
 
 
+function checkOrientationAndScreenSize() {
+  const rotateOverlay = document.getElementById('rotateOverlay');
+  const canvas = document.querySelector('canvas');
+
+  console.log(`Width: ${window.innerWidth}, Height: ${window.innerHeight}`);
+
+  if (rotateOverlay && canvas) {
+    if (window.innerWidth <= 720 && window.innerHeight > window.innerWidth) {
+      console.log('Portrait mode');
+      rotateOverlay.style.display = 'flex';
+      canvas.style.display = 'none';
+    } else {
+      console.log('Landscape mode or wide screen');
+      rotateOverlay.style.display = 'none';
+      canvas.style.display = 'block';
+    }
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    checkOrientationAndScreenSize(); // safe to call now
+    window.addEventListener('orientationchange', checkOrientationAndScreenSize);
+    window.addEventListener('resize', checkOrientationAndScreenSize);
+});
+
+
+
+
                                             
