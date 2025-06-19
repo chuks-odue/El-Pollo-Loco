@@ -31,7 +31,6 @@ class Endboss extends moveableObject {
          this.clearIntervals();
         this.loadAllImages();
        this.startAnimation();
-       
     }
 
     initProperties() {
@@ -45,6 +44,8 @@ class Endboss extends moveableObject {
        this.moveInterval = null;
        this.animationInterval = null;
        this.fallInterval = null;
+       this.movementLimit = 2500; 
+
     }
 
     clearIntervals() {
@@ -67,12 +68,15 @@ class Endboss extends moveableObject {
         if (this.bottleThrowInterval) {
             clearInterval(this.bottleThrowInterval);
         }
+        if (this.bottleThrowInterval) {
+        clearInterval(this.bottleThrowInterval);
+        
+    }
         this.bottleThrowInterval = setInterval(() => {
             if (!this.isDead && this.isActivated) {
                 const isCharacterOnLeft = world.character.x < this.x;
                 const bottle = new ThrowableObject(this.x, this.y + 50, isCharacterOnLeft, this);
                 world.throwableObjects.push(bottle);
-                
                 
             }
         }, 3000);
@@ -81,9 +85,17 @@ class Endboss extends moveableObject {
     animate() {
         if (this.moveInterval) clearInterval(this.moveInterval);
         if (this.animationInterval) clearInterval(this.animationInterval);
-        this.moveInterval = setInterval(() => {
-            if (!this.isDead && !world.gameOver && !world.paused) {this.moveLeft();}
-        }, 1000 / 60);
+       this.moveInterval = setInterval(() => {
+    if (!this.isDead && !world.gameOver && !world.paused) {
+        if (this.x > this.movementLimit) {
+            this.moveLeft();
+        } else {
+            // Stop moving if reached limit
+            this.speed = 0;
+        }
+    }
+}, 1000 / 60);
+
         this.animationInterval = setInterval(() => {
             if (this.isDead) {
                 if (!this.hasFallen) {

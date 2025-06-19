@@ -65,7 +65,6 @@ class Character extends moveableObject {
         this.applyGravity();
         this.animate();
         this.previousY = this.y;
-        
 
     }
 

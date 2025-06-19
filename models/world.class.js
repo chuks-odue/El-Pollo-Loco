@@ -86,6 +86,7 @@ class World {
 
     setWorld() {
         this.character.world = this;
+        
     }
       loadImage(src) {
     World.imagesToLoad.push(src);
@@ -409,10 +410,8 @@ checkEndboss() {
       clearInterval(enemy.animationInterval);
       enemy.animationInterval = null;
     }
-    if (enemy.bottleThrowInterval) {
-      clearInterval(enemy.bottleThrowInterval);
-      enemy.bottleThrowInterval = null;
-      enemy.throwBottles();
+    if (enemy instanceof Endboss) {        
+            enemy.throwBottles();                                  
     }
     enemy.animate();
   });
@@ -457,6 +456,7 @@ resumeThrowableObjects() {
   this.resumeThrowableObjects();
   this.startAnimation();
   this.startCollisionDetection();
+  
 }
 
 
