@@ -370,15 +370,15 @@ canvas{
 }
 #rotateOverlay {
   position: fixed;
-  top: 0;
+  top: 20%;
   left: 0;
   width: 100vw;
   height: 100vh;
   
-  color: black;
+  color: darkslateblue;
   display: none;
   justify-content: center;
-  align-items: center;
+  
   text-align: center;
   z-index: 9999;
   font-size: 1.0rem;
