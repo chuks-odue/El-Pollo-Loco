@@ -24,41 +24,55 @@ class Endboss extends moveableObject {
     animationInterval;
     fallInterval;
 
-    constructor() {
-        super().loadimage('img/img/4_enemie_boss_chicken/1_walk/G1.png');
-        this.loadimages(this.WALKING_IMAGES_ENDBOSS);
-        this.loadimages(this.Endboss_DEAD);
+    constructor(world) {
+       super().loadimage('img/img/4_enemie_boss_chicken/1_walk/G1.png');
+        this.world = world;    
+        this.initProperties();
+         this.clearIntervals();
+        this.loadAllImages();
+       this.startAnimation();
+       
+    }
+
+    initProperties() {
         this.x = 2800;
-        this.speed = 0.15 + Math.random() * 0.5;
-        this.originalSpeed = this.speed;
+       this.speed = 0.15 + Math.random() * 0.5;
+       this.originalSpeed = this.speed;
+       this.isActivated = false;
+       this.isDead = false;
+         this.hasFallen = false;    
+       this.bottleThrowInterval = null;
+       this.moveInterval = null;
+       this.animationInterval = null;
+       this.fallInterval = null;
+    }
 
-        this.isActivated = false;
-        this.isDead = false;
-        this.hasFallen = false;
+    clearIntervals() {
+      if (this.bottleThrowInterval) clearInterval(this.bottleThrowInterval);
+      if (this.moveInterval) clearInterval(this.moveInterval);
+      if (this.animationInterval) clearInterval(this.animationInterval);
+      if (this.fallInterval) clearInterval(this.fallInterval);
+    }
 
-        if (this.bottleThrowInterval) clearInterval(this.bottleThrowInterval);
-        if (this.moveInterval) clearInterval(this.moveInterval);
-        if (this.animationInterval) clearInterval(this.animationInterval);
-        if (this.fallInterval) clearInterval(this.fallInterval);
+    loadAllImages() {
+      this.loadimages(this.WALKING_IMAGES_ENDBOSS);
+      this.loadimages(this.Endboss_DEAD);
+    }
 
-        this.bottleThrowInterval = null;
-        this.moveInterval = null;
-        this.animationInterval = null;
-        this.fallInterval = null;
-
-        this.animate();
+    startAnimation() {
+       this.animate();
     }
 
     throwBottles() {
         if (this.bottleThrowInterval) {
             clearInterval(this.bottleThrowInterval);
         }
-
         this.bottleThrowInterval = setInterval(() => {
             if (!this.isDead && this.isActivated) {
                 const isCharacterOnLeft = world.character.x < this.x;
                 const bottle = new ThrowableObject(this.x, this.y + 50, isCharacterOnLeft, this);
                 world.throwableObjects.push(bottle);
+                
                 
             }
         }, 3000);
@@ -67,24 +81,17 @@ class Endboss extends moveableObject {
     animate() {
         if (this.moveInterval) clearInterval(this.moveInterval);
         if (this.animationInterval) clearInterval(this.animationInterval);
-
         this.moveInterval = setInterval(() => {
-            if (!this.isDead && !world.gameOver && !world.paused) {
-                this.moveLeft();
-            }
+            if (!this.isDead && !world.gameOver && !world.paused) {this.moveLeft();}
         }, 1000 / 60);
-
         this.animationInterval = setInterval(() => {
             if (this.isDead) {
                 if (!this.hasFallen) {
                     this.playAnimation(this.Endboss_DEAD);
-                } else {
-                    const lastFrame = this.Endboss_DEAD[this.Endboss_DEAD.length - 1];
+                } else {const lastFrame = this.Endboss_DEAD[this.Endboss_DEAD.length - 1];
                     this.loadimage(lastFrame);
                 }
-            } else {
-                this.playAnimation(this.WALKING_IMAGES_ENDBOSS);
-            }
+            } else {this.playAnimation(this.WALKING_IMAGES_ENDBOSS);}
         }, 200);
     }
 

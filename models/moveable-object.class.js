@@ -11,6 +11,7 @@ class moveableObject extends DrawableObject{
     bottleThrowInterval = null; 
     fallInterval = null;        
 
+    
 
     applyGravity(){
         setInterval(() => {
@@ -26,34 +27,32 @@ class moveableObject extends DrawableObject{
         return this.y < 180;
     }  
     isColliding(mo) {
-        let thisRect = {
-            x: this.x + (this.width * 0.1), y: this.y + (this.height * 0.1), 
-            width: this.width * 0.8, height: this.height * 0.8 
-        };    
-        let moRect = {
-            x: mo.x + (mo.width * 0.1), y: mo.y + (mo.height * 0.1),
-            width: mo.width * 0.8, height: mo.height * 0.8
-        };    
-        return  thisRect.x + thisRect.width > moRect.x &&
-                thisRect.x < moRect.x + moRect.width &&
-                thisRect.y + thisRect.height > moRect.y &&
-                thisRect.y < moRect.y + moRect.height;
-    }        
+    return (
+        this.x < mo.x + mo.width &&
+        this.x + this.width > mo.x &&
+        this.y < mo.y + mo.height &&
+        this.y + this.height > mo.y
+    );
+}        
     
-  hit(){
+  hit(damage = 20) {
     if (new Date().getTime() - this.lastHit > 500) { 
-        this.energy -= 20;
-        if (this.energy < 0) { this.energy = 0;}
-        this.lastHit = new Date().getTime();
-        this.world.coinBar.percentage -= 20;
-        if (this.world.coinBar.percentage < 0) {this.world.coinBar.percentage = 0;}
-        this.world.coinBar.setPercentage(this.world.coinBar.percentage);
-        let droppedCoin = new DroppedCoin(this.x, this.y);
-        droppedCoin.world = this.world;
-        this.world.droppedCoins.push(droppedCoin);
-        this.world.playSound('coin-lost');
+        this.energy -= damage;
+        if (this.energy < 0) this.energy = 0;
+        this.lastHit = new Date().getTime();         
+        if (this instanceof Character) {
+            this.world.coinBar.percentage -= 20;
+            if (this.world.coinBar.percentage < 0) {
+                this.world.coinBar.percentage = 0;
+            }
+            let droppedCoin = new DroppedCoin(this.x, this.y);
+            droppedCoin.world = this.world;
+            this.world.droppedCoins.push(droppedCoin);
+            this.world.playSound('coin-lost');
+            
+        }
     }
-   }
+}
 
                     
     isHurt(){

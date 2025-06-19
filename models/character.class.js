@@ -3,6 +3,8 @@ class Character extends moveableObject {
     height = 240;
     y = 30;
     speed = 10;
+    
+    
     bottleCount = 5;
     world;
     isHurtState = false;
@@ -62,6 +64,9 @@ class Character extends moveableObject {
         this.sounds.walk.loop = true;
         this.applyGravity();
         this.animate();
+        this.previousY = this.y;
+        
+
     }
 
     updateMovement() {
@@ -90,18 +95,19 @@ class Character extends moveableObject {
     }
 
     updateMainGameLoop() {
+        
         if (!this.world.gameOver) {
             this.updateMovement();
             this.updateJumping();
             this.updateCamera();
+                this.lastY = this.y;
+
         } else {
             this.stopWalkingSound();
         }
     }
 
-    bounce() {
-        this.speedY = -20;
-    }
+
 
     updateAnimation() {
         if (this.isDead()) {
@@ -123,11 +129,8 @@ class Character extends moveableObject {
     animate() {
         if (this.moveInterval) clearInterval(this.moveInterval);
         if (this.animationInterval) clearInterval(this.animationInterval);
-
-        this.moveInterval = setInterval(() => {
-            this.updateMainGameLoop();
+        this.moveInterval = setInterval(() => { this.updateMainGameLoop();
         }, 1000 / 60);
-
         this.animationInterval = setInterval(() => {
             if (!this.world.gameOver) {
                 this.updateAnimation();
@@ -135,11 +138,8 @@ class Character extends moveableObject {
                 this.playAnimation(this.DEAD_IMAGES);
                 if (this.currentImage % this.DEAD_IMAGES.length === this.DEAD_IMAGES.length - 1) {
                     this.stopAnimation();
-                    this.loadimage(this.DEAD_IMAGES[this.DEAD_IMAGES.length - 1]);
-                }
-            } else {
-                this.stopAnimation();
-            }
+                    this.loadimage(this.DEAD_IMAGES[this.DEAD_IMAGES.length - 1]); }
+            } else { this.stopAnimation();}
         }, 50);
     }
 
@@ -179,4 +179,6 @@ class Character extends moveableObject {
             this.animationInterval = null;
         }
     }
+   
+    
 }

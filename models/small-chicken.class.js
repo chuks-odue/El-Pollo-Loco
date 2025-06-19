@@ -2,10 +2,13 @@ class SmallChicken extends moveableObject {
     y = 400;
     width = 40;
     height = 40;
-    speed = 0.2 + Math.random() * 0.3; // random speed between 0.2 and 0.5
-    energy = 50; // energy for the small chicken
-    isDead = false; // to check if small chicken is dead
+    speed = 0.2 + Math.random() * 0.3;
+    energy = 50;
+    isDead = false;
     speedY = 0;
+    moveInterval;
+    jumpInterval;
+    animationInterval;
 
     WALKING_IMAGES = [
         'img/img/3_enemies_chicken/chicken_small/1_walk/1_w.png',
@@ -17,57 +20,59 @@ class SmallChicken extends moveableObject {
         'img/img/3_enemies_chicken/chicken_small/2_dead/dead.png',
     ];
 
-    constructor() {
+    constructor(world) {
         super().loadimage('img/img/3_enemies_chicken/chicken_small/1_walk/1_w.png');
         this.loadimages(this.WALKING_IMAGES);
         this.loadimages(this.DEAD_IMAGES);
-        this.x = 400 + Math.random() * 700; 
+        this.x = 400 + Math.random() * 700;
         this.originalSpeed = this.speed;
-
+        this.world = world;
         this.animate();
     }
 
-     moveInterval;
-  jumpInterval;
-  animationInterval;
-
-  animate() {
-    if (this.moveInterval) {
-      clearInterval(this.moveInterval);
-    }
-    if (this.jumpInterval) {
-      clearInterval(this.jumpInterval);
-    }
-    if (this.animationInterval) {
-      clearInterval(this.animationInterval);
+    animate() {
+        this.clearAnimationIntervals();
+        this.startMovement();
+        this.startJumping();
+        this.startAnimationLoop();
     }
 
-    this.moveInterval = setInterval(() => {
-      if (!this.isDead && !world.gameOver && !world.paused) {
-        this.moveLeft();
-        this.updatePosition();
-      }
-    }, 1000 / 60);
+    clearAnimationIntervals() {
+        if (this.moveInterval) clearInterval(this.moveInterval);
+        if (this.jumpInterval) clearInterval(this.jumpInterval);
+        if (this.animationInterval) clearInterval(this.animationInterval);
+    }
 
-    this.jumpInterval = setInterval(() => {
-      if (!this.isDead && !world.gameOver && !world.paused && Math.random() < 0.05) { 
-        this.jump(); 
-      }
-    }, 1000/60); 
+    startMovement() {
+        this.moveInterval = setInterval(() => {
+            if (!this.isDead && !world.gameOver && !world.paused) {
+                this.moveLeft();
+                this.updatePosition();
+            }
+        }, 1000 / 60);
+    }
 
-    this.animationInterval = setInterval(() => {
-      if (this.isDead) { 
-        this.playAnimation(this.DEAD_IMAGES);
-      } else { 
-        this.playAnimation(this.WALKING_IMAGES); 
-      }
-    }, 200);
-  }
+    startJumping() {
+        this.jumpInterval = setInterval(() => {
+            if (!this.isDead && !world.gameOver && !world.paused && Math.random() < 0.05) {
+                this.jump();
+            }
+        }, 1000 / 60);
+    }
 
+    startAnimationLoop() {
+        this.animationInterval = setInterval(() => {
+            if (this.isDead) {
+                this.playAnimation(this.DEAD_IMAGES);
+            } else {
+                this.playAnimation(this.WALKING_IMAGES);
+            }
+        }, 200);
+    }
 
     jump() {
         if (this.y >= 380) {
-            this.speedY = -20; 
+            this.speedY = -20;
         }
     }
 

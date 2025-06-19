@@ -24,7 +24,7 @@ canvas {
     position: absolute;
     top: 45%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-60%, -45%);
 }
 
 h1{
@@ -123,9 +123,10 @@ canvas{
 }
 .in-game-menu {
     position: absolute;
-    top: 7px;
-    right: 10px;
+    top: 5%;
+    right: 15px;
     display: flex;
+    flex-direction: column;
     gap: 10px;
     background-color: rgba(119, 0, 255, 0.7); /* Orange background with some transparency */
     padding: 7px;
@@ -134,13 +135,14 @@ canvas{
 }
 
 .in-game-menu button {
-    background-color:#0c627a;
-    color: white; /* Orange text color */
+    background-color: #0c627a;
+    color: white;
     border: none;
-    padding: 5px 10px;
+    padding: 10px;
     font-size: 16px;
     cursor: pointer;
     border-radius: 5px;
+    width: 60px; /* or whatever width you want */
 }
 .in-game-menu a {
     text-decoration: none;
@@ -479,6 +481,7 @@ canvas{
         height: 30px;
         padding: 10px;
         display: flex;
+        flex-direction: row;
         justify-content: space-around;
         background-color: rgba(119, 0, 255, 0.7);
         border-radius: 0;

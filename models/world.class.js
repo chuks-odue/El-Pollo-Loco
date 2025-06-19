@@ -110,6 +110,15 @@ class World {
             }
         });
     }
+        checkCollision() {
+        this.collisionInterval = setInterval(() => {
+            if (this.gameOver || this.paused) return;
+
+            this.checkEnemyCollision();
+            this.checkCollectibleCollision();
+            this.checkThrowableCollision();
+        }, 1000 / 66);
+    }
 
     checkCollectibleCollision() {
           this.level.collectibles.forEach((collectible, index) => {
@@ -216,15 +225,7 @@ class World {
           this.removeFinishedBottles();
     }
 
-    checkCollision() {
-        this.collisionInterval = setInterval(() => {
-            if (this.gameOver || this.paused) return;
 
-            this.checkEnemyCollision();
-            this.checkCollectibleCollision();
-            this.checkThrowableCollision();
-        }, 1000 / 66);
-    }
 
     checkThrowBottle() {
         document.addEventListener('keydown', (event) => {
@@ -327,23 +328,7 @@ checkEndboss() {
             }
         }
     });
-}
-
-
-
-   /* checkEndbossActivation() {
-    this.level.enemies.forEach((enemy) => {
-        if (enemy instanceof Endboss && !enemy.activated && !enemy.isDead) {
-            const endbossVisible = enemy.x + enemy.width > this.camera_x &&
-                                   enemy.x < this.camera_x + this.canvas.width;
-
-            if (endbossVisible) {
-                enemy.activated = true;
-                enemy.throwBottles(); // Start throwing
-            }
-        }
-    });
-}*/
+}  
 
 
    drawGameOverImage() {
@@ -438,7 +423,7 @@ checkEndboss() {
         });
     }
 
-    // In World class:
+    
 resumeThrowableObjects() {
     this.throwableObjects.forEach((bottle) => {
         if (!bottle.animationInterval) {
@@ -507,11 +492,11 @@ resumeThrowableObjects() {
 
         this.gameOverImage.onload = () => {
             this.gameOverImageShown = true;
-            this.draw(); // Request one final draw to display the image
+            this.draw(); 
         };
         this.gameOverImage.onerror = () => {
             this.gameOverImageShown = true;
-            this.draw(); // Request one final draw even if image fails to load
+            this.draw(); 
         };
     }
 
@@ -567,19 +552,19 @@ resumeThrowableObjects() {
     }
 
         stop() {
-        // Stop the main game loop (animationFrameId)
+        
         if (this.animationFrameId) {
             cancelAnimationFrame(this.animationFrameId);
             this.animationFrameId = null;
         }
 
-        // Stop the collision detection interval
+        
         if (this.collisionInterval) {
             clearInterval(this.collisionInterval);
             this.collisionInterval = null;
         }
 
-        // Stop intervals for all movable objects by calling their clearAllIntervals method
+    
         if (this.character && typeof this.character.clearAllIntervals === 'function') {
             this.character.clearAllIntervals();
         }
@@ -608,7 +593,7 @@ resumeThrowableObjects() {
             });
         }
 
-        // You might also want to stop any other global intervals or sounds here
+        
         if (this.character.sounds.walk && !this.character.sounds.walk.paused) {
             this.character.sounds.walk.pause();
             this.character.sounds.walk.currentTime = 0;
