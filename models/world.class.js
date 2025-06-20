@@ -13,6 +13,8 @@ class World {
     statusBar = new StatusBar('health');
     coinBar = new StatusBar('coin');
     bottleBar = new StatusBar('bottle');
+    endbossHealthBar = new StatusBar('endbossHealth'); 
+
     throwableObjects = [];
     droppedCoins = [];
     playPauseButton;
@@ -81,16 +83,24 @@ class World {
        this.initProperties(canvas, keyboard);
        this.initGameLogic();
        this.initUIComponents();
-       this.loadPlayPauseIcons();
-    }
-
-    setWorld() {
-        this.character.world = this;
+       this.loadPlayPauseIcons();            
         
     }
-      loadImage(src) {
+
+  setWorld() {
+        this.character.world = this;         
+        this.level.enemies.forEach(enemy => {
+            enemy.world = this; 
+            
+        });        
+        if (this.level.endboss) { 
+            this.level.endboss.world = this;
+            
+        }
+    }  
+    loadImage(src) {
     World.imagesToLoad.push(src);
-    // Load the image here
+    
   }
 
 
@@ -305,6 +315,8 @@ checkEndboss() {
        this.addToMap(this.statusBar);
        this.addToMap(this.coinBar);
        this.touchControls.draw();
+        this.addToMap(this.endbossHealthBar);
+        
     }
 
    drawButtons() {  

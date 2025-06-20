@@ -166,7 +166,7 @@ class Character extends moveableObject {
     }
 
     jump() {
-        this.speedY = 50;
+        this.speedY = 40;
         if (soundEnabled) {
             this.playSound('jump');
         }

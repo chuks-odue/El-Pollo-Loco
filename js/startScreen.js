@@ -143,7 +143,7 @@ function setupGameControls() {
 
 document.addEventListener('DOMContentLoaded', setupGameControls);
 function isSmallScreen() {
-  return window.innerWidth <= 920;
+  return window.innerWidth <= 1024;
 }
 window.addEventListener('resize', () => {
     

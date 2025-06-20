@@ -11,7 +11,6 @@ class moveableObject extends DrawableObject{
     bottleThrowInterval = null; 
     fallInterval = null;        
 
-    
 
     applyGravity(){
         setInterval(() => {
@@ -35,21 +34,26 @@ class moveableObject extends DrawableObject{
     );
 }        
     
-  hit(damage = 20) {
-    if (new Date().getTime() - this.lastHit > 500) { 
+ 
+
+hit(damage = 20) {
+    if (new Date().getTime() - this.lastHit > 500) {
         this.energy -= damage;
         if (this.energy < 0) this.energy = 0;
-        this.lastHit = new Date().getTime();         
+        this.lastHit = new Date().getTime();
         if (this instanceof Character) {
             this.world.coinBar.percentage -= 20;
             if (this.world.coinBar.percentage < 0) {
                 this.world.coinBar.percentage = 0;
             }
+            
+            this.world.coinBar.setPercentage(this.world.coinBar.percentage); 
+            
+
             let droppedCoin = new DroppedCoin(this.x, this.y);
             droppedCoin.world = this.world;
             this.world.droppedCoins.push(droppedCoin);
             this.world.playSound('coin-lost');
-            
         }
     }
 }

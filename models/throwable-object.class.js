@@ -1,5 +1,5 @@
 class ThrowableObject extends moveableObject {
-    speed = 5;      // Speed flying forward
+    speed = 3.5;      // Speed flying forward
     gravity = 0.5;    // Strength of gravity
     velocityY = 10;     // Speed falling downward
     bottleCount = 5; 

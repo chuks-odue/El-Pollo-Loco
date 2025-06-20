@@ -2,7 +2,7 @@ class Endboss extends moveableObject {
     height = 400;
     width = 250;
     y = 59;
-    energy = 300;
+    energy = 400;
     isActivated = false;
     isDead = false;
     hasFallen = false;
@@ -44,7 +44,7 @@ class Endboss extends moveableObject {
        this.moveInterval = null;
        this.animationInterval = null;
        this.fallInterval = null;
-       this.movementLimit = 2500; 
+       this.movementLimit = 2900; 
 
     }
 
@@ -108,12 +108,33 @@ class Endboss extends moveableObject {
     }
 
     hit() {
-        this.energy -= 100;
+      
+        this.energy -= 100;        
+        if (this.energy < 0) {
+            this.energy = 0;
+        }
+
+      
+
+        const maxEnergy = 400;
+        const newPercentage = (this.energy / maxEnergy) * 100;
+
+       
+        if (this.world && this.world.endbossHealthBar) {
+           
+            this.world.endbossHealthBar.setPercentage(newPercentage);
+          
+        } else {
+            console.error('Endboss: ERROR - world or endbossHealthBar is undefined!',
+                          'world:', this.world,
+                          'endbossHealthBar:', this.world ? this.world.endbossHealthBar : 'N/A'); // <-- CRITICAL ERROR LOG
+        }
 
         if (this.energy <= 0) {
             this.die();
         }
     }
+
 
     die() {
         this.isDead = true;
