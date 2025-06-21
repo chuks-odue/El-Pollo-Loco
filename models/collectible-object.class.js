@@ -18,7 +18,7 @@ class Collectible extends moveableObject {
           this.width = 60;
           this.height = 60;
         } else if (this.type === 'life') {
-          this.loadimage('img/img/7_statusbars/1_statusbar/2_statusbar_health/blue/100.png');
+          this.loadimage('img/img/7_statusbars/3_icons/icon_health.png');
           this.width = 60;
           this.height = 60;
         }

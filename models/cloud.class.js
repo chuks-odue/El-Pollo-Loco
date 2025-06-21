@@ -1,17 +1,39 @@
-class Cloud extends moveableObject{
-    y=50;
-   width=500;
-   height=250;
+/**
+ * Represents a cloud object in the game.
+ * @extends moveableObject
+ */
+class Cloud extends moveableObject {
+    /**
+     * The y-coordinate of the cloud.
+     * @type {number}
+     */
+    y = 50;
 
-    constructor(){
+    /**
+     * The width of the cloud.
+     * @type {number}
+     */
+    width = 500;
+
+    /**
+     * The height of the cloud.
+     * @type {number}
+     */
+    height = 250;
+
+    /**
+     * Creates a new cloud object.
+     */
+    constructor() {
         super().loadimage('img/img/5_background/layers/4_clouds/1.png');
-        this.x =50 + Math.random() * 500;
-      this.animate();
+        this.x = 50 + Math.random() * 500;
+        this.animate();
     }
-     animate(){
-        this.moveLeft();
-    
-    }
-     
 
+    /**
+     * Animates the cloud by moving it to the left.
+     */
+    animate() {
+        this.moveLeft();
+    }
 }

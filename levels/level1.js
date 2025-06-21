@@ -1,8 +1,19 @@
+/**
+ * The current level.
+ * @type {Level}
+ */
 let level1;
 
+/**
+ * Initializes the level.
+ */
 function initLevel() {
     level1 = new Level(
         [
+            /**
+             * Enemies in the level.
+             * @type {Array<Enemy>}
+             */
             new chicken(world),
             new chicken(world),
             new chicken(world),
@@ -13,12 +24,19 @@ function initLevel() {
             new SmallChicken(world),
             new SmallChicken(world),
             new Endboss(world),
-            
         ],
         [
+            /**
+             * Clouds in the level.
+             * @type {Array<Cloud>}
+             */
             new Cloud()
         ],
         [
+            /**
+             * Background objects in the level.
+             * @type {Array<BackgroundObject>}
+             */
             new BackgroundObject('img/img/5_background/layers/air.png', -819),
             new BackgroundObject('img/img/5_background/layers/3_third_layer/2.png', -819),
             new BackgroundObject('img/img/5_background/layers/2_second_layer/2.png', -819),
@@ -45,6 +63,10 @@ function initLevel() {
             new BackgroundObject('img/img/5_background/layers/1_first_layer/2.png', 819 * 3),
         ],
         [
+            /**
+             * Collectibles in the level.
+             * @type {Array<Collectible>}
+             */
             new Collectible('coin', 10, 130),
             new Collectible('coin', 600, 150),
             new Collectible('coin', 900, 120),

@@ -19,8 +19,16 @@ class chicken extends moveableObject {
         this.x = 400 + Math.random() * 700;
         this.speed = 0.15 + Math.random() * 0.5;
         this.originalSpeed = this.speed;
+                this.collisionOffset = {
+            top: 10,
+            bottom: 10,
+            left: 10,
+            right: 10
+        };
+
         this.animate();
         this.world = world;
+        
 
     }
 

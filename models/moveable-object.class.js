@@ -6,59 +6,82 @@ class moveableObject extends DrawableObject{
     acceleration = 2.5;
     energy = 100;
     lastHit = 0;
-        moveInterval = null;
+    moveInterval = null;
     animationInterval = null;
     bottleThrowInterval = null; 
-    fallInterval = null;        
-
-
-    applyGravity(){
-        setInterval(() => {
-            if (this.isAboveGround()|| this.speedY > 0) {                           
-            this.y -= this.speedY;
-            this.speedY -= this.acceleration;
-            }
-            
-        }, 1000/25);
-    }
+    fallInterval = null;    
     
+    
+    collisionOffset = {
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0
+    };
+
+
+    applyGravity() {
+      
+        if (this.gravityInterval) {
+            clearInterval(this.gravityInterval);
+        }
+        this.gravityInterval = setInterval(() => { // Assign to this.gravityInterval
+            if (this.isAboveGround() || this.speedY > 0) {
+                this.y -= this.speedY;
+                this.speedY -= this.acceleration;
+            }
+        }, 1000 / 25);
+    }
+
+        
     isAboveGround(){
         return this.y < 180;
-    }  
-    isColliding(mo) {
-    return (
-        this.x < mo.x + mo.width &&
-        this.x + this.width > mo.x &&
-        this.y < mo.y + mo.height &&
-        this.y + this.height > mo.y
-    );
-}        
+    } 
     
- 
+    getCollisionBox() {
+        return {
+            x: this.x + this.collisionOffset.left,
+            y: this.y + this.collisionOffset.top,
+            width: this.width - this.collisionOffset.left - this.collisionOffset.right,
+            height: this.height - this.collisionOffset.top - this.collisionOffset.bottom
+        };
+    }
 
-hit(damage = 20) {
-    if (new Date().getTime() - this.lastHit > 500) {
-        this.energy -= damage;
-        if (this.energy < 0) this.energy = 0;
-        this.lastHit = new Date().getTime();
-        if (this instanceof Character) {
-            this.world.coinBar.percentage -= 20;
-            if (this.world.coinBar.percentage < 0) {
-                this.world.coinBar.percentage = 0;
+    isColliding(mo) {
+        const thisBox = this.getCollisionBox();
+        const moBox = mo.getCollisionBox();
+
+        return (
+            thisBox.x < moBox.x + moBox.width &&
+            thisBox.x + thisBox.width > moBox.x &&
+            thisBox.y < moBox.y + moBox.height &&
+            thisBox.y + thisBox.height > moBox.y
+        );
+    }
+
+      hit(damage = 20) {
+        if (new Date().getTime() - this.lastHit > 500) {
+            this.energy -= damage;
+            if (this.energy < 0) this.energy = 0;
+            this.lastHit = new Date().getTime();
+
+            // This block specifically for Character, not all moveableObjects
+            if (this instanceof Character) {
+                this.world.coinBar.percentage -= 20;
+                if (this.world.coinBar.percentage < 0) {
+                    this.world.coinBar.percentage = 0;
+                }
+                this.world.coinBar.setPercentage(this.world.coinBar.percentage);
+
+                let droppedCoin = new DroppedCoin(this.x, this.y);
+                droppedCoin.world = this.world;
+                this.world.droppedCoins.push(droppedCoin);
+                this.world.playSound('coin-lost');
             }
-            
-            this.world.coinBar.setPercentage(this.world.coinBar.percentage); 
-            
-
-            let droppedCoin = new DroppedCoin(this.x, this.y);
-            droppedCoin.world = this.world;
-            this.world.droppedCoins.push(droppedCoin);
-            this.world.playSound('coin-lost');
         }
     }
-}
 
-                    
+                               
     isHurt(){
         let timepassed = new Date().getTime() - this.lastHit;
          timepassed = timepassed / 1000;

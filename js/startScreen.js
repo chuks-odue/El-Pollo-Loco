@@ -1,38 +1,119 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const infoButton = document.getElementById('infoButton');
-    const infoOverlay = document.getElementById('infoOverlay');
-    const closeInfoBtn = document.getElementById('closeInfoBtn'); 
-    let isInfoOverlayVisible = false;    
-    function closeInfoOverlay() {
-        if (infoOverlay) {
-            infoOverlay.style.display = 'none';
-        }
+/**
+ * Flag to track the visibility of the info overlay.
+ * @type {boolean}
+ */
+let isInfoOverlayVisible = false;
+
+/**
+ * Retrieves the info overlay element.
+ * @returns {HTMLElement|null} The info overlay element.
+ */
+function getInfoOverlay() {
+    return document.getElementById('infoOverlay');
+}
+
+/**
+ * Retrieves the info button element.
+ * @returns {HTMLElement|null} The info button element.
+ */
+function getInfoButton() {
+    return document.getElementById('infoButton');
+}
+
+/**
+ * Retrieves the close info button element.
+ * @returns {HTMLElement|null} The close info button element.
+ */
+function getCloseInfoButton() {
+    return document.getElementById('closeInfoBtn');
+}
+
+/**
+ * Shows the info overlay.
+ */
+function showInfoOverlay() {
+    const infoOverlay = getInfoOverlay();
+    if (infoOverlay) {
+        infoOverlay.style.display = 'block';
+        isInfoOverlayVisible = true;
+    }
+}
+
+/**
+ * Hides the info overlay.
+ */
+function hideInfoOverlay() {
+    const infoOverlay = getInfoOverlay();
+    if (infoOverlay) {
+        infoOverlay.style.display = 'none';
         isInfoOverlayVisible = false;
-    }    
+    }
+}
+
+/**
+ * Toggles the visibility of the info overlay.
+ */
+function toggleInfoOverlay() {
+    if (isInfoOverlayVisible) {
+        hideInfoOverlay();
+    } else {
+        showInfoOverlay();
+    }
+}
+
+/**
+ * Sets up the event listener for the info button.
+ */
+function setupInfoButtonListener() {
+    const infoButton = getInfoButton();
     if (infoButton) {
-        infoButton.addEventListener('click', () => {
-            isInfoOverlayVisible = !isInfoOverlayVisible;
-            if (infoOverlay) {
-                infoOverlay.style.display = isInfoOverlayVisible ? 'block' : 'none';
-            }
-        });
-    }    
-    if (closeInfoBtn) { 
-        closeInfoBtn.addEventListener('click', () => {
-            closeInfoOverlay(); 
-        });
-    }    
-    document.addEventListener('click', (event) => {
-        if (isInfoOverlayVisible && 
-            infoOverlay && 
-            !infoOverlay.contains(event.target) && 
-            event.target !== infoButton) 
-        {
-            closeInfoOverlay(); 
+        infoButton.addEventListener('click', toggleInfoOverlay);
+    }
+}
+
+/**
+ * Sets up the event listener for the close info button.
+ */
+function setupCloseButtonListener() {
+    const closeInfoBtn = getCloseInfoButton();
+    if (closeInfoBtn) {
+        closeInfoBtn.addEventListener('click', hideInfoOverlay);
+    }
+}
+
+/**
+ * Sets up the event listener for document clicks.
+ */
+function setupDocumentClickListener() {
+    document.addEventListener('click', function (event) {
+        const infoOverlay = getInfoOverlay();
+        const infoButton = getInfoButton();
+        if (
+            isInfoOverlayVisible &&
+            infoOverlay &&
+            !infoOverlay.contains(event.target) &&
+            event.target !== infoButton
+        ) {
+            hideInfoOverlay();
         }
     });
-});
+}
 
+/**
+ * Initializes the info overlay.
+ */
+function initializeInfoOverlay() {
+    setupInfoButtonListener();
+    setupCloseButtonListener();
+    setupDocumentClickListener();
+}
+
+document.addEventListener('DOMContentLoaded', initializeInfoOverlay);
+
+/**
+ * Toggles fullscreen mode for the game container.
+ * @param {HTMLElement} gameContainer The game container element.
+ */
 function toggleFullscreen(gameContainer) {
     if (!isFullscreen(gameContainer)) {
         enterFullscreen(gameContainer);
@@ -41,6 +122,11 @@ function toggleFullscreen(gameContainer) {
     }
 }
 
+/**
+ * Checks if the game container is in fullscreen mode.
+ * @param {HTMLElement} gameContainer The game container element.
+ * @returns {boolean} True if in fullscreen mode, false otherwise.
+ */
 function isFullscreen(gameContainer) {
     return !!(
         document.fullscreenElement === gameContainer ||
@@ -50,6 +136,10 @@ function isFullscreen(gameContainer) {
     );
 }
 
+/**
+ * Enters fullscreen mode for the game container.
+ * @param {HTMLElement} gameContainer The game container element.
+ */
 function enterFullscreen(gameContainer) {
     try {
         if (gameContainer.requestFullscreen) {
@@ -66,6 +156,9 @@ function enterFullscreen(gameContainer) {
     }
 }
 
+/**
+ * Exits fullscreen mode.
+ */
 function exitFullscreen() {
     try {
         if (document.exitFullscreen) {
@@ -82,6 +175,11 @@ function exitFullscreen() {
     }
 }
 
+/**
+ * Updates the fullscreen icon based on the current fullscreen state.
+ * @param {HTMLElement} fullscreenIcon The fullscreen icon element.
+ * @param {boolean} isFullscreenIcon True if the icon should be in fullscreen mode, false otherwise.
+ */
 function updateFullscreenIcon(fullscreenIcon, isFullscreenIcon) {
     const iconPath = isFullscreenIcon 
         ? 'img/assets/fullscreen_exit.svg'
@@ -98,6 +196,12 @@ function updateFullscreenIcon(fullscreenIcon, isFullscreenIcon) {
         .catch(error => console.error('Icon fetch error:', error));
 }
 
+/**
+ * Handles the fullscreen button click event.
+ * @param {HTMLElement} fullscreenButton The fullscreen button element.
+ * @param {HTMLElement} gameContainer The game container element.
+ * @param {HTMLElement} fullscreenIcon The fullscreen icon element.
+ */
 function handleFullscreenButton(fullscreenButton, gameContainer, fullscreenIcon) {
     fullscreenButton.addEventListener('click', () => {
         toggleFullscreen(gameContainer);
@@ -114,6 +218,11 @@ function handleFullscreenButton(fullscreenButton, gameContainer, fullscreenIcon)
     updateFullscreenIcon(fullscreenIcon, isFullscreen(gameContainer));
 }
 
+/**
+ * Handles the sound button click event.
+ * @param {HTMLElement} soundButtonInGame The sound button element.
+ * @param {HTMLElement} soundIconInGame The sound icon element.
+ */
 function handleSoundButton(soundButtonInGame, soundIconInGame) {
     soundButtonInGame.addEventListener('click', (e) => {
         soundEnabled = !soundEnabled;
@@ -129,6 +238,9 @@ function handleSoundButton(soundButtonInGame, soundIconInGame) {
         : 'img/assets/Mic-Off.svg';
 }
 
+/**
+ * Sets up the game controls.
+ */
 function setupGameControls() {
     const fullscreenButton = document.getElementById('fullscreenButton');
     const fullscreenIcon = document.getElementById('fullscreenIcon');
@@ -142,9 +254,15 @@ function setupGameControls() {
 }
 
 document.addEventListener('DOMContentLoaded', setupGameControls);
+
+/**
+ * Checks if the screen size is small.
+ * @returns {boolean} True if the screen size is small, false otherwise.
+ */
 function isSmallScreen() {
   return window.innerWidth <= 1024;
 }
+
 window.addEventListener('resize', () => {
     
     if (world) { 
@@ -152,7 +270,9 @@ window.addEventListener('resize', () => {
     }
 });
 
-
+/**
+ * Checks the orientation and screen size.
+ */
 function checkOrientationAndScreenSize() {
   const rotateOverlay = document.getElementById('rotateOverlay');
   const canvas = document.querySelector('canvas'); 
@@ -172,8 +292,3 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('orientationchange', checkOrientationAndScreenSize);
     window.addEventListener('resize', checkOrientationAndScreenSize);
 });
-
-
-
-
-                                            

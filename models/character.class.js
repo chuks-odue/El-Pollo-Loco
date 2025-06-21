@@ -62,9 +62,18 @@ class Character extends moveableObject {
         this.loadimages(this.DEAD_IMAGES);
         this.loadimages(this.HURT_IMAGES);
         this.sounds.walk.loop = true;
+          this.collisionOffset = {
+            top: 80,   // Shrink 80px from the top (e.g., for head space)
+            bottom: 10, // Shrink 10px from the bottom (e.g., for feet/shadows)
+            left: 30,  // Shrink 30px from the left
+            right: 30  // Shrink 30px from the right
+        };
         this.applyGravity();
         this.animate();
         this.previousY = this.y;
+            this.showCollisionBox = true; // <--- MAKE SURE THIS IS TRUE
+
+        
 
     }
 

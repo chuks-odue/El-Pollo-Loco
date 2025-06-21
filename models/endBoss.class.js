@@ -28,6 +28,12 @@ class Endboss extends moveableObject {
        super().loadimage('img/img/4_enemie_boss_chicken/1_walk/G1.png');
         this.world = world;    
         this.initProperties();
+         this.collisionOffset = {
+            top: 100,  // Big boss, maybe lots of empty space above
+            bottom: 50, // Maybe large feet/shadow area below
+            left: 50,
+            right: 50
+        };
          this.clearIntervals();
         this.loadAllImages();
        this.startAnimation();
@@ -75,7 +81,7 @@ class Endboss extends moveableObject {
         this.bottleThrowInterval = setInterval(() => {
             if (!this.isDead && this.isActivated) {
                 const isCharacterOnLeft = world.character.x < this.x;
-                const bottle = new ThrowableObject(this.x, this.y + 50, isCharacterOnLeft, this);
+                const bottle = new ThrowableObject(this.x, this.y + 150, isCharacterOnLeft, this);
                 world.throwableObjects.push(bottle);
                 
             }
