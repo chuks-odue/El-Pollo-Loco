@@ -24,7 +24,7 @@ class SmallChicken extends moveableObject {
      * The speed of the chicken.
      * @type {number}
      */
-    speed = 0.2 + Math.random() * 0.3;
+    speed = 0.2 + Math.random() * 0.1;
 
      /**
      * The energy of the chicken.
@@ -78,7 +78,7 @@ class SmallChicken extends moveableObject {
         super().loadimage('img/img/3_enemies_chicken/chicken_small/1_walk/1_w.png');
         this.loadimages(this.WALKING_IMAGES);
         this.loadimages(this.DEAD_IMAGES);
-        this.x = 400 + Math.random() * 700;
+        this.x = 400 + Math.random() * 1700;
         this.originalSpeed = this.speed;
         this.world = world;
         this.animate();

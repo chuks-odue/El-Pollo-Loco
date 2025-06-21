@@ -87,6 +87,7 @@ class World {
        this.character.bottleCount = 0;
         this.bottleBar = new StatusBar('bottle');
         this.bottleBar.setPercentage(this.character.bottleCount * 20);
+        
                
         
     }

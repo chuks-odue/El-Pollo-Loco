@@ -65,8 +65,8 @@ class chicken extends moveableObject {
     constructor(world) {
         super().loadimage('img/img/4_enemie_boss_chicken/1_walk/G1.png');
         this.loadimages(this.WALKING_IMAGES);
-        this.x = 400 + Math.random() * 700;
-        this.speed = 0.15 + Math.random() * 0.5;
+        this.x = 400 + Math.random() * 1900;
+        this.speed = 0.15 + Math.random() * 0.3;
         this.originalSpeed = this.speed;
                 this.collisionOffset = {
             top: 10,
