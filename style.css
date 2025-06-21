@@ -370,20 +370,46 @@ canvas{
 }
 #rotateOverlay {
   position: fixed;
-  top: 20%;
+  top: 40%;
   left: 0;
   width: 100vw;
   height: 100vh;
   
-  color: darkslateblue;
+  color: rgba(0, 0, 0, 0.9);
   display: none;
   justify-content: center;
   
   text-align: center;
   z-index: 9999;
-  font-size: 1.0rem;
+  font-size: 2.0rem;
   padding: 10px;
 }
+@media screen and (orientation: landscape) and (max-height: 480px) { /* iPhone 14 Pro Max landscape height is 430px, so this will catch it */
+    #canvas {
+        width: 100vw; /* Use 100vw and 100vh for full viewport coverage */
+        height: 100vh;
+        position: absolute;
+        top: 0;
+        left: 0;
+        transform: none; /* Remove centering transform */
+         /* Keep the game content scaled properly */
+
+        /* Add safe area padding to the canvas to avoid notch/home indicator */
+        padding-top: env(safe-area-inset-top);
+        padding-right: env(safe-area-inset-right);
+        padding-bottom: env(safe-area-inset-bottom);
+        padding-left: env(safe-area-inset-left);
+        box-sizing: border-box;
+    }
+    #inGameHelp{
+        display: none !important;
+    }
+    #inGameMenu{
+        display: none;
+    }
+}
+
+
 #impressum-container a {
   position: absolute;
   bottom: 40px;
