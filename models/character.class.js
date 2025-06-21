@@ -1,16 +1,67 @@
+/**
+ * Represents a character in the game.
+ * @extends moveableObject
+ */
 class Character extends moveableObject {
+    /**
+     * The width of the character.
+     * @type {number}
+     */
     width = 120;
+            
+
+    /**
+     * The height of the character.
+     * @type {number}
+     */
     height = 240;
+
+    /**
+     * The y-coordinate of the character.
+     * @type {number}
+     */
     y = 30;
+
+    /**
+     * The speed of the character.
+     * @type {number}
+     */
     speed = 10;
-    
-    
+
+    /**
+     * The number of bottles the character has.
+     * @type {number}
+     */
     bottleCount = 5;
+
+    /**
+     * The world object.
+     * @type {World}
+     */
     world;
+
+    /**
+     * Flag to track whether the character is hurt.
+     * @type {boolean}
+     */
     isHurtState = false;
+
+    /**
+     * The timestamp of when the character was hurt.
+     * @type {number}
+     */
     hurtTimestamp = 0;
+
+    /**
+     * The duration of the hurt state.
+     * @type {number}
+     */
     hurtDuration = 700;
 
+    /**
+     * The walking images of the character.
+     * @type {string[]}
+     */
     WALKING_IMAGES = [
         'img/img/2_character_pepe/2_walk/W-21.png',
         'img/img/2_character_pepe/2_walk/W-22.png',
@@ -20,6 +71,10 @@ class Character extends moveableObject {
         'img/img/2_character_pepe/2_walk/W-26.png'
     ];
 
+    /**
+     * The jumping images of the character.
+     * @type {string[]}
+     */
     JUMPING_IMAGES = [
         'img/img/2_character_pepe/3_jump/J-31.png',
         'img/img/2_character_pepe/3_jump/J-32.png',
@@ -33,6 +88,10 @@ class Character extends moveableObject {
         'img/img/2_character_pepe/3_jump/J-39.png'
     ];
 
+    /**
+     * The dead images of the character.
+     * @type {string[]}
+     */
     DEAD_IMAGES = [
         'img/img/2_character_pepe/5_dead/D-51.png',
         'img/img/2_character_pepe/5_dead/D-52.png',
@@ -43,18 +102,29 @@ class Character extends moveableObject {
         'img/img/2_character_pepe/5_dead/D-57.png'
     ];
 
+    /**
+     * The hurt images of the character.
+     * @type {string[]}
+     */
     HURT_IMAGES = [
         'img/img/2_character_pepe/4_hurt/H-41.png',
         'img/img/2_character_pepe/4_hurt/H-42.png',
         'img/img/2_character_pepe/4_hurt/H-43.png'
     ];
 
+    /**
+     * The sounds of the character.
+     * @type {Object}
+     */
     sounds = {
         walk: new Audio('audio/concrete-footsteps-6752.mp3'),
         jump: new Audio('audio/slime_jump.mp3'),
         hurt: new Audio('audio/5.ogg'),
     };
 
+    /**
+     * Creates a new character.
+     */
     constructor() {
         super().loadimage('img/img/2_character_pepe/1_idle/idle/I-1.png');
         this.loadimages(this.WALKING_IMAGES);
@@ -62,21 +132,21 @@ class Character extends moveableObject {
         this.loadimages(this.DEAD_IMAGES);
         this.loadimages(this.HURT_IMAGES);
         this.sounds.walk.loop = true;
-          this.collisionOffset = {
-            top: 80,   // Shrink 80px from the top (e.g., for head space)
-            bottom: 10, // Shrink 10px from the bottom (e.g., for feet/shadows)
-            left: 30,  // Shrink 30px from the left
-            right: 30  // Shrink 30px from the right
+        this.collisionOffset = {
+            top: 80,   
+            bottom: 10, 
+            left: 30,  
+            right: 30  
         };
         this.applyGravity();
         this.animate();
         this.previousY = this.y;
-            this.showCollisionBox = true; // <--- MAKE SURE THIS IS TRUE
-
-        
-
+        this.showCollisionBox = true; 
     }
 
+    /**
+     * Updates the movement of the character.
+     */
     updateMovement() {
         if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
             this.otherDirection = false;
@@ -91,6 +161,9 @@ class Character extends moveableObject {
         }
     }
 
+    /**
+     * Updates the jumping of the character.
+     */
     updateJumping() {
         if (this.world.keyboard.UP && !this.isAboveGround()) {
             this.jump();
@@ -98,10 +171,16 @@ class Character extends moveableObject {
         }
     }
 
+    /**
+     * Updates the camera position.
+     */
     updateCamera() {
         this.world.camera_x = -this.x + 100;
     }
 
+    /**
+     * Updates the main game loop.
+     */
     updateMainGameLoop() {
         
         if (!this.world.gameOver) {
@@ -115,8 +194,9 @@ class Character extends moveableObject {
         }
     }
 
-
-
+    /**
+     * Updates the animation of the character.
+     */
     updateAnimation() {
         if (this.isDead()) {
             this.playAnimation(this.DEAD_IMAGES);
@@ -134,6 +214,9 @@ class Character extends moveableObject {
         }
     }
 
+    /**
+     * Animates the character.
+     */
     animate() {
         if (this.moveInterval) clearInterval(this.moveInterval);
         if (this.animationInterval) clearInterval(this.animationInterval);
@@ -151,12 +234,18 @@ class Character extends moveableObject {
         }, 50);
     }
 
+    /**
+     * Plays the walking sound.
+     */
     playWalkingSound() {
         if (soundEnabled && this.sounds.walk.paused) {
             this.sounds.walk.play();
         }
     }
 
+    /**
+     * Stops the walking sound.
+     */
     stopWalkingSound() {
         if (!this.sounds.walk.paused) {
             this.sounds.walk.pause();
@@ -164,6 +253,10 @@ class Character extends moveableObject {
         }
     }
 
+    /**
+     * Plays a sound.
+     * @param {string} name The name of the sound.
+     */
     playSound(name) {
         if (soundEnabled) {
             const sound = this.sounds[name];
@@ -174,6 +267,9 @@ class Character extends moveableObject {
         }
     }
 
+    /**
+     * Makes the character jump.
+     */
     jump() {
         this.speedY = 40;
         if (soundEnabled) {
@@ -181,12 +277,16 @@ class Character extends moveableObject {
         }
     }
 
+    /**
+     * Stops the animation.
+     */
     stopAnimation() {
         if (this.animationInterval) {
             clearInterval(this.animationInterval);
             this.animationInterval = null;
         }
     }
-   
+
+
     
 }

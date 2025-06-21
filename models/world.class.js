@@ -83,7 +83,11 @@ class World {
        this.initProperties(canvas, keyboard);
        this.initGameLogic();
        this.initUIComponents();
-       this.loadPlayPauseIcons();            
+       this.loadPlayPauseIcons();     
+       this.character.bottleCount = 0;
+        this.bottleBar = new StatusBar('bottle');
+        this.bottleBar.setPercentage(this.character.bottleCount * 20);
+               
         
     }
 
@@ -253,12 +257,15 @@ class World {
             }
         });
     }
-    throwBottle() {
-    let bottle = new ThrowableObject(this.character.x + 50, this.character.y + 50, this.character.otherDirection);
-    bottle.owner = this.character;
-    this.throwableObjects.push(bottle); 
-    this.character.bottleCount--;
-    this.bottleBar.setPercentage(this.character.bottleCount * 20);
+  throwBottle() {
+    console.log('Bottle count:', this.character.bottleCount);
+    if (this.character.bottleCount > 0) {
+        let bottle = new ThrowableObject(this.character.x + 50, this.character.y + 50, this.character.otherDirection);
+        bottle.owner = this.character;
+        this.throwableObjects.push(bottle); 
+        this.character.bottleCount--;
+        this.bottleBar.setPercentage(this.character.bottleCount * 20);
+    }
 }
 
 checkEndboss() {

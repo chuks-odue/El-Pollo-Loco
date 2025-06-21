@@ -75,6 +75,9 @@ function initLevel() {
             new Collectible('coin', 2000, 80),
             new Collectible('coin', 2200, 190),
 
+            new Collectible('bottle', 50, 270),
+            new Collectible('bottle', 210, 120),
+            new Collectible('bottle', 350, 200),
             new Collectible('bottle', 550, 270),
             new Collectible('bottle', 900, 200),
             new Collectible('bottle', 1350, 300),

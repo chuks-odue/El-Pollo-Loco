@@ -1,25 +1,79 @@
+/**
+ * Represents a small chicken enemy.
+ * @extends moveableObject
+ */
 class SmallChicken extends moveableObject {
+
+     /**
+     * The y-coordinate of the chicken.
+     * @type {number}
+     */
     y = 400;
+
+     /**
+     * The width of the chicken.
+     * @type {number}
+     */
     width = 40;
+      /**
+     * The height of the chicken.
+     * @type {number}
+     */
     height = 40;
+    /**
+     * The speed of the chicken.
+     * @type {number}
+     */
     speed = 0.2 + Math.random() * 0.3;
+
+     /**
+     * The energy of the chicken.
+     * @type {number}
+     */
     energy = 50;
+
+     /**
+     * Flag to track whether the chicken is dead.
+     * @type {boolean}
+     */
     isDead = false;
+
+    /**
+     * The vertical speed of the chicken.
+     * @type {number}
+     */
     speedY = 0;
+    
+     /**
+     * The interval IDs for movement, jumping, and animation.
+     * @type {number}
+     */
     moveInterval;
     jumpInterval;
     animationInterval;
 
+     /**
+     * The walking images of the chicken.
+     * @type {string[]}
+     */
     WALKING_IMAGES = [
         'img/img/3_enemies_chicken/chicken_small/1_walk/1_w.png',
         'img/img/3_enemies_chicken/chicken_small/1_walk/2_w.png',
         'img/img/3_enemies_chicken/chicken_small/1_walk/3_w.png',
     ];
 
+      /**
+     * The dead images of the chicken.
+     * @type {string[]}
+     */
     DEAD_IMAGES = [
         'img/img/3_enemies_chicken/chicken_small/2_dead/dead.png',
     ];
 
+     /**
+     * Creates a new small chicken enemy.
+     * @param {World} world The world object.
+     */
     constructor(world) {
         super().loadimage('img/img/3_enemies_chicken/chicken_small/1_walk/1_w.png');
         this.loadimages(this.WALKING_IMAGES);
@@ -30,6 +84,9 @@ class SmallChicken extends moveableObject {
         this.animate();
     }
 
+    /**
+     * Animates the chicken.
+     */
     animate() {
         this.clearAnimationIntervals();
         this.startMovement();
@@ -37,11 +94,18 @@ class SmallChicken extends moveableObject {
         this.startAnimationLoop();
     }
 
+    /**
+     * Clears the animation intervals.
+     */
     clearAnimationIntervals() {
         if (this.moveInterval) clearInterval(this.moveInterval);
         if (this.jumpInterval) clearInterval(this.jumpInterval);
         if (this.animationInterval) clearInterval(this.animationInterval);
     }
+
+    /**
+     * Starts the movement of the chicken.
+     */
 
     startMovement() {
         this.moveInterval = setInterval(() => {
@@ -52,6 +116,10 @@ class SmallChicken extends moveableObject {
         }, 1000 / 60);
     }
 
+    /**
+     * Starts the jumping of the chicken.
+     */
+
     startJumping() {
         this.jumpInterval = setInterval(() => {
             if (!this.isDead && !world.gameOver && !world.paused && Math.random() < 0.05) {
@@ -60,6 +128,9 @@ class SmallChicken extends moveableObject {
         }, 1000 / 60);
     }
 
+     /**
+     * Starts the animation loop of the chicken.
+     */
     startAnimationLoop() {
         this.animationInterval = setInterval(() => {
             if (this.isDead) {
@@ -70,12 +141,18 @@ class SmallChicken extends moveableObject {
         }, 200);
     }
 
+     /**
+     * Makes the chicken jump.
+     */
     jump() {
         if (this.y >= 380) {
             this.speedY = -20;
         }
     }
 
+    /**
+     * Updates the position of the chicken.
+     */
     updatePosition() {
         this.y += this.speedY;
         if (this.y < 400) {
@@ -86,6 +163,10 @@ class SmallChicken extends moveableObject {
         }
     }
 
+     /**
+     * Plays the animation of the chicken.
+     * @param {string[]} images The images to play.
+     */
     playAnimation(images) {
         let i = this.currentImage % images.length;
         let path = images[i];
@@ -93,6 +174,9 @@ class SmallChicken extends moveableObject {
         this.currentImage++;
     }
 
+     /**
+     * Handles a hit event.
+     */
     hit() {
         this.energy -= 50;
         if (this.energy <= 0) {
@@ -100,6 +184,9 @@ class SmallChicken extends moveableObject {
         }
     }
 
+    /**
+     * Kills the chicken.
+     */
     die() {
         this.isDead = true;
         this.speed = 0;

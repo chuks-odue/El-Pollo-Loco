@@ -401,12 +401,12 @@ canvas{
         padding-left: env(safe-area-inset-left);
         box-sizing: border-box;
     }
-    #inGameHelp{
+    /*#inGameHelp{
         display: none !important;
     }
     #inGameMenu{
         display: none;
-    }
+    }*/
 }
 
 

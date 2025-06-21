@@ -1,147 +1,223 @@
+/**
+ * Represents the endboss enemy in the game.
+ * @extends moveableObject
+ */
 class Endboss extends moveableObject {
+    /**
+     * The height of the endboss.
+     * @type {number}
+     */
     height = 400;
+
+    /**
+     * The width of the endboss.
+     * @type {number}
+     */
     width = 250;
+
+    /**
+     * The y-coordinate of the endboss.
+     * @type {number}
+     */
     y = 59;
+
+    /**
+     * The energy of the endboss.
+     * @type {number}
+     */
     energy = 400;
+
+    /**
+     * Flag to track whether the endboss is activated.
+     * @type {boolean}
+     */
     isActivated = false;
+
+    /**
+     * Flag to track whether the endboss is dead.
+     * @type {boolean}
+     */
     isDead = false;
+
+    /**
+     * Flag to track whether the endboss has fallen.
+     * @type {boolean}
+     */
     hasFallen = false;
 
+    /**
+     * The walking images of the endboss.
+     * @type {string[]}
+     */
     WALKING_IMAGES_ENDBOSS = [
         'img/img/4_enemie_boss_chicken/1_walk/G1.png',
         'img/img/4_enemie_boss_chicken/1_walk/G2.png',
         'img/img/4_enemie_boss_chicken/1_walk/G3.png',
         'img/img/4_enemie_boss_chicken/1_walk/G4.png',
     ];
+
+    /**
+     * The dead images of the endboss.
+     * @type {string[]}
+     */
     Endboss_DEAD = [
         'img/img/4_enemie_boss_chicken/5_dead/G24.png',
         'img/img/4_enemie_boss_chicken/5_dead/G25.png',
         'img/img/4_enemie_boss_chicken/5_dead/G26.png',
     ];
 
+    /**
+     * The interval IDs for bottle throwing, movement, animation, and falling.
+     * @type {number}
+     */
     bottleThrowInterval;
     moveInterval;
     animationInterval;
     fallInterval;
 
+    /**
+     * Creates a new endboss.
+     * @param {World} world The world object.
+     */
     constructor(world) {
-       super().loadimage('img/img/4_enemie_boss_chicken/1_walk/G1.png');
-        this.world = world;    
+        super().loadimage('img/img/4_enemie_boss_chicken/1_walk/G1.png');
+        this.world = world;
         this.initProperties();
-         this.collisionOffset = {
-            top: 100,  // Big boss, maybe lots of empty space above
-            bottom: 50, // Maybe large feet/shadow area below
+        this.collisionOffset = {
+            top: 100,
+            bottom: 50,
             left: 50,
             right: 50
         };
-         this.clearIntervals();
+        this.clearIntervals();
         this.loadAllImages();
-       this.startAnimation();
+        this.startAnimation();
     }
 
+    /**
+     * Initializes the properties of the endboss.
+     */
     initProperties() {
         this.x = 2800;
-       this.speed = 0.15 + Math.random() * 0.5;
-       this.originalSpeed = this.speed;
-       this.isActivated = false;
-       this.isDead = false;
-         this.hasFallen = false;    
-       this.bottleThrowInterval = null;
-       this.moveInterval = null;
-       this.animationInterval = null;
-       this.fallInterval = null;
-       this.movementLimit = 2900; 
-
+        this.speed = 0.15 + Math.random() * 0.5;
+        this.originalSpeed = this.speed;
+        this.isActivated = false;
+        this.isDead = false;
+        this.hasFallen = false;
+        this.bottleThrowInterval = null;
+        this.moveInterval = null;
+        this.animationInterval = null;
+        this.fallInterval = null;
+        this.movementLimit = 2900;
     }
 
+    /**
+     * Clears all intervals.
+     */
     clearIntervals() {
-      if (this.bottleThrowInterval) clearInterval(this.bottleThrowInterval);
-      if (this.moveInterval) clearInterval(this.moveInterval);
-      if (this.animationInterval) clearInterval(this.animationInterval);
-      if (this.fallInterval) clearInterval(this.fallInterval);
+        if (this.bottleThrowInterval) clearInterval(this.bottleThrowInterval);
+        if (this.moveInterval) clearInterval(this.moveInterval);
+        if (this.animationInterval) clearInterval(this.animationInterval);
+        if (this.fallInterval) clearInterval(this.fallInterval);
     }
 
+    /**
+     * Loads all images.
+     */
     loadAllImages() {
-      this.loadimages(this.WALKING_IMAGES_ENDBOSS);
-      this.loadimages(this.Endboss_DEAD);
+        this.loadimages(this.WALKING_IMAGES_ENDBOSS);
+        this.loadimages(this.Endboss_DEAD);
     }
 
+    /**
+     * Starts the animation.
+     */
     startAnimation() {
-       this.animate();
+        this.animate();
     }
 
+    /**
+     * Throws bottles at the character.
+     */
     throwBottles() {
         if (this.bottleThrowInterval) {
             clearInterval(this.bottleThrowInterval);
         }
-        if (this.bottleThrowInterval) {
-        clearInterval(this.bottleThrowInterval);
-        
-    }
         this.bottleThrowInterval = setInterval(() => {
             if (!this.isDead && this.isActivated) {
                 const isCharacterOnLeft = world.character.x < this.x;
                 const bottle = new ThrowableObject(this.x, this.y + 150, isCharacterOnLeft, this);
                 world.throwableObjects.push(bottle);
-                
             }
         }, 3000);
     }
 
-    animate() {
-        if (this.moveInterval) clearInterval(this.moveInterval);
-        if (this.animationInterval) clearInterval(this.animationInterval);
+    /**
+     * Animates the endboss.
+     */
+    animateMovement() {
+    if (this.moveInterval) clearInterval(this.moveInterval);
        this.moveInterval = setInterval(() => {
-    if (!this.isDead && !world.gameOver && !world.paused) {
-        if (this.x > this.movementLimit) {
-            this.moveLeft();
-        } else {
-            // Stop moving if reached limit
-            this.speed = 0;
-        }
-    }
-}, 1000 / 60);
-
-        this.animationInterval = setInterval(() => {
-            if (this.isDead) {
-                if (!this.hasFallen) {
-                    this.playAnimation(this.Endboss_DEAD);
-                } else {const lastFrame = this.Endboss_DEAD[this.Endboss_DEAD.length - 1];
-                    this.loadimage(lastFrame);
+           if (!this.isDead && !world.gameOver && !world.paused) {
+               if (this.x > this.movementLimit) {
+                   this.moveLeft();
+                } else {
+                   this.speed = 0;
                 }
-            } else {this.playAnimation(this.WALKING_IMAGES_ENDBOSS);}
+            }
+        }, 1000 / 60);
+    }
+
+    /**
+ * Animates the endboss's images.
+ */
+   animateImages() {
+       if (this.animationInterval) clearInterval(this.animationInterval);
+         this.animationInterval = setInterval(() => {
+           if (this.isDead) {
+               if (!this.hasFallen) {
+                  this.playAnimation(this.Endboss_DEAD);
+                } else {
+                  const lastFrame = this.Endboss_DEAD[this.Endboss_DEAD.length - 1];
+                  this.loadimage(lastFrame);
+                }
+            } else {
+                this.playAnimation(this.WALKING_IMAGES_ENDBOSS);
+            }
         }, 200);
     }
 
+
+   /**
+ * Animates the movement of the endboss.
+ * 
+ */
+    animate() {
+      this.animateMovement();
+      this.animateImages();
+    }
+
+    /**
+     * Handles a hit event.
+     */
     hit() {
-      
-        this.energy -= 100;        
+        this.energy -= 100;
         if (this.energy < 0) {
             this.energy = 0;
         }
-
-      
-
         const maxEnergy = 400;
         const newPercentage = (this.energy / maxEnergy) * 100;
-
-       
         if (this.world && this.world.endbossHealthBar) {
-           
             this.world.endbossHealthBar.setPercentage(newPercentage);
-          
-        } else {
-            console.error('Endboss: ERROR - world or endbossHealthBar is undefined!',
-                          'world:', this.world,
-                          'endbossHealthBar:', this.world ? this.world.endbossHealthBar : 'N/A'); // <-- CRITICAL ERROR LOG
-        }
-
+        } 
         if (this.energy <= 0) {
             this.die();
         }
     }
 
-
+    /**
+     * Kills the endboss.
+     */
     die() {
         this.isDead = true;
         this.speed = 0;
@@ -156,6 +232,9 @@ class Endboss extends moveableObject {
         }, 2000);
     }
 
+    /**
+     * Starts the falling animation.
+     */
     startFalling() {
         if (this.fallInterval) clearInterval(this.fallInterval);
 

@@ -1,3 +1,7 @@
+/**
+ * Represents a keyboard input handler.
+ */
+
 class Keyboard {
     LEFT = false;
     RIGHT = false;
@@ -6,18 +10,31 @@ class Keyboard {
     UP = false;
     D = false;
 
+     /**
+     * The starting x-coordinate of a touch event.
+     * @type {number}
+     */
     touchStartX = 0;
 
+     /**
+     * Creates a new keyboard input handler.
+     */
     constructor() {
         this.initKeyboardListeners();
         this.initTouchListeners();
     }
 
+      /**
+     * Initializes keyboard event listeners.
+     */
     initKeyboardListeners() {
         this.addKeyDownListener();
         this.addKeyUpListener();
     }
 
+    /**
+     * Adds a key down event listener.
+     */
     addKeyDownListener() {
         document.addEventListener('keydown', (event) => {
             switch (event.key) {
@@ -31,6 +48,9 @@ class Keyboard {
         });
     }
 
+    /**
+     * Adds a key up event listener.
+     */
     addKeyUpListener() {
         document.addEventListener('keyup', (event) => {
             switch (event.key) {
@@ -43,6 +63,9 @@ class Keyboard {
         });
     }
 
+    /**
+     * Initializes touch event listeners.
+     */
     initTouchListeners() {
         document.addEventListener('touchstart', (event) => {
             this.touchStartX = event.touches[0].clientX;
@@ -60,6 +83,9 @@ class Keyboard {
         });
     }
 
+     /**
+     * Throws a bottle when the D key is pressed.
+     */
     throwBottle() {
         this.D = true;
         setTimeout(() => {

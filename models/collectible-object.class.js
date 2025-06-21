@@ -1,38 +1,68 @@
+/**
+ * Represents a collectible object in the game.
+ * @extends moveableObject
+ */
 class Collectible extends moveableObject {
-
+    /**
+     * The timer for blinking.
+     * @type {number}
+     */
     blinkTimer = 0;
+
+    /**
+     * Flag to track whether the collectible is visible.
+     * @type {boolean}
+     */
     isVisible = true;
 
+    /**
+     * Sets the initial state of the collectible.
+     * @param {number} x The x-coordinate of the collectible.
+     * @param {number} y The y-coordinate of the collectible.
+     */
     setInitialState(x, y) {
-      this.x = x;
-      this.y = y;
+        this.x = x;
+        this.y = y;
     }
 
-   initializeType() {
-    if (this.type === 'coin') {
-          this.loadimage('img/img/8_coin/coin_1.png');
-          this.width = 110;
-          this.height = 110;
+    /**
+     * Initializes the type of the collectible.
+     */
+    initializeType() {
+        if (this.type === 'coin') {
+            this.loadimage('img/img/8_coin/coin_1.png');
+            this.width = 110;
+            this.height = 110;
         } else if (this.type === 'bottle') {
-          this.loadimage('img/img/6_salsa_bottle/salsa_bottle.png');
-          this.width = 60;
-          this.height = 60;
+            this.loadimage('img/img/6_salsa_bottle/salsa_bottle.png');
+            this.width = 60;
+            this.height = 60;
         } else if (this.type === 'life') {
-          this.loadimage('img/img/7_statusbars/3_icons/icon_health.png');
-          this.width = 60;
-          this.height = 60;
+            this.loadimage('img/img/7_statusbars/3_icons/icon_health.png');
+            this.width = 60;
+            this.height = 60;
         }
     }
 
-   constructor(type, x, y) {
-      super();
-       this.type = type;
-       this.setInitialState(x, y);
-       this.initializeType();
+    /**
+     * Creates a new collectible.
+     * @param {string} type The type of the collectible (coin, bottle, or life).
+     * @param {number} x The x-coordinate of the collectible.
+     * @param {number} y The y-coordinate of the collectible.
+     */
+    constructor(type, x, y) {
+        super();
+        this.type = type;
+        this.setInitialState(x, y);
+        this.initializeType();
     }
 
+    /**
+     * Draws the collectible on the canvas.
+     * @param {CanvasRenderingContext2D} ctx The 2D drawing context of the canvas.
+     */
     draw(ctx) {
-      if (this.isVisible) {
+        if (this.isVisible) {
             super.draw(ctx);
         }
         if (this.type === 'coin') {
@@ -43,5 +73,4 @@ class Collectible extends moveableObject {
             }
         }
     }
-
 }
