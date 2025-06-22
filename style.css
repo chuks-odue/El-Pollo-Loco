@@ -348,6 +348,9 @@ canvas{
     z-index: 1000;
     display: none;
 }
+.hide-on-mobile{
+    display: none;
+}
 
 #canvas {
     width: 820px;
@@ -401,12 +404,18 @@ canvas{
         padding-left: env(safe-area-inset-left);
         box-sizing: border-box;
     }
-    /*#inGameHelp{
-        display: none !important;
-    }
-    #inGameMenu{
-        display: none;
-    }*/
+      #inGameMenu.game-running {
+    display: none;
+  }
+      #inGameHelp.gameRunning {
+    display: none;
+  }
+   
+}
+@media only screen and (max-device-width: 1029px) {
+  #inGameMenu.hide-on-mobile {
+    display: none !important;
+  }
 }
 
 

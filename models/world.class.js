@@ -476,6 +476,9 @@ resumeThrowableObjects() {
   this.resumeThrowableObjects();
   this.startAnimation();
   this.startCollisionDetection();
+  this.character.applyGravity();
+
+  
   
 }
 

@@ -170,24 +170,31 @@ function preloadImages(imageUrls) {
     });
   });
 }
-
 /**
- * Handles the window resize event.
+ * Updates the in-game menu and help visibility based on window size.
  */
-function handleWindowResize() {
-    window.addEventListener('resize', () => {
-        const inGameMenu = document.getElementById('inGameMenu');
-        if (window.innerWidth <= 1029) {
-            inGameMenu.classList.add('hide-on-mobile');
-        } else {
-            inGameMenu.classList.remove('hide-on-mobile');
-        }
-        const inGameHelp = document.getElementById('inGameHelp');
-        if (window.innerWidth <= 920) {
-            inGameHelp.style.display = 'none';
-        } else {inGameHelp.style.display = 'block'; }
-    });
+function updateInGameMenuVisibility() {
+    const inGameMenu = document.getElementById('inGameMenu');
+    if (window.innerWidth <= 1029) {
+        inGameMenu?.classList.add('hide-on-mobile');
+    } else {
+        inGameMenu?.classList.remove('hide-on-mobile');
+    }
+
+    const inGameHelp = document.getElementById('inGameHelp');
+    if (window.innerWidth <= 920) {
+        inGameHelp.style.display = 'none';
+    } else {
+        inGameHelp.style.display = 'block';
+    }
 }
+function handleWindowResize() {
+    window.addEventListener('resize', updateInGameMenuVisibility);
+}
+
+
+
+
 
 /**
  * Hides the header.
@@ -267,7 +274,9 @@ function addCanvasClickListener(canvas) {
  * Starts the game.
  */
 function startGame() {
-  prepareUIForGameStart();
+     const inGameMenu = document.getElementById('inGameMenu');
+  if (inGameMenu) inGameMenu.classList.add('game-running');
+    prepareUIForGameStart();
   const canvas = document.getElementById('canvas');
   if (canvas) canvas.style.display = 'none';
 
@@ -284,6 +293,7 @@ function prepareUIForGameStart() {
   hideStartScreen();
   handleInGameMenuDisplay();
   handleWindowResize();
+   updateInGameMenuVisibility();
   hideHeader();
   showInGameMenu();
   showPlayPauseControls();
@@ -314,6 +324,8 @@ function hideLoadingScreen() {
 
 // Event listeners
 document.addEventListener('DOMContentLoaded', () => {
+    const inGameMenu = document.getElementById('inGameMenu');
+  if (inGameMenu) inGameMenu.classList.remove('game-running');
   const startButton = document.getElementById('startButton');
   startButton.addEventListener('click', () => {
     const loadingScreen = document.getElementById('loadingScreen');
