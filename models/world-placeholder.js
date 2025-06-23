@@ -13,6 +13,8 @@ class World {
     statusBar = new StatusBar('health');
     coinBar = new StatusBar('coin');
     bottleBar = new StatusBar('bottle');
+    endbossHealthBar = new StatusBar('endbossHealth'); 
+
     throwableObjects = [];
     droppedCoins = [];
     playPauseButton;
@@ -81,15 +83,29 @@ class World {
        this.initProperties(canvas, keyboard);
        this.initGameLogic();
        this.initUIComponents();
-       this.loadPlayPauseIcons();
+       this.loadPlayPauseIcons();     
+       this.character.bottleCount = 0;
+        this.bottleBar = new StatusBar('bottle');
+        this.bottleBar.setPercentage(this.character.bottleCount * 20);
+        
+               
+        
     }
 
-    setWorld() {
-        this.character.world = this;
-    }
-      loadImage(src) {
+  setWorld() {
+        this.character.world = this;         
+        this.level.enemies.forEach(enemy => {
+            enemy.world = this; 
+            
+        });        
+        if (this.level.endboss) { 
+            this.level.endboss.world = this;
+            
+        }
+    }  
+    loadImage(src) {
     World.imagesToLoad.push(src);
-    // Load the image here
+    
   }
 
 
@@ -242,12 +258,15 @@ class World {
             }
         });
     }
-    throwBottle() {
-    let bottle = new ThrowableObject(this.character.x + 50, this.character.y + 50, this.character.otherDirection);
-    bottle.owner = this.character;
-    this.throwableObjects.push(bottle); 
-    this.character.bottleCount--;
-    this.bottleBar.setPercentage(this.character.bottleCount * 20);
+  throwBottle() {
+    console.log('Bottle count:', this.character.bottleCount);
+    if (this.character.bottleCount > 0) {
+        let bottle = new ThrowableObject(this.character.x + 50, this.character.y + 50, this.character.otherDirection);
+        bottle.owner = this.character;
+        this.throwableObjects.push(bottle); 
+        this.character.bottleCount--;
+        this.bottleBar.setPercentage(this.character.bottleCount * 20);
+    }
 }
 
 checkEndboss() {
@@ -304,6 +323,8 @@ checkEndboss() {
        this.addToMap(this.statusBar);
        this.addToMap(this.coinBar);
        this.touchControls.draw();
+        this.addToMap(this.endbossHealthBar);
+        
     }
 
    drawButtons() {  
@@ -409,10 +430,8 @@ checkEndboss() {
       clearInterval(enemy.animationInterval);
       enemy.animationInterval = null;
     }
-    if (enemy.bottleThrowInterval) {
-      clearInterval(enemy.bottleThrowInterval);
-      enemy.bottleThrowInterval = null;
-      enemy.throwBottles();
+    if (enemy instanceof Endboss) {        
+            enemy.throwBottles();                                  
     }
     enemy.animate();
   });
@@ -457,6 +476,10 @@ resumeThrowableObjects() {
   this.resumeThrowableObjects();
   this.startAnimation();
   this.startCollisionDetection();
+  this.character.applyGravity();
+
+  
+  
 }
 
 
@@ -606,6 +629,10 @@ resumeThrowableObjects() {
         window.location.href = 'index.html';
     }
 }
+
+
+
+
 
 /*class World {
     soundEnabled = true;

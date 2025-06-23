@@ -144,6 +144,8 @@ class Character extends moveableObject {
         this.showCollisionBox = true; 
     }
 
+    
+
     /**
      * Updates the movement of the character.
      */

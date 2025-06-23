@@ -1,3 +1,4 @@
+
 /**
  * The canvas element.
  * @type {HTMLCanvasElement}

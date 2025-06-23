@@ -82,12 +82,15 @@ function initLevel() {
             new Collectible('bottle', 900, 200),
             new Collectible('bottle', 1350, 300),
             new Collectible('bottle', 1750, 300),
+            new Collectible('bottle', 2100, 110),
             new Collectible('bottle', 2300, 150),
+            new Collectible('bottle', 2500, 50),
 
             new Collectible('life', 700, 280),
             new Collectible('life', 900, 100),
             new Collectible('life', 1800, 100),
             new Collectible('life', 1800, 100),
+            new Collectible('life', 2300, 180),
             new Collectible('life', 2550, 250),
         ]
     );

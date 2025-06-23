@@ -1,6 +1,316 @@
 class World {
     soundEnabled = true;
     static imagesToLoad = [];
+    gameInitialized = false;
+
+    character = new Character();
+    level = level1;
+    canvas;
+    ctx;
+    keyboard;
+    camera_x = 0;
+    statusBar = new StatusBar('health');
+    coinBar = new StatusBar('coin');
+    bottleBar = new StatusBar('bottle');
+    endbossHealthBar = new StatusBar('endbossHealth'); 
+
+    throwableObjects = [];
+    droppedCoins = [];
+    playPauseButton;
+    pausedIcon = new Image();
+    playIcon = new Image();
+
+    gameOverImage = new Image();
+    gameOverImageShown = false;
+    gameOver = false;
+    paused = false;
+    animationFrameId = null;
+    collisionInterval = null;
+
+    sounds = {
+        'throw': new Audio('audio/SHOOT011.mp3'),
+        'collect-bottle': new Audio('audio/collect-bottle.wav'),
+        'collect-life': new Audio('audio/collect-life.ogg'),
+        'explode': new Audio('audio/8bit_bomb_explosion.wav'),
+        'win': new Audio('audio/Won!.wav'),
+        'bottle-hit': new Audio('audio/1.mp3'),
+        'lose': new Audio('audio/vgdeathsound.ogg'),
+        'coin': new Audio('audio/collect-coin.mp3'),
+    };
+
+    initProperties(canvas, keyboard) {
+        this.ctx = canvas.getContext('2d');
+        this.canvas = canvas;
+        this.keyboard = keyboard;
+        this.soundEnabled = soundEnabled;
+    }
+
+    initUIComponents() {
+        this.restartButton = new RestartButton(650, 10, 100, 30, this.ctx, 'Replay');
+        this.quitButton = new QuitButton(770, 10, 40, 40, this.ctx, 'Quit');
+        this.touchControls = new TouchControls(this.ctx, this.canvas);
+        this.touchControls.handleTouchEvents(this.canvas, this.keyboard);
+    }
+
+    loadPlayPauseIcons() {
+        this.pausedIcon.src = 'img/assets/pause_circle.svg';
+        World.imagesToLoad.push('img/assets/pause_circle.svg');
+        this.playIcon.src = 'img/assets/smart_play__WHITE.svg';
+        World.imagesToLoad.push('img/assets/smart_play__WHITE.svg');
+
+        let self = this;
+        let imagesLoaded = 0;
+        function imageLoaded() {
+            imagesLoaded++;
+            if (imagesLoaded === 2) {
+                self.playPauseButton = new Button(680, 10, 40, 40, self.ctx, self.pausedIcon, self.playIcon);
+                self.playPauseButton.icon = self.pausedIcon;
+                self.draw();
+            }
+        }
+        this.pausedIcon.onload = imageLoaded;
+        this.playIcon.onload = imageLoaded;
+    }
+
+    constructor(canvas, keyboard) {
+        this.initProperties(canvas, keyboard);
+        this.initGameLogic();
+        this.initUIComponents();
+        this.loadPlayPauseIcons();     
+        this.character.bottleCount = 0;
+        this.bottleBar = new StatusBar('bottle');
+        this.bottleBar.setPercentage(this.character.bottleCount * 20);
+    }
+
+    setWorld() {
+        this.character.world = this;         
+        this.level.enemies.forEach(enemy => {
+            enemy.world = this; 
+        });        
+        if (this.level.endboss) { 
+            this.level.endboss.world = this;
+        }
+    }  
+    
+    loadImage(src) {
+        World.imagesToLoad.push(src);
+    }
+
+    throwBottle() {
+        if (this.character.bottleCount > 0) {
+            let bottle = new ThrowableObject(this.character.x + 50, this.character.y + 50, this.character.otherDirection);
+            bottle.owner = this.character;
+            this.throwableObjects.push(bottle); 
+            this.character.bottleCount--;
+            this.bottleBar.setPercentage(this.character.bottleCount * 20);
+        }
+    }
+
+    pause() {
+        this.paused = true;
+        this.stop();
+    }
+    
+    resumeCharacter() {
+        this.character.animate();
+        if (this.character.originalSpeed) {
+            this.character.speed = this.character.originalSpeed;
+        }
+    }
+
+    startAnimation() {
+        if (!this.animationFrameId) {
+            this.draw();
+        }
+    }
+
+    startCollisionDetection() {
+        if (!this.collisionInterval) {
+            this.checkCollision();
+        }
+    }
+
+    resume = () => {
+        this.paused = false;
+        this.resumeCharacter();
+        this.resumeEnemies();
+        this.resumeClouds();
+        this.resumeThrowableObjects();
+        this.startAnimation();
+        this.startCollisionDetection();
+        this.character.applyGravity();
+    }
+
+    playSound(name) {
+        if (this.soundEnabled) {
+            const sound = this.sounds[name];
+            if (sound) {
+                sound.currentTime = 0;
+                sound.volume = 0.5;
+                sound.play().catch(err => console.error('Sound error:', err));
+            }
+        }
+    } 
+
+    stopAnimation() {
+        if (this.animationFrameId) {
+            cancelAnimationFrame(this.animationFrameId);
+            this.animationFrameId = null;
+        }
+    }
+
+    stopCollisionInterval() {
+        if (this.collisionInterval) {
+            clearInterval(this.collisionInterval);
+            this.collisionInterval = null;
+        }
+    }
+
+    stopMovableObjects() {        
+        const allMovableObjects = [
+            this.character,
+            ...this.level.enemies,
+            ...this.level.clouds,
+            ...this.throwableObjects
+        ];
+        allMovableObjects.forEach(obj => {
+            this.stopObjectIntervals(obj);
+            if (obj.speed !== undefined) {
+                obj.originalSpeed = obj.speed;
+                obj.speed = 0;
+            }
+        });
+    }
+
+    stopObjectIntervals(obj) {
+        if (obj.animationInterval) {
+            clearInterval(obj.animationInterval);
+            obj.animationInterval = null;
+        }
+        if (obj.moveInterval) {
+            clearInterval(obj.moveInterval);
+            obj.moveInterval = null;
+        }
+        if (obj.gravityInterval) {
+            clearInterval(obj.gravityInterval);
+            obj.gravityInterval = null;
+        }
+    }
+
+    clearGameObjects() {
+        this.throwableObjects = [];
+        this.droppedCoins = [];
+    }
+
+    stop() {
+        if (this.animationFrameId) {
+            cancelAnimationFrame(this.animationFrameId);
+            this.animationFrameId = null;
+        }
+
+        if (this.collisionInterval) {
+            clearInterval(this.collisionInterval);
+            this.collisionInterval = null;
+        }
+
+        if (this.character && typeof this.character.clearAllIntervals === 'function') {
+            this.character.clearAllIntervals();
+        }
+
+        if (this.level && this.level.enemies) {
+            this.level.enemies.forEach(enemy => {
+                if (enemy && typeof enemy.clearAllIntervals === 'function') {
+                    enemy.clearAllIntervals();
+                }
+            });
+        }
+
+        if (this.throwableObjects) {
+            this.throwableObjects.forEach(bottle => {
+                if (bottle && typeof bottle.clearAllIntervals === 'function') {
+                    bottle.clearAllIntervals();
+                }
+            });
+        }
+
+        if (this.level && this.level.clouds) {
+            this.level.clouds.forEach(cloud => {
+                if (cloud && typeof cloud.clearAllIntervals === 'function') {
+                    cloud.clearAllIntervals();
+                }
+            });
+        }
+
+        if (this.character.sounds.walk && !this.character.sounds.walk.paused) {
+            this.character.sounds.walk.pause();
+            this.character.sounds.walk.currentTime = 0;
+        }
+    }
+
+    quitGame() {
+        window.location.href = 'index.html';
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*class World {
+    soundEnabled = true;
+    static imagesToLoad = [];
       gameInitialized = false;
 
 
@@ -628,4 +938,4 @@ resumeThrowableObjects() {
     quitGame() {
         window.location.href = 'index.html';
     }
-}
+}*/
