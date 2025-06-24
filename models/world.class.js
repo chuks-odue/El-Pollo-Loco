@@ -1,3 +1,7 @@
+/**
+ * Represents the game world.
+ */
+
 class World {
     soundEnabled = true;
     static imagesToLoad = [];
@@ -38,6 +42,11 @@ class World {
         'coin': new Audio('audio/collect-coin.mp3'),
     };
 
+        /**
+     * Initializes the world properties.
+     * @param {HTMLCanvasElement} canvas - The canvas element.
+     * @param {Object} keyboard - The keyboard input.
+     */
     initProperties(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
         this.canvas = canvas;
@@ -45,6 +54,9 @@ class World {
         this.soundEnabled = soundEnabled;
     }
 
+     /**
+     * Initializes the UI components.
+     */
     initUIComponents() {
         this.restartButton = new RestartButton(650, 10, 100, 30, this.ctx, 'Replay');
         this.quitButton = new QuitButton(770, 10, 40, 40, this.ctx, 'Quit');
@@ -52,26 +64,31 @@ class World {
         this.touchControls.handleTouchEvents(this.canvas, this.keyboard);
     }
 
+     /**
+     * Loads the play/pause icons.
+     */
     loadPlayPauseIcons() {
         this.pausedIcon.src = 'img/assets/pause_circle.svg';
         World.imagesToLoad.push('img/assets/pause_circle.svg');
         this.playIcon.src = 'img/assets/smart_play__WHITE.svg';
         World.imagesToLoad.push('img/assets/smart_play__WHITE.svg');
-
         let self = this;
         let imagesLoaded = 0;
-        function imageLoaded() {
-            imagesLoaded++;
+        function imageLoaded() { imagesLoaded++;
             if (imagesLoaded === 2) {
                 self.playPauseButton = new Button(680, 10, 40, 40, self.ctx, self.pausedIcon, self.playIcon);
-                self.playPauseButton.icon = self.pausedIcon;
-                self.draw();
+                self.playPauseButton.icon = self.pausedIcon; self.draw();
             }
         }
-        this.pausedIcon.onload = imageLoaded;
-        this.playIcon.onload = imageLoaded;
+        this.pausedIcon.onload = imageLoaded; this.playIcon.onload = imageLoaded;
     }
 
+    
+    /**
+     * Creates a new World instance.
+     * @param {HTMLCanvasElement} canvas - The canvas element.
+     * @param {Object} keyboard - The keyboard input.
+     */
     constructor(canvas, keyboard) {
         this.initProperties(canvas, keyboard);
         this.initGameLogic();
@@ -82,6 +99,9 @@ class World {
         this.bottleBar.setPercentage(this.character.bottleCount * 20);
     }
 
+     /**
+     * Sets the world for the character and enemies.
+     */
     setWorld() {
         this.character.world = this;         
         this.level.enemies.forEach(enemy => {
@@ -91,11 +111,18 @@ class World {
             this.level.endboss.world = this;
         }
     }  
-    
+
+    /**
+     * Loads an image.
+     * @param {string} src - The image source URL.
+     */    
     loadImage(src) {
         World.imagesToLoad.push(src);
     }
 
+    /**
+     * Throws a bottle.
+     */
     throwBottle() {
         if (this.character.bottleCount > 0) {
             let bottle = new ThrowableObject(this.character.x + 50, this.character.y + 50, this.character.otherDirection);
@@ -106,11 +133,17 @@ class World {
         }
     }
 
+    /**
+     * Pauses the game.
+     */
     pause() {
         this.paused = true;
         this.stop();
-    }
-    
+    }    
+
+    /**
+     * Resumes the character's animation.
+     */
     resumeCharacter() {
         this.character.animate();
         if (this.character.originalSpeed) {
@@ -118,18 +151,27 @@ class World {
         }
     }
 
+    /**
+     * Starts the animation.
+     */
     startAnimation() {
         if (!this.animationFrameId) {
             this.draw();
         }
     }
 
+    /**
+     * Starts the collision detection.
+     */
     startCollisionDetection() {
         if (!this.collisionInterval) {
             this.checkCollision();
         }
     }
 
+    /**
+     * Resumes the game.
+     */
     resume = () => {
         this.paused = false;
         this.resumeCharacter();
@@ -141,6 +183,10 @@ class World {
         this.character.applyGravity();
     }
 
+     /**
+     * Plays a sound.
+     * @param {string} name - The sound name.
+     */
     playSound(name) {
         if (this.soundEnabled) {
             const sound = this.sounds[name];
@@ -152,6 +198,9 @@ class World {
         }
     } 
 
+    /**
+     * Stops the animation.
+     */
     stopAnimation() {
         if (this.animationFrameId) {
             cancelAnimationFrame(this.animationFrameId);
@@ -159,6 +208,9 @@ class World {
         }
     }
 
+     /**
+     * Stops the collision interval.
+     */
     stopCollisionInterval() {
         if (this.collisionInterval) {
             clearInterval(this.collisionInterval);
@@ -166,6 +218,10 @@ class World {
         }
     }
 
+    
+    /**
+     * Stops the game objects.
+     */
     stopMovableObjects() {        
         const allMovableObjects = [
             this.character,
@@ -182,6 +238,9 @@ class World {
         });
     }
 
+     /**
+     * Stops the movable objects.
+     */
     stopObjectIntervals(obj) {
         if (obj.animationInterval) {
             clearInterval(obj.animationInterval);
@@ -197,59 +256,120 @@ class World {
         }
     }
 
+    /**
+     * Clears intervals for all game objects.
+     */
     clearGameObjects() {
         this.throwableObjects = [];
         this.droppedCoins = [];
     }
 
-    stop() {
-        if (this.animationFrameId) {
-            cancelAnimationFrame(this.animationFrameId);
-            this.animationFrameId = null;
-        }
+     /**
+     * Stops object intervals.
+     * @param {Object} obj - The object.
+     */
+   stop() {
+       this.stopAnimation();
+      this.stopCollisionInterval();
+       this.stopGameObjects();
+        this.stopCharacterSounds();
+    }
 
-        if (this.collisionInterval) {
-            clearInterval(this.collisionInterval);
-            this.collisionInterval = null;
+    stopAnimation() {
+       if (this.animationFrameId) {
+           cancelAnimationFrame(this.animationFrameId);
+           this.animationFrameId = null;
         }
+    }
 
-        if (this.character && typeof this.character.clearAllIntervals === 'function') {
-            this.character.clearAllIntervals();
+    
+    /**
+     * Stops the game.
+     */
+    stopCollisionInterval() {
+       if (this.collisionInterval) {
+           clearInterval(this.collisionInterval);
+           this.collisionInterval = null;
         }
+    }
 
-        if (this.level && this.level.enemies) {
-            this.level.enemies.forEach(enemy => {
-                if (enemy && typeof enemy.clearAllIntervals === 'function') {
-                    enemy.clearAllIntervals();
-                }
-            });
+    /**
+     * Stops the game objects.
+     */    
+   stopGameObjects() {
+       this.stopMovableObjects();
+       this.clearIntervalsForAllGameObjects();
+    }
+
+    /**
+     * Stops the movable objects.
+     */
+    stopMovableObjects() {
+        const allMovableObjects = [
+           this.character,
+           ...this.level.enemies,
+           ...this.level.clouds,
+           ...this.throwableObjects
+        ];
+        allMovableObjects.forEach(obj => {
+           this.stopObjectIntervals(obj);
+           if (obj.speed !== undefined) {
+               obj.originalSpeed = obj.speed;
+               obj.speed = 0;
+            }
+        });
+    }
+
+    clearIntervalsForAllGameObjects() {
+        const allGameObjects = [
+            this.character,
+           ...this.level.enemies,
+            ...this.throwableObjects,
+            ...this.level.clouds
+        ];
+        allGameObjects.forEach(obj => {
+            if (obj && typeof obj.clearAllIntervals === 'function') {
+               obj.clearAllIntervals();
+            }
+        });
+    }
+
+     /**
+     * Stops object intervals.
+     * @param {Object} obj - The object.
+     */
+    stopObjectIntervals(obj) {
+        if (obj.animationInterval) {
+            clearInterval(obj.animationInterval);
+            obj.animationInterval = null;
         }
-
-        if (this.throwableObjects) {
-            this.throwableObjects.forEach(bottle => {
-                if (bottle && typeof bottle.clearAllIntervals === 'function') {
-                    bottle.clearAllIntervals();
-                }
-            });
+        if (obj.moveInterval) {
+           clearInterval(obj.moveInterval);
+            obj.moveInterval = null;
         }
-
-        if (this.level && this.level.clouds) {
-            this.level.clouds.forEach(cloud => {
-                if (cloud && typeof cloud.clearAllIntervals === 'function') {
-                    cloud.clearAllIntervals();
-                }
-            });
+        if (obj.gravityInterval) {
+           clearInterval(obj.gravityInterval);
+           obj.gravityInterval = null;
         }
+    }
 
+    /**
+     * Stops character sounds.
+     */
+    stopCharacterSounds() {
         if (this.character.sounds.walk && !this.character.sounds.walk.paused) {
             this.character.sounds.walk.pause();
             this.character.sounds.walk.currentTime = 0;
         }
     }
 
+     /**
+     * Quits the game.
+     */
     quitGame() {
         window.location.href = 'index.html';
     }
+    
 }
 
 

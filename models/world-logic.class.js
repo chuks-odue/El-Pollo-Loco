@@ -1,17 +1,29 @@
-// Game initialization and logic
+/**
+ * Initializes core game logic systems
+ * @function initGameLogic
+ * @memberof World.prototype
+ * @description Sets up world references, collision detection, and bottle throwing
+ */
+
 World.prototype.initGameLogic = function() {
     this.setWorld();
     this.checkCollision();
     this.checkThrowBottle();
 };
 
-// Enemy and item collision handling
 
-
+/**
+ * Handles player-enemy collision detection and consequences
+ * @function checkEnemyCollision
+ * @memberof World.prototype
+ * @description Processes collisions between player and enemies:
+ * - Kills enemy if player lands on top (y-position check + downward velocity)
+ * - Damages player for other collision types
+ */
 World.prototype.checkEnemyCollision = function() {
     this.level.enemies.forEach((enemy) => {
         if (!enemy.isDead && this.character.isColliding(enemy)) {
-            if (this.character.y < enemy.y && this.character.speedY >= 0) {
+            if (this.character.y < enemy.y && this.character.speedY >=0) {
                 enemy.die();
                 this.character.speedY = -10;
             } else {
@@ -25,18 +37,15 @@ World.prototype.checkEnemyCollision = function() {
     });
 };
 
-
-// In character.class.js
-Character.prototype.isLandingOn = function(object) {
-    const characterBottom = this.y + this.height;
-    const objectTop = object.y;
-    return (
-        this.speedY > 0 && 
-        characterBottom >= objectTop - 5 && 
-        characterBottom <= objectTop + 20
-    );
-};
-
+/**
+ * Main collision detection loop
+ * @function checkCollision
+ * @memberof World.prototype
+ * @description Runs at ≈66 FPS (15ms intervals) to check:
+ * - Enemy collisions
+ * - Collectible collisions
+ * - Throwable object collisions
+ */
 World.prototype.checkCollision = function() {
     this.collisionInterval = setInterval(() => {
         if (this.gameOver || this.paused) return;
@@ -46,6 +55,15 @@ World.prototype.checkCollision = function() {
     }, 1000 / 66);
 };
 
+/**
+ * Handles collectible item collisions
+ * @function checkCollectibleCollision
+ * @memberof World.prototype
+ * @description Processes player collisions with collectibles:
+ * - Coins (increases coin meter)
+ * - Bottles (adds to inventory)
+ * - Health (restores energy)
+ */
 World.prototype.checkCollectibleCollision = function() {
     this.level.collectibles.forEach((collectible, index) => {
         if (this.character.isColliding(collectible)) {
@@ -62,6 +80,14 @@ World.prototype.checkCollectibleCollision = function() {
     });
 };
 
+/**
+ * Handles coin collection
+ * @function collectCoin
+ * @memberof World.prototype
+ * @param {Object} collectible - Coin object
+ * @param {number} index - Position in collectibles array
+ * @description Increases coin meter by 20% (max 100%), plays sound
+ */
 World.prototype.collectCoin = function(collectible, index) {
     if (this.coinBar.percentage < 100) {
         this.coinBar.percentage += 20;
@@ -76,6 +102,14 @@ World.prototype.collectCoin = function(collectible, index) {
     }
 };
 
+/**
+ * Handles bottle collection
+ * @function collectBottle
+ * @memberof World.prototype
+ * @param {Object} collectible - Bottle object
+ * @param {number} index - Position in collectibles array
+ * @description Adds bottle to inventory (max 5), updates UI
+ */
 World.prototype.collectBottle = function(collectible, index) {
     if (this.character.bottleCount < 5) {
         this.character.bottleCount++;
@@ -85,6 +119,14 @@ World.prototype.collectBottle = function(collectible, index) {
     }
 };
 
+/**
+ * Handles health collection
+ * @function collectLife
+ * @memberof World.prototype
+ * @param {Object} collectible - Health object
+ * @param {number} index - Position in collectibles array
+ * @description Restores 20 energy (max 100), plays sound
+ */
 World.prototype.collectLife = function(collectible, index) {
     if (this.character.energy < 100) {
         this.character.energy += 20;
@@ -97,7 +139,16 @@ World.prototype.collectLife = function(collectible, index) {
     }
 };
 
-// Bottle collision handling
+/**
+ * Handles bottle-enemy collisions
+ * @function checkBottleEnemyCollision
+ * @memberof World.prototype
+ * @param {Object} bottle - Throwable bottle object
+ * @description Processes collisions between player-thrown bottles and enemies:
+ * - Triggers splash animation
+ * - Damages enemies
+ * - Plays explosion sound
+ */
 World.prototype.checkBottleEnemyCollision = function(bottle) {
     if (!bottle || typeof bottle !== 'object' || !('owner' in bottle)) return;
 
@@ -115,6 +166,15 @@ World.prototype.checkBottleEnemyCollision = function(bottle) {
     });
 };
 
+/**
+ * Handles bottle-player collisions
+ * @function checkBottleCharacterCollision
+ * @memberof World.prototype
+ * @param {Object} bottle - Throwable bottle object
+ * @description Processes collisions between endboss-thrown bottles and player:
+ * - Damages player
+ * - Triggers game over if energy depleted
+ */
 World.prototype.checkBottleCharacterCollision = function(bottle) {
     if (!bottle || typeof bottle !== 'object') return;
     if (bottle.owner instanceof Endboss && bottle.isColliding(this.character) && !bottle.hasHit) {
@@ -129,6 +189,12 @@ World.prototype.checkBottleCharacterCollision = function(bottle) {
     }
 };
 
+/**
+ * Cleans up finished bottle objects
+ * @function removeFinishedBottles
+ * @memberof World.prototype
+ * @description Removes bottles from game world after splash animation completes
+ */
 World.prototype.removeFinishedBottles = function() {
     for (let i = this.throwableObjects.length - 1; i >= 0; i--) {
         const bottle = this.throwableObjects[i];
@@ -138,6 +204,16 @@ World.prototype.removeFinishedBottles = function() {
     }
 };
 
+
+/**
+ * Manages throwable object collisions
+ * @function checkThrowableCollision
+ * @memberof World.prototype
+ * @description Processes all active throwable objects:
+ * - Bottle vs enemy collisions
+ * - Bottle vs character collisions
+ * - Removes finished bottles
+ */
 World.prototype.checkThrowableCollision = function() {
     for (let i = this.throwableObjects.length - 1; i >= 0; i--) {
         const bottle = this.throwableObjects[i];
@@ -147,6 +223,12 @@ World.prototype.checkThrowableCollision = function() {
     this.removeFinishedBottles();
 };
 
+/**
+ * Handles bottle throwing input
+ * @function checkThrowBottle
+ * @memberof World.prototype
+ * @description Listens for 'd' keypress to throw bottles when available
+ */
 World.prototype.checkThrowBottle = function() {
     document.addEventListener('keydown', (event) => {
         if (event.key === 'd' && this.character.bottleCount > 0 && !this.gameOver && !this.paused) {
@@ -161,8 +243,12 @@ World.prototype.checkThrowBottle = function() {
         }
     });
 };
-
-// Game state management
+ /**
+ * Resumes enemy AI and animations
+ * @function resumeEnemies
+ * @memberof World.prototype
+ * @description Restarts enemy movement and attack patterns after pause
+ */
 World.prototype.resumeEnemies = function() {
     this.level.enemies.forEach((enemy) => {
         if (enemy.originalSpeed) {
@@ -183,12 +269,24 @@ World.prototype.resumeEnemies = function() {
     });
 };
 
+/**
+ * Resumes cloud animations
+ * @function resumeClouds
+ * @memberof World.prototype
+ * @description Restarts background cloud movement after pause
+ */
 World.prototype.resumeClouds = function() {
     this.level.clouds.forEach((cloud) => {
         cloud.animate();
     });
 };
 
+/**
+ * Resumes throwable object physics
+ * @function resumeThrowableObjects
+ * @memberof World.prototype
+ * @description Restarts bottle animations and gravity after pause
+ */
 World.prototype.resumeThrowableObjects = function() {
     this.throwableObjects.forEach((bottle) => {
         if (!bottle.animationInterval) {
@@ -201,31 +299,36 @@ World.prototype.resumeThrowableObjects = function() {
     });
 };
 
+/**
+ * Displays game over screen
+ * @function showGameOverImage
+ * @memberof World.prototype
+ * @param {string} result - Game outcome ('win' or 'lose')
+ * @description Shows appropriate game over image and plays sound effect
+ */
 World.prototype.showGameOverImage = function(result) {
     this.gameOver = true;
     this.paused = true;
     this.stop();
-
     this.gameOverImage.src = result === 'win' ? 'img/img/You won, you lost/You Won B.png' : 'img/img/You won, you lost/You lost b.png';
     World.imagesToLoad.push(result === 'win' ? 'img/img/You won, you lost/You Won B.png' : 'img/img/You won, you lost/You lost b.png');
 
-    if (result === 'win') {
-        this.playSound('win');
-    } else {
-        this.playSound('lose');
-    }
-
-    this.gameOverImage.onload = () => {
-        this.gameOverImageShown = true;
+    if (result === 'win') {  this.playSound('win');
+    } else { this.playSound('lose');}
+    this.gameOverImage.onload = () => { this.gameOverImageShown = true;
         this.draw(); 
     };
-    this.gameOverImage.onerror = () => {
-        this.gameOverImageShown = true;
+    this.gameOverImage.onerror = () => {this.gameOverImageShown = true;
         this.draw(); 
     };
 };
 
-// Endboss activation
+/**
+ * Activates endboss when visible on screen
+ * @function checkEndbossActivation
+ * @memberof World.prototype
+ * @description Triggers endboss attack patterns when it enters viewport
+ */
 World.prototype.checkEndbossActivation = function() {
     this.level.enemies.forEach((enemy) => {
         if (enemy instanceof Endboss && !enemy.isActivated && !enemy.isDead) {
