@@ -110,17 +110,20 @@ class Button {
      * @param {number} y The y-coordinate of the click.
      * @param {World} world The game world.
      */
-    handleClick(x, y, world) {
+   handleClick(x, y, world) {
     if (x > this.x && x < this.x + this.width && y > this.y && y < this.y + this.height) {
-          if (world.paused) {
-               world.resume();
-               this.icon = world.pausedIcon;
-               this.draw();
+        if (world && world.gameLifecycleManager) {
+            if (world.paused) {
+                world.gameLifecycleManager.resume();
+                this.icon = this.pausedIcon; // When game resumes, show 'pause' icon (because it's now playing)
             } else {
-               world.pause();
-               this.icon = world.playIcon;
-               this.draw();
+                world.gameLifecycleManager.pause();
+                this.icon = this.playIcon; // When game pauses, show 'play' icon (because it's now paused)
             }
+            this.draw();
+        } else {
+            console.error("GameLifecycleManager not available on world object!");
         }
     }
+}
 }

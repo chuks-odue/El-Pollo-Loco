@@ -292,3 +292,4 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('orientationchange', checkOrientationAndScreenSize);
     window.addEventListener('resize', checkOrientationAndScreenSize);
 });
+

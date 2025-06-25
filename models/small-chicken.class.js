@@ -3,6 +3,8 @@
  * @extends moveableObject
  */
 class SmallChicken extends moveableObject {
+        world; // Declare this property
+
 
      /**
      * The y-coordinate of the chicken.
@@ -109,7 +111,7 @@ class SmallChicken extends moveableObject {
 
     startMovement() {
         this.moveInterval = setInterval(() => {
-            if (!this.isDead && !world.gameOver && !world.paused) {
+            if (!this.isDead && !this.world.gameOver && !this.world.paused) {
                 this.moveLeft();
                 this.updatePosition();
             }
@@ -122,7 +124,7 @@ class SmallChicken extends moveableObject {
 
     startJumping() {
         this.jumpInterval = setInterval(() => {
-            if (!this.isDead && !world.gameOver && !world.paused && Math.random() < 0.05) {
+            if (!this.isDead && !this.world.gameOver && !this.world.paused && Math.random() < 0.05) {
                 this.jump();
             }
         }, 1000 / 60);
@@ -192,9 +194,9 @@ class SmallChicken extends moveableObject {
         this.speed = 0;
         this.loadimage(this.DEAD_IMAGES);
         setTimeout(() => {
-            const index = world.level.enemies.indexOf(this);
+            const index = this.world.level.enemies.indexOf(this);
             if (index > -1) {
-                world.level.enemies.splice(index, 1);
+                this.world.level.enemies.splice(index, 1);
             }
         }, 2000);
     }

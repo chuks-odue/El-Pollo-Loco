@@ -51,18 +51,17 @@ function init(callback) {
 /**
  * Replays the game.
  */
-function replayGame() {
-  if (world && typeof world.stop === 'function') {
-    world.stop(); 
-  }
-  keyboard = new Keyboard();   
-  initLevel();                 
-  world = new World(canvas, keyboard);
-  world.soundEnabled = soundEnabled;  
-  world.gameOver = false;
-  world.gameOverImageShown = false;
-  handleStartSound();  
-  
+function replayGame() {    
+    if (world && world.gameLifecycleManager) {
+        world.gameLifecycleManager.stop(); 
+    }
+    keyboard = new Keyboard(); 
+    initLevel(); 
+    world = new World(canvas, keyboard); 
+    world.soundEnabled = soundEnabled; 
+    world.gameOver = false; 
+    world.gameOverImageShown = false; 
+    handleStartSound();     
 }
 
 /**

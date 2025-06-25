@@ -145,9 +145,9 @@ class Endboss extends moveableObject {
         }
         this.bottleThrowInterval = setInterval(() => {
             if (!this.isDead && this.isActivated) {
-                const isCharacterOnLeft = world.character.x < this.x;
+                const isCharacterOnLeft =this.world.character.x < this.x;
                 const bottle = new ThrowableObject(this.x, this.y + 150, isCharacterOnLeft, this);
-                world.throwableObjects.push(bottle);
+                this.world.throwableObjects.push(bottle);
             }
         }, 3000);
     }
@@ -158,7 +158,7 @@ class Endboss extends moveableObject {
     animateMovement() {
     if (this.moveInterval) clearInterval(this.moveInterval);
        this.moveInterval = setInterval(() => {
-           if (!this.isDead && !world.gameOver && !world.paused) {
+           if (!this.isDead && !this.world.gameOver && !this.world.paused) {
                if (this.x > this.movementLimit) {
                    this.moveLeft();
                 } else {
@@ -244,7 +244,7 @@ class Endboss extends moveableObject {
             } else {
                 clearInterval(this.fallInterval);
                 this.hasFallen = true;
-                world.showGameOverImage('win');
+                this.world.showGameOverImage('win');
             }
         }, 1000 / 30);
     }

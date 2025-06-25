@@ -86,12 +86,12 @@ class chicken extends moveableObject {
       clearInterval(this.moveInterval); }
     if (this.animationInterval) {clearInterval(this.animationInterval);}
     this.moveInterval = setInterval(() => {
-      if (!this.isDead && !world.gameOver && !world.paused) { 
+      if (!this.isDead && !this.world.gameOver && !this.world.paused) { 
         this.moveLeft();
       }
     }, 1000 / 60);
         this.animationInterval = setInterval(() => {
-      if (!this.isDead && !world.gameOver && !world.paused) { 
+      if (!this.isDead && !this.world.gameOver && !this.world.paused) { 
         this.playAnimation(this.WALKING_IMAGES);
       }
     }, 200);
@@ -116,9 +116,9 @@ class chicken extends moveableObject {
         this.loadimage(this.DEAD_IMAGE); 
     
         setTimeout(() => {
-            const index = world.level.enemies.indexOf(this);
+            const index = this.world.level.enemies.indexOf(this);
             if (index > -1) {
-                world.level.enemies.splice(index, 1); 
+                this.world.level.enemies.splice(index, 1); 
             }
         }, 2000); 
     }
