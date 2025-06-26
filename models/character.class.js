@@ -57,6 +57,8 @@ class Character extends moveableObject {
      * @type {number}
      */
     hurtDuration = 700;
+            previousY = 30; 
+
 
     /**
      * The walking images of the character.
@@ -142,6 +144,7 @@ class Character extends moveableObject {
         this.animate();
         this.previousY = this.y;
         this.showCollisionBox = true; 
+        
     }
 
     
@@ -183,18 +186,50 @@ class Character extends moveableObject {
     /**
      * Updates the main game loop.
      */
-    updateMainGameLoop() {
-        
+        updateMainGameLoop() {
+        this.previousY = this.y; 
         if (!this.world.gameOver) {
             this.updateMovement();
             this.updateJumping();
             this.updateCamera();
-                this.lastY = this.y;
-
+                        this.lastY = this.y; 
         } else {
             this.stopWalkingSound();
         }
     }
+
+
+    /**
+     * Checks if the character is falling onto an object, indicating a stomp.
+     * Uses previousY to determine if character crossed enemy's top from above.
+     * @param {Object} otherObject - The object being collided with.
+     * @returns {boolean} True if the character is falling on the other object, false otherwise.
+     */
+    isFallingOn(otherObject) {
+        const charCurrentBottom = this.y + this.height - this.collisionOffset.bottom;        
+        const charPreviousBottom = this.previousY + this.height - this.collisionOffset.bottom;        
+        const enemyTop = otherObject.y + otherObject.collisionOffset.top;        
+        const enemyLeft = otherObject.x + otherObject.collisionOffset.left;
+        const enemyRight = otherObject.x + otherObject.width - otherObject.collisionOffset.right;    
+        const charLeft = this.x + this.collisionOffset.left;
+        const charRight = this.x + this.width - this.collisionOffset.right;
+        const isClearlyFalling = this.speedY < -10;        
+        const hasCrossedEnemyTopFromAbove =
+            charCurrentBottom >= enemyTop &&        
+            charPreviousBottom < (enemyTop + 10);  
+        const horizontalOverlap = charRight > enemyLeft && charLeft < enemyRight;        
+        return isClearlyFalling && hasCrossedEnemyTopFromAbove && horizontalOverlap;
+    }
+
+    /**
+     * Makes the character jump after defeating an enemy by jumping on it.
+     */
+    jumpAfterEnemyBounce() {
+        this.speedY = 20; // A moderate upward bounce
+    }
+
+
+
 
     /**
      * Updates the animation of the character.

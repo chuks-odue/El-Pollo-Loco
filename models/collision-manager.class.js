@@ -42,23 +42,27 @@ class CollisionManager {
    * Checks for collisions between the character and enemies.
    * If a collision is detected, the enemy is either killed or the character is hit.
    */
-    checkEnemyCollision() {
-        this.world.level.enemies.forEach((enemy) => {
-            if (!enemy.isDead && this.world.character.isColliding(enemy)) {
-                if (this.world.character.y < enemy.y && this.world.character.speedY >= 0) {
-                    enemy.die();
-                    this.world.character.speedY = -10;
-                } else {
-                    this.world.character.hit();
-                    this.world.statusBar.setPercentage(this.world.character.energy);
-                    if (this.world.character.energy <= 0) {
-                        this.world.showGameOverImage('lose');
-                    }
-                }
+/**
+ * Checks for collisions with enemies, handling "stomp" and "hurt" logic separately.
+ */
+checkEnemyCollision() {
+    this.world.level.enemies.forEach((enemy) => {
+        // First, make sure the enemy is alive and the player is touching it.
+        if (!enemy.isDead && this.world.character.isColliding(enemy)) {            
+            const isFalling = this.world.character.speedY < 0;
+            if (isFalling) {            
+                enemy.die(); 
+                jumpAfterEnemyBounce() ;               
+                return; 
             }
-        });
-    }
-
+            this.world.character.hit();
+            this.world.statusBar.setPercentage(this.world.character.energy);
+            if (this.world.character.energy <= 0) {
+                this.world.showGameOverImage('lose');
+            }
+        }
+    });
+}
     /**
    * Checks for collisions between the character and collectibles.
    * If a collision is detected, the collectible is removed and the character's status is updated.
@@ -191,10 +195,8 @@ class CollisionManager {
             }
         }
     }
+    
 
-    /**
-   * Checks for collisions between throwables and game objects.
-   */
     checkThrowableCollision() {
     
         for (let i = this.world.throwableObjects.length - 1; i >= 0; i--) {
@@ -205,9 +207,6 @@ class CollisionManager {
         this.removeFinishedBottles();
     }
 
-  /**
-   * Listens for keyboard events to throw bottles.
-   */
     checkThrowBottle() {
         document.addEventListener('keydown', (event) => {
             if (event.key === 'd' && this.world.character.bottleCount > 0 && !this.world.gameOver && !this.world.paused) {
