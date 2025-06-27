@@ -205,10 +205,7 @@ canvas{
     border: none;
     padding: 0;
 }
-
-  /*test*/
-  
-/* Add this at the end of your CSS */
+ 
 :fullscreen {
     background-image: url('img/assets/background.png');
     background-size: cover;
@@ -238,8 +235,8 @@ canvas{
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 820px; /* same width as the canvas */
-    height: 480px; /* same height as the canvas */
+    width: 820px; 
+    height: 480px; 
     pointer-events: none;
 }
 
@@ -387,17 +384,14 @@ canvas{
   font-size: 2.0rem;
   padding: 10px;
 }
-@media screen and (orientation: landscape) and (max-height: 480px) { /* iPhone 14 Pro Max landscape height is 430px, so this will catch it */
+@media screen and (orientation: landscape) and (max-height: 480px) { 
     #canvas {
-        width: 100vw; /* Use 100vw and 100vh for full viewport coverage */
+        width: 100vw; 
         height: 100vh;
         position: absolute;
         top: 0;
         left: 0;
-        transform: none; /* Remove centering transform */
-         /* Keep the game content scaled properly */
-
-        /* Add safe area padding to the canvas to avoid notch/home indicator */
+        transform: none; 
         padding-top: env(safe-area-inset-top);
         padding-right: env(safe-area-inset-right);
         padding-bottom: env(safe-area-inset-bottom);

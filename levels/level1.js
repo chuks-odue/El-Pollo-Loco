@@ -23,6 +23,8 @@ function initLevel() {
             new SmallChicken(world),
             new SmallChicken(world),
             new SmallChicken(world),
+            new SmallChicken(world),
+            new SmallChicken(world),
             new Endboss(world),
         ],
         [
@@ -77,8 +79,9 @@ function initLevel() {
 
             new Collectible('bottle', 50, 270),
             new Collectible('bottle', 210, 120),
-            new Collectible('bottle', 350, 200),
+            new Collectible('bottle', 350, 130),
             new Collectible('bottle', 550, 270),
+            new Collectible('bottle', 750, 170),
             new Collectible('bottle', 900, 200),
             new Collectible('bottle', 1350, 300),
             new Collectible('bottle', 1750, 300),

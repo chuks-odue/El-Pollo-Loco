@@ -5,6 +5,9 @@
  * @extends moveableObject
  */
 class ThrowableObject extends moveableObject {
+    width = 30; 
+    height = 30;
+
 
     /**
      * Speed of the object flying forward.

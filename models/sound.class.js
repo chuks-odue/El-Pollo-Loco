@@ -17,7 +17,8 @@ const allGameSounds = {
     'explode': new Audio('audio/8bit_bomb_explosion.wav'),
     'win': new Audio('audio/Won!.wav'),
     'bottle-hit': new Audio('audio/1.mp3'),
-    'lose': new Audio('audio/vgdeathsound.ogg'),
+    'lose': new Audio('audio/Game-over.mp3'),
     'coin': new Audio('audio/collect-coin.mp3'),    
+    'stomp': new Audio('audio/stomp.mp3'),    
     
 };

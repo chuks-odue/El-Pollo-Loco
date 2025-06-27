@@ -52,8 +52,9 @@ class CollisionManager {
     checkEnemyCollision() {
         this.world.level.enemies.forEach((enemy) => {
             if (!enemy.isDead && this.world.character.isColliding(enemy)) {
-                if (this.world.character.isFallingOn(enemy)) {
-                    enemy.die();
+                if (enemy instanceof chicken && this.world.character.isFallingOn(enemy)) {
+                   this.world.playSound('stomp'); 
+                    enemy.die();                    
                     this.world.character.jumpAfterEnemyBounce();
                 } else {
                     this.world.character.hit();

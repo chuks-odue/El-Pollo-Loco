@@ -3,53 +3,14 @@
  * @extends moveableObject
  */
 class SmallChicken extends moveableObject {
-        world; 
-
-
-     /**
-     * The y-coordinate of the chicken.
-     * @type {number}
-     */
-    y = 400;
-
-     /**
-     * The width of the chicken.
-     * @type {number}
-     */
-    width = 40;
-      /**
-     * The height of the chicken.
-     * @type {number}
-     */
-    height = 40;
-    /**
-     * The speed of the chicken.
-     * @type {number}
-     */
+    world;      
+    y = 400;     
+    width = 40;     
+    height = 40;    
     speed = 0.2 + Math.random() * 0.1;
-
-     /**
-     * The energy of the chicken.
-     * @type {number}
-     */
-    energy = 50;
-
-     /**
-     * Flag to track whether the chicken is dead.
-     * @type {boolean}
-     */
-    isDead = false;
-
-    /**
-     * The vertical speed of the chicken.
-     * @type {number}
-     */
-    speedY = 0;
-    
-     /**
-     * The interval IDs for movement, jumping, and animation.
-     * @type {number}
-     */
+    energy = 50;     
+    isDead = false;    
+    speedY = 0;     
     moveInterval;
     jumpInterval;
     animationInterval;
@@ -80,7 +41,7 @@ class SmallChicken extends moveableObject {
         super().loadimage('img/img/3_enemies_chicken/chicken_small/1_walk/1_w.png');
         this.loadimages(this.WALKING_IMAGES);
         this.loadimages(this.DEAD_IMAGES);
-        this.x = 400 + Math.random() * 1700;
+        this.x = 800 + Math.random() * 1900;
         this.originalSpeed = this.speed;
         this.world = world;
         this.animate();
