@@ -3,16 +3,8 @@
  * @extends moveableObject
  */
 class Collectible extends moveableObject {
-    /**
-     * The timer for blinking.
-     * @type {number}
-     */
-    blinkTimer = 0;
-
-    /**
-     * Flag to track whether the collectible is visible.
-     * @type {boolean}
-     */
+    
+    blinkTimer = 0;    
     isVisible = true;
 
     /**

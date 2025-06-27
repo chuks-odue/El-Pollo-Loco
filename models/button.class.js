@@ -2,42 +2,12 @@
  * Represents a button on the canvas.
  */
 class Button {
-    /**
-     * The x-coordinate of the button.
-     * @type {number}
-     */
     x;
-
-    /**
-     * The y-coordinate of the button.
-     * @type {number}
-     */
-    y;
-
-    /**
-     * The width of the button.
-     * @type {number}
-     */
+    y;   
     width;
-
-    /**
-     * The height of the button.
-     * @type {number}
-     */
-    height;
-
-    /**
-     * The 2D drawing context of the canvas.
-     * @type {CanvasRenderingContext2D}
-     */
+    height;    
     ctx;
-
-    /**
-     * The icon to be displayed on the button.
-     * @type {HTMLImageElement}
-     */
     icon;
-
     /**
      * Creates a new button.
      * @param {number} x The x-coordinate of the button.
@@ -115,10 +85,10 @@ class Button {
         if (world && world.gameLifecycleManager) {
             if (world.paused) {
                 world.gameLifecycleManager.resume();
-                this.icon = this.pausedIcon; // When game resumes, show 'pause' icon (because it's now playing)
+                this.icon = this.pausedIcon; 
             } else {
                 world.gameLifecycleManager.pause();
-                this.icon = this.playIcon; // When game pauses, show 'play' icon (because it's now paused)
+                this.icon = this.playIcon; 
             }
             this.draw();
         } else {

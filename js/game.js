@@ -322,7 +322,7 @@ function hideLoadingScreen() {
   if (loadingScreen) loadingScreen.style.display = 'none';
 }
 
-// Event listeners
+
 document.addEventListener('DOMContentLoaded', () => {
     const inGameMenu = document.getElementById('inGameMenu');
   if (inGameMenu) inGameMenu.classList.remove('game-running');
@@ -348,7 +348,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// Keyboard event listeners
 window.addEventListener("keydown", (e) => {
     if (e.key === "ArrowRight") keyboard.RIGHT = true;
     if (e.key === "ArrowLeft") keyboard.LEFT = true;

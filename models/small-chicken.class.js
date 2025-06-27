@@ -3,7 +3,7 @@
  * @extends moveableObject
  */
 class SmallChicken extends moveableObject {
-        world; // Declare this property
+        world; 
 
 
      /**

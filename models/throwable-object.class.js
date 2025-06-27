@@ -115,7 +115,7 @@ class ThrowableObject extends moveableObject {
      */
     collectBottle() {
        this.bottleCount += 1;
-       world.bottleStatusBar.setPercentage(this.bottleCount * 20); // Assuming 5 bottles is 100%
+       world.bottleStatusBar.setPercentage(this.bottleCount * 20); 
     }
 
      /**

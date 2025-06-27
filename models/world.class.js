@@ -251,13 +251,13 @@ class World {
             }             
         }
     }
-        /**
+    
+    /**
      * Displays the game over image and stops all game activity.
      * This method now delegates to the GameLifecycleManager.
      * @param {string} result 'win' or 'lose'
      */
-    showGameOverImage(result) {
-        // The original logic is unchanged and is handled by the GameLifecycleManager's method
+    showGameOverImage(result) {        
         this.gameLifecycleManager.showGameOverImage(result);
     }  
 

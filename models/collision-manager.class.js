@@ -1,36 +1,42 @@
+/**
+ * Manages all collision detection logic within the game world.
+ * This includes collisions between the character and enemies, collectibles, and throwable objects.
+ * @class
+ */
 class CollisionManager {
+
     /**
-   * Creates a new instance of the CollisionManager class.
-   * @param {World} world - The game world.
-   */
+     * Creates an instance of CollisionManager.
+     * @param {World} world - The game world instance.
+     */
     constructor(world) {
         this.world = world;
         this.collisionInterval = null;
     }
 
-     /**
-   * Initializes the continuous collision checking.
-   * Starts an interval that checks for collisions between game objects.
-   */    
+    /**
+     * Initializes and starts the continuous collision checking loop.
+     * Clears any existing interval before starting a new one.
+     */
     startCollisionChecks() {
         if (this.collisionInterval) {
-            clearInterval(this.collisionInterval); 
+            clearInterval(this.collisionInterval);
         }
         this.collisionInterval = setInterval(() => {
             if (this.world.gameOver || this.world.paused) {
-                this.stopCollisionChecks();  return;
-            }              
+                this.stopCollisionChecks();
+                return;
+            }
             this.checkEnemyCollision();
             this.checkCollectibleCollision();
             this.checkThrowableCollision();
-
-        }, 1000 / 60); 
+        }, 1000 / 60);
     }
 
     /**
-   * Stops the continuous collision checking.
-   * Clears the interval that checks for collisions.
-   */
+     * Stops the continuous collision checking loop.
+     * Clears the active interval.
+     */
     stopCollisionChecks() {
         if (this.collisionInterval) {
             clearInterval(this.collisionInterval);
@@ -38,42 +44,38 @@ class CollisionManager {
         }
     }
 
-      /**
-   * Checks for collisions between the character and enemies.
-   * If a collision is detected, the enemy is either killed or the character is hit.
-   */
-/**
- * Checks for collisions with enemies, handling "stomp" and "hurt" logic separately.
- */
-checkEnemyCollision() {
-    this.world.level.enemies.forEach((enemy) => {
-        // First, make sure the enemy is alive and the player is touching it.
-        if (!enemy.isDead && this.world.character.isColliding(enemy)) {            
-            const isFalling = this.world.character.speedY < 0;
-            if (isFalling) {            
-                enemy.die(); 
-                jumpAfterEnemyBounce() ;               
-                return; 
+   /**
+     * Checks for collisions between the character and all active enemies.
+     * Determines if the collision is a "stomp" (enemy dies, character bounces)
+     * or a regular hit (character takes damage).
+     */
+    checkEnemyCollision() {
+        this.world.level.enemies.forEach((enemy) => {
+            if (!enemy.isDead && this.world.character.isColliding(enemy)) {
+                if (this.world.character.isFallingOn(enemy)) {
+                    enemy.die();
+                    this.world.character.jumpAfterEnemyBounce();
+                } else {
+                    this.world.character.hit();
+                    this.world.statusBar.setPercentage(this.world.character.energy);
+                    if (this.world.character.energy <= 0) {
+                        this.world.showGameOverImage('lose');
+                    }
+                }
             }
-            this.world.character.hit();
-            this.world.statusBar.setPercentage(this.world.character.energy);
-            if (this.world.character.energy <= 0) {
-                this.world.showGameOverImage('lose');
-            }
-        }
-    });
-}
+        });
+    }
+
     /**
-   * Checks for collisions between the character and collectibles.
-   * If a collision is detected, the collectible is removed and the character's status is updated.
-   */
+     * Checks for collisions between the character and all active collectibles.
+     * Collects the item if a collision is detected.
+     */
     checkCollectibleCollision() {
-    
         for (let i = this.world.level.collectibles.length - 1; i >= 0; i--) {
             const collectible = this.world.level.collectibles[i];
             if (this.world.character.isColliding(collectible)) {
                 if (collectible.type === 'coin') {
-                    this.collectCoin(collectible, i); 
+                    this.collectCoin(collectible, i);
                 } else if (collectible.type === 'bottle') {
                     this.collectBottle(collectible, i);
                 } else if (collectible.type === 'life') {
@@ -85,37 +87,37 @@ checkEnemyCollision() {
         }
     }
 
-      /**
-   * Collects a coin and updates the character's coin status.
-   * @param {Collectible} collectible - The coin collectible.
-   * @param {number} index - The index of the collectible in the level's collectibles array.
-   */
+    /**
+     * Handles the collection of a coin.
+     * Increases the coin bar percentage and plays a sound.
+     * @param {Object} collectible - The coin object.
+     * @param {number} index - The index of the coin in the collectibles array.
+     */
     collectCoin(collectible, index) {
         const character = this.world.character;
         const coinBar = this.world.coinBar;
-
         if (coinBar.percentage < 100) {
             coinBar.percentage += 20;
             if (coinBar.percentage > 100) {
                 coinBar.percentage = 100;
             }
             coinBar.setPercentage(coinBar.percentage);
-            this.world.playSound('coin'); 
+            this.world.playSound('coin');
             this.world.level.collectibles.splice(index, 1);
         } else {
             this.world.playSound('coin-lost');
         }
     }
 
-  /**
-   * Collects a bottle and updates the character's bottle status.
-   * @param {Collectible} collectible - The bottle collectible.
-   * @param {number} index - The index of the collectible in the level's collectibles array.
-   */
+     /**
+     * Handles the collection of a bottle.
+     * Increases the character's bottle count and updates the bottle bar.
+     * @param {Object} collectible - The bottle object.
+     * @param {number} index - The index of the bottle in the collectibles array.
+     */
     collectBottle(collectible, index) {
         const character = this.world.character;
         const bottleBar = this.world.bottleBar;
-
         if (character.bottleCount < 5) {
             character.bottleCount++;
             bottleBar.setPercentage(character.bottleCount * 20);
@@ -124,15 +126,15 @@ checkEnemyCollision() {
         }
     }
 
-     /**
-   * Collects a life and updates the character's health status.
-   * @param {Collectible} collectible - The life collectible.
-   * @param {number} index - The index of the collectible in the level's collectibles array.
-   */
+    /**
+     * Handles the collection of a life (health potion).
+     * Increases the character's energy and updates the status bar.
+     * @param {Object} collectible - The life object.
+     * @param {number} index - The index of the life in the collectibles array.
+     */
     collectLife(collectible, index) {
         const character = this.world.character;
         const statusBar = this.world.statusBar;
-
         if (character.energy < 100) {
             character.energy += 20;
             if (character.energy > 100) {
@@ -143,16 +145,16 @@ checkEnemyCollision() {
             this.world.playSound('collect-life');
         }
     }
-         /**
-   * Checks for collisions between throwables and enemies.
-   * If a collision is detected, the enemy is hit and the throwable is removed.
-   * @param {Throwable} bottle - The throwable object.
-   */
+
+    /**
+     * Checks for collisions between a throwable bottle and enemies.
+     * If a collision occurs, the enemy takes damage, the bottle splashes, and a sound plays.
+     * @param {ThrowableObject} bottle - The throwable bottle object.
+     */
     checkBottleEnemyCollision(bottle) {
         if (!bottle || typeof bottle !== 'object' || !('owner' in bottle)) return;
-
         this.world.level.enemies.forEach((enemy) => {
-            const isBottleFromCharacter = bottle.owner instanceof Character; 
+            const isBottleFromCharacter = bottle.owner instanceof Character;
             if (bottle.isColliding(enemy) && !enemy.isDead && !bottle.hasHit) {
                 if (isBottleFromCharacter && !(enemy instanceof Character)) {
                     bottle.splash();
@@ -164,14 +166,13 @@ checkEnemyCollision() {
         });
     }
 
-    /**
-   * Checks for collisions between throwables and the character.
-   * If a collision is detected, the character is hit and the throwable is removed from.
-   * @param {Throwable} bottle - The throwable object.
-   */
+     /**
+     * Checks for collisions between a throwable bottle (specifically from an Endboss) and the character.
+     * If a collision occurs, the character takes damage, the bottle splashes, and sound/game over is handled.
+     * @param {ThrowableObject} bottle - The throwable bottle object.
+     */
     checkBottleCharacterCollision(bottle) {
         if (!bottle || typeof bottle !== 'object') return;
-        
         if (bottle.owner instanceof Endboss && bottle.isColliding(this.world.character) && !bottle.hasHit) {
             bottle.splash();
             bottle.hasHit = true;
@@ -185,8 +186,8 @@ checkEnemyCollision() {
     }
 
     /**
-   * Removes finished throwable objects from the game world.
-   */
+     * Removes throwable bottles from the game world once their splash animation is finished.
+     */
     removeFinishedBottles() {
         for (let i = this.world.throwableObjects.length - 1; i >= 0; i--) {
             const bottle = this.world.throwableObjects[i];
@@ -195,10 +196,12 @@ checkEnemyCollision() {
             }
         }
     }
-    
 
+     /**
+     * Iterates through all active throwable objects and checks for relevant collisions
+     * with enemies or the character, then removes finished bottles.
+     */
     checkThrowableCollision() {
-    
         for (let i = this.world.throwableObjects.length - 1; i >= 0; i--) {
             const bottle = this.world.throwableObjects[i];
             this.checkBottleEnemyCollision(bottle);
@@ -207,14 +210,18 @@ checkEnemyCollision() {
         this.removeFinishedBottles();
     }
 
+     /**
+     * Sets up event listeners for throwing bottles (e.g., 'd' key press or custom 'throwBottle' event).
+     * Triggers the throw action if conditions are met (character has bottles, game not over/paused).
+     */
     checkThrowBottle() {
         document.addEventListener('keydown', (event) => {
             if (event.key === 'd' && this.world.character.bottleCount > 0 && !this.world.gameOver && !this.world.paused) {
-                this.world.throwBottle(); 
+                this.world.throwBottle();
                 this.world.playSound('throw');
             }
         });
-        document.addEventListener('throwBottle', () => { 
+        document.addEventListener('throwBottle', () => {
             if (this.world.character.bottleCount > 0 && !this.world.gameOver && !this.world.paused) {
                 this.world.throwBottle();
                 this.world.playSound('throw');

@@ -13,7 +13,7 @@ class StatusBar extends DrawableObject {
      */
     STATUS_IMAGES = [
         'img/img/7_statusbars/1_statusbar/2_statusbar_health/green/0.png',
-        'img/img/7_statusbars/1_statusbar/2_statusbar_health/blue/20.png', // This one is blue, others are green
+        'img/img/7_statusbars/1_statusbar/2_statusbar_health/blue/20.png', 
         'img/img/7_statusbars/1_statusbar/2_statusbar_health/green/40.png',
         'img/img/7_statusbars/1_statusbar/2_statusbar_health/green/60.png',
         'img/img/7_statusbars/1_statusbar/2_statusbar_health/green/80.png',

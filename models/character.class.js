@@ -1,67 +1,23 @@
 /**
- * Represents a character in the game.
+ * Represents the main player character in the game, extending common properties and behaviors
+ * from `moveableObject`.
  * @extends moveableObject
  */
 class Character extends moveableObject {
-    /**
-     * The width of the character.
-     * @type {number}
-     */
+   
     width = 120;
-            
-
-    /**
-     * The height of the character.
-     * @type {number}
-     */
     height = 240;
-
-    /**
-     * The y-coordinate of the character.
-     * @type {number}
-     */
-    y = 30;
-
-    /**
-     * The speed of the character.
-     * @type {number}
-     */
-    speed = 10;
-
-    /**
-     * The number of bottles the character has.
-     * @type {number}
-     */
-    bottleCount = 5;
-
-    /**
-     * The world object.
-     * @type {World}
-     */
+    y = 190;   
+    speed = 10;   
+    bottleCount = 5;   
     world;
+    isHurtState = false;   
+    hurtTimestamp = 0;   
+    hurtDuration = 700;    
+    previousY = 190;
 
     /**
-     * Flag to track whether the character is hurt.
-     * @type {boolean}
-     */
-    isHurtState = false;
-
-    /**
-     * The timestamp of when the character was hurt.
-     * @type {number}
-     */
-    hurtTimestamp = 0;
-
-    /**
-     * The duration of the hurt state.
-     * @type {number}
-     */
-    hurtDuration = 700;
-            previousY = 30; 
-
-
-    /**
-     * The walking images of the character.
+     * Array of image paths for the character's walking animation.
      * @type {string[]}
      */
     WALKING_IMAGES = [
@@ -74,7 +30,7 @@ class Character extends moveableObject {
     ];
 
     /**
-     * The jumping images of the character.
+     * Array of image paths for the character's jumping animation.
      * @type {string[]}
      */
     JUMPING_IMAGES = [
@@ -91,7 +47,7 @@ class Character extends moveableObject {
     ];
 
     /**
-     * The dead images of the character.
+     * Array of image paths for the character's death animation.
      * @type {string[]}
      */
     DEAD_IMAGES = [
@@ -105,7 +61,7 @@ class Character extends moveableObject {
     ];
 
     /**
-     * The hurt images of the character.
+     * Array of image paths for the character's hurt animation.
      * @type {string[]}
      */
     HURT_IMAGES = [
@@ -115,8 +71,11 @@ class Character extends moveableObject {
     ];
 
     /**
-     * The sounds of the character.
-     * @type {Object}
+     * Object containing Audio instances for character sounds.
+     * @type {object}
+     * @property {Audio} walk - Sound for walking.
+     * @property {Audio} jump - Sound for jumping.
+     * @property {Audio} hurt - Sound for getting hurt.
      */
     sounds = {
         walk: new Audio('audio/concrete-footsteps-6752.mp3'),
@@ -125,7 +84,9 @@ class Character extends moveableObject {
     };
 
     /**
-     * Creates a new character.
+     * Creates an instance of Character.
+     * Loads initial image and animation images, sets up collision offsets,
+     * applies gravity, and starts animation loops.
      */
     constructor() {
         super().loadimage('img/img/2_character_pepe/1_idle/idle/I-1.png');
@@ -134,23 +95,22 @@ class Character extends moveableObject {
         this.loadimages(this.DEAD_IMAGES);
         this.loadimages(this.HURT_IMAGES);
         this.sounds.walk.loop = true;
+        this.previousY = this.y;
         this.collisionOffset = {
-            top: 80,   
-            bottom: 10, 
-            left: 30,  
-            right: 30  
+            top: 80,
+            bottom: 10,
+            left: 30,
+            right: 30
         };
         this.applyGravity();
         this.animate();
         this.previousY = this.y;
-        this.showCollisionBox = true; 
-        
+        this.showCollisionBox = true;
     }
 
-    
-
     /**
-     * Updates the movement of the character.
+     * Updates the character's horizontal movement based on keyboard input and level boundaries.
+     * Plays or stops the walking sound accordingly.
      */
     updateMovement() {
         if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
@@ -167,7 +127,8 @@ class Character extends moveableObject {
     }
 
     /**
-     * Updates the jumping of the character.
+     * Handles character jumping based on keyboard input.
+     * Triggers the jump action if the character is not currently above ground.
      */
     updateJumping() {
         if (this.world.keyboard.UP && !this.isAboveGround()) {
@@ -177,62 +138,62 @@ class Character extends moveableObject {
     }
 
     /**
-     * Updates the camera position.
+     * Updates the game camera's horizontal position to follow the character.
      */
     updateCamera() {
         this.world.camera_x = -this.x + 100;
     }
 
     /**
-     * Updates the main game loop.
+     * The main update loop for character physics and game state.
+     * This method is called repeatedly by `moveInterval`.
+     * It captures `previousY` before applying current frame's movement and updates camera.
      */
-        updateMainGameLoop() {
-        this.previousY = this.y; 
+    updateMainGameLoop() {
+        this.previousY = this.y;
         if (!this.world.gameOver) {
             this.updateMovement();
             this.updateJumping();
             this.updateCamera();
-                        this.lastY = this.y; 
+            this.lastY = this.y;
         } else {
             this.stopWalkingSound();
         }
     }
 
-
     /**
-     * Checks if the character is falling onto an object, indicating a stomp.
-     * Uses previousY to determine if character crossed enemy's top from above.
-     * @param {Object} otherObject - The object being collided with.
-     * @returns {boolean} True if the character is falling on the other object, false otherwise.
+     * Checks if the character is falling onto another object, indicating a potential "stomp".
+     * This differentiates a stomp from a general collision.
+     * @param {moveableObject} otherObject - The object (e.g., enemy) being collided with.
+     * @returns {boolean} True if the character is in a stomping position, false otherwise.
      */
     isFallingOn(otherObject) {
-        const charCurrentBottom = this.y + this.height - this.collisionOffset.bottom;        
-        const charPreviousBottom = this.previousY + this.height - this.collisionOffset.bottom;        
-        const enemyTop = otherObject.y + otherObject.collisionOffset.top;        
+        const charCurrentBottom = this.y + this.height - this.collisionOffset.bottom;
+        const charPreviousBottom = this.previousY + this.height - this.collisionOffset.bottom;
+        const enemyTop = otherObject.y + otherObject.collisionOffset.top;
         const enemyLeft = otherObject.x + otherObject.collisionOffset.left;
-        const enemyRight = otherObject.x + otherObject.width - otherObject.collisionOffset.right;    
+        const enemyRight = otherObject.x + otherObject.width - otherObject.collisionOffset.right;
         const charLeft = this.x + this.collisionOffset.left;
         const charRight = this.x + this.width - this.collisionOffset.right;
-        const isClearlyFalling = this.speedY < -10;        
-        const hasCrossedEnemyTopFromAbove =
-            charCurrentBottom >= enemyTop &&        
-            charPreviousBottom < (enemyTop + 10);  
-        const horizontalOverlap = charRight > enemyLeft && charLeft < enemyRight;        
-        return isClearlyFalling && hasCrossedEnemyTopFromAbove && horizontalOverlap;
+        const isFalling = this.speedY < 0;
+        const isAboveGroundBeforeCollision = charPreviousBottom < enemyTop;
+        const isNowCollidingAtEnemyTop = charCurrentBottom >= enemyTop;
+        const justCrossedOverEnemy = isAboveGroundBeforeCollision && isNowCollidingAtEnemyTop;
+        const horizontalOverlap = charRight > enemyLeft && charLeft < enemyRight;
+        return (isFalling || justCrossedOverEnemy) && horizontalOverlap;
     }
 
     /**
-     * Makes the character jump after defeating an enemy by jumping on it.
+     * Makes the character perform a small upward jump/bounce, typically after successfully stomping an enemy.
+     * @returns {void}
      */
     jumpAfterEnemyBounce() {
-        this.speedY = 20; // A moderate upward bounce
+        this.speedY = 20;
     }
 
-
-
-
     /**
-     * Updates the animation of the character.
+     * Updates the character's visual animation based on its current state (dead, hurt, jumping, walking, idle).
+     * @returns {void}
      */
     updateAnimation() {
         if (this.isDead()) {
@@ -252,13 +213,18 @@ class Character extends moveableObject {
     }
 
     /**
-     * Animates the character.
+     * Sets up and manages the intervals for the character's movement and animation updates.
+     * Clears any previous intervals before starting new ones.
+     * @returns {void}
      */
     animate() {
         if (this.moveInterval) clearInterval(this.moveInterval);
         if (this.animationInterval) clearInterval(this.animationInterval);
-        this.moveInterval = setInterval(() => { this.updateMainGameLoop();
+
+        this.moveInterval = setInterval(() => {
+            this.updateMainGameLoop();
         }, 1000 / 60);
+
         this.animationInterval = setInterval(() => {
             if (!this.world.gameOver) {
                 this.updateAnimation();
@@ -266,13 +232,17 @@ class Character extends moveableObject {
                 this.playAnimation(this.DEAD_IMAGES);
                 if (this.currentImage % this.DEAD_IMAGES.length === this.DEAD_IMAGES.length - 1) {
                     this.stopAnimation();
-                    this.loadimage(this.DEAD_IMAGES[this.DEAD_IMAGES.length - 1]); }
-            } else { this.stopAnimation();}
+                    this.loadimage(this.DEAD_IMAGES[this.DEAD_IMAGES.length - 1]);
+                }
+            } else {
+                this.stopAnimation();
+            }
         }, 50);
     }
 
     /**
-     * Plays the walking sound.
+     * Plays the character's walking sound if sound is enabled and the sound is not already playing.
+     * @returns {void}
      */
     playWalkingSound() {
         if (soundEnabled && this.sounds.walk.paused) {
@@ -281,7 +251,8 @@ class Character extends moveableObject {
     }
 
     /**
-     * Stops the walking sound.
+     * Stops the character's walking sound and resets its playback position.
+     * @returns {void}
      */
     stopWalkingSound() {
         if (!this.sounds.walk.paused) {
@@ -291,8 +262,9 @@ class Character extends moveableObject {
     }
 
     /**
-     * Plays a sound.
-     * @param {string} name The name of the sound.
+     * Plays a specified character sound if sound is enabled.
+     * @param {string} name - The name of the sound to play (e.g., 'jump', 'hurt').
+     * @returns {void}
      */
     playSound(name) {
         if (soundEnabled) {
@@ -305,7 +277,9 @@ class Character extends moveableObject {
     }
 
     /**
-     * Makes the character jump.
+     * Initiates the character's jump by setting its upward vertical speed (`speedY`).
+     * Also plays the jump sound.
+     * @returns {void}
      */
     jump() {
         this.speedY = 40;
@@ -315,7 +289,8 @@ class Character extends moveableObject {
     }
 
     /**
-     * Stops the animation.
+     * Stops the character's animation interval, effectively freezing its animation frames.
+     * @returns {void}
      */
     stopAnimation() {
         if (this.animationInterval) {
@@ -323,7 +298,4 @@ class Character extends moveableObject {
             this.animationInterval = null;
         }
     }
-
-
-    
 }

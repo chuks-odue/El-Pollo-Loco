@@ -2,34 +2,11 @@
  * Represents a drawable object in the game.
  */
 class DrawableObject {
-    /**
-     * The x-coordinate of the object.
-     * @type {number}
-     */
+   
     x = 120;
-
-    /**
-     * The y-coordinate of the object.
-     * @type {number}
-     */
     y = 280;
-
-    /**
-     * The image of the object.
-     * @type {HTMLImageElement}
-     */
-    img;
-
-    /**
-     * The width of the object.
-     * @type {number}
-     */
-    width = 100;
-
-    /**
-     * The height of the object.
-     * @type {number}
-     */
+    img;    
+    width = 100;    
     height = 150;
 
     /**

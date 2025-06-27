@@ -3,22 +3,9 @@
  * @extends moveableObject
  */
 class Cloud extends moveableObject {
-    /**
-     * The y-coordinate of the cloud.
-     * @type {number}
-     */
-    y = 50;
-
-    /**
-     * The width of the cloud.
-     * @type {number}
-     */
-    width = 500;
-
-    /**
-     * The height of the cloud.
-     * @type {number}
-     */
+   
+    y = 50;   
+    width = 500;    
     height = 250;
 
     /**

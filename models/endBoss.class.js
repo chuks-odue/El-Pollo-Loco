@@ -3,46 +3,13 @@
  * @extends moveableObject
  */
 class Endboss extends moveableObject {
-    /**
-     * The height of the endboss.
-     * @type {number}
-     */
-    height = 400;
-
-    /**
-     * The width of the endboss.
-     * @type {number}
-     */
-    width = 250;
-
-    /**
-     * The y-coordinate of the endboss.
-     * @type {number}
-     */
-    y = 59;
-
-    /**
-     * The energy of the endboss.
-     * @type {number}
-     */
-    energy = 400;
-
-    /**
-     * Flag to track whether the endboss is activated.
-     * @type {boolean}
-     */
-    isActivated = false;
-
-    /**
-     * Flag to track whether the endboss is dead.
-     * @type {boolean}
-     */
-    isDead = false;
-
-    /**
-     * Flag to track whether the endboss has fallen.
-     * @type {boolean}
-     */
+    
+    height = 400;    
+    width = 250;    
+    y = 59;    
+    energy = 400;    
+    isActivated = false;    
+    isDead = false;    
     hasFallen = false;
 
     /**

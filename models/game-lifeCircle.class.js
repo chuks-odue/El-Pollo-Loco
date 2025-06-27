@@ -1,4 +1,4 @@
-// js/gameLifecycleManager.js
+
 
 class GameLifecycleManager {
     /**
