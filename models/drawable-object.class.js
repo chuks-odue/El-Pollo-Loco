@@ -1,24 +1,13 @@
 /**
  * Represents a drawable object in the game.
  */
-class DrawableObject {
-   
+class DrawableObject {   
     x = 120;
     y = 280;
     img;    
     width = 100;    
-    height = 150;
-
-    /**
-     * A cache of images.
-     * @type {Object<string, HTMLImageElement>}
-     */
+    height = 150;   
     imageCache = {};
-
-    /**
-     * The current image index.
-     * @type {number}
-     */
     currentImage = 0;
 
     /**

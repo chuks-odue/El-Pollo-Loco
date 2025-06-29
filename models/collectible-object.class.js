@@ -2,8 +2,7 @@
  * Represents a collectible object in the game.
  * @extends moveableObject
  */
-class Collectible extends moveableObject {
-    
+class Collectible extends moveableObject {    
     blinkTimer = 0;    
     isVisible = true;
 

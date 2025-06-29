@@ -2,52 +2,14 @@
  * Represents a restart button.
  */
 class RestartButton {
-    /**
-     * The x-coordinate of the button.
-     * @type {number}
-     */
-    x;
 
-    /**
-     * The y-coordinate of the button.
-     * @type {number}
-     */
+    x;    
     y;
-
-    /**
-     * The width of the button.
-     * @type {number}
-     */
     width;
-
-    /**
-     * The height of the button.
-     * @type {number}
-     */
-    height;
-
-    /**
-     * The 2D drawing context of the canvas.
-     * @type {CanvasRenderingContext2D}
-     */
+    height;    
     ctx;
-
-    /**
-     * The text to display on the button.
-     * @type {string}
-     */
-    text;
-
-    /**
-     * The blink timer.
-     * @type {number}
-     */
+    text;    
     blinkTimer = 0;
-
-    /**
-     * Flag to track whether the button is blinking.
-     * @type {boolean}
-     */
     isBlinking = false;
 
     /**

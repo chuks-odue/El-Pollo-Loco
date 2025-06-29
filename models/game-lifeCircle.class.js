@@ -155,48 +155,108 @@ class GameLifecycleManager {
      * Stops all active game loops and clears intervals for a full game halt.
      * @returns {void}
      */
+     /**
+     * Stops all active game processes, including animation loops,
+     * collision checks, and intervals for all dynamic game entities and sounds.
+     * This is the primary method to halt game activity.
+     * @returns {void}
+     */
     stop() {
+        this.stopMainGameLoops();
+        this.stopCharacterIntervals();
+        this.stopEnemyIntervals();
+        this.stopThrowableObjectIntervals();
+        this.stopCloudIntervals();
+        this.stopCharacterSounds();
+    }
+
+    /**
+     * Stops the main animation frame loop (`requestAnimationFrame`)
+     * and the primary collision detection interval.
+     * @private
+     * @returns {void}
+     */
+    stopMainGameLoops() {
         if (this.world.animationFrameId) {
             cancelAnimationFrame(this.world.animationFrameId);
             this.world.animationFrameId = null;
         }
 
-        
-        if (this.world.collisionInterval) {
-            clearInterval(this.world.collisionInterval);
-            this.world.collisionInterval = null;
+        // Assuming collisionManager is initialized and has collisionInterval
+        if (this.world.collisionManager && this.world.collisionManager.collisionInterval) {
+            clearInterval(this.world.collisionManager.collisionInterval);
+            this.world.collisionManager.collisionInterval = null;
         }
+    }
 
-        
+    /**
+     * Stops all specific intervals associated with the main player character.
+     * This relies on the character having a `clearAllIntervals` method.
+     * @private
+     * @returns {void}
+     */
+    stopCharacterIntervals() {
         if (this.world.character && typeof this.world.character.clearAllIntervals === 'function') {
             this.world.character.clearAllIntervals();
         }
+    }
 
-        if (this.world.level && this.world.level.enemies) {
-            this.world.level.enemies.forEach(enemy => {
-                if (enemy && typeof enemy.clearAllIntervals === 'function') {
-                    enemy.clearAllIntervals();
+    /**
+     * Stops all intervals for enemy objects in the current level.
+     * Delegates to a helper method to iterate and clear intervals.
+     * @private
+     * @returns {void}
+     */
+    stopEnemyIntervals() {
+        this._clearAllIntervalsForCollection(this.world.level.enemies);
+    }
+
+    /**
+     * Stops all intervals for throwable objects currently active in the world.
+     * Delegates to a helper method to iterate and clear intervals.
+     * @private
+     * @returns {void}
+     */
+    stopThrowableObjectIntervals() {
+        this._clearAllIntervalsForCollection(this.world.throwableObjects);
+    }
+
+    /**
+     * Stops all intervals for cloud objects in the current level.
+     * Delegates to a helper method to iterate and clear intervals.
+     * @private
+     * @returns {void}
+     */
+    stopCloudIntervals() {
+        this._clearAllIntervalsForCollection(this.world.level.clouds);
+    }
+
+    /**
+     * A helper method to iterate over a collection of game objects
+     * and call their `clearAllIntervals` method if it exists.
+     * This prevents redundant code for clearing intervals across different object types.
+     * @private
+     * @param {Array<moveableObject>} collection - An array of game objects (e.g., enemies, clouds, bottles).
+     * @returns {void}
+     */
+    _clearAllIntervalsForCollection(collection) {
+        if (collection) {
+            collection.forEach(obj => {
+                // Ensure the object exists and has the clearAllIntervals method
+                if (obj && typeof obj.clearAllIntervals === 'function') {
+                    obj.clearAllIntervals();
                 }
             });
         }
+    }
 
-        if (this.world.throwableObjects) {
-            this.world.throwableObjects.forEach(bottle => {
-                if (bottle && typeof bottle.clearAllIntervals === 'function') {
-                    bottle.clearAllIntervals();
-                }
-            });
-        }
-
-        if (this.world.level && this.world.level.clouds) {
-            this.world.level.clouds.forEach(cloud => {
-                if (cloud && typeof cloud.clearAllIntervals === 'function') {
-                    cloud.clearAllIntervals();
-                }
-            });
-        }
-
-    
+    /**
+     * Stops and resets any looping or active sounds specifically associated with the character,
+     * such as the walking sound.
+     * @private
+     * @returns {void}
+     */
+    stopCharacterSounds() {
         if (this.world.character && this.world.character.sounds && this.world.character.sounds.walk && !this.world.character.sounds.walk.paused) {
             this.world.character.sounds.walk.pause();
             this.world.character.sounds.walk.currentTime = 0;

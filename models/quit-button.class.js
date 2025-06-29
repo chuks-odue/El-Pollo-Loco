@@ -1,5 +1,4 @@
 class QuitButton {
-
        /**
      * Creates a new quit button.
      * @param {number} x The x-coordinate of the button.

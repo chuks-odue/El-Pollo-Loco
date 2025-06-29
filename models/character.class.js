@@ -7,7 +7,7 @@ class Character extends moveableObject {
    
     width = 120;
     height = 240;
-    y = 190;   
+    y = 0;   
     speed = 10;   
     bottleCount = 5;   
     world;
@@ -15,6 +15,9 @@ class Character extends moveableObject {
     hurtTimestamp = 0;   
     hurtDuration = 700;    
     previousY = 190;
+    lastBottleThrowTime = 0;
+    bottleCooldownDuration = 1000; 
+
 
     /**
      * Array of image paths for the character's walking animation.

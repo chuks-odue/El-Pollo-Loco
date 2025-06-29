@@ -4,8 +4,7 @@
  * @class StatusBar
  * @extends DrawableObject
  */
-class StatusBar extends DrawableObject {
-    
+class StatusBar extends DrawableObject {    
     /**
      * Array of image paths for the health status bar.
      * 

@@ -113,10 +113,10 @@ class Endboss extends moveableObject {
         this.bottleThrowInterval = setInterval(() => {
             if (!this.isDead && this.isActivated) {
                 const isCharacterOnLeft =this.world.character.x < this.x;
-                const bottle = new ThrowableObject(this.x, this.y + 150, isCharacterOnLeft, this);
+                const bottle = new ThrowableObject(this.x, this.y + 250, isCharacterOnLeft, this);
                 this.world.throwableObjects.push(bottle);
             }
-        }, 3000);
+        }, 2000);
     }
 
     /**

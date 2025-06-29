@@ -2,8 +2,7 @@
  * Represents a cloud object in the game.
  * @extends moveableObject
  */
-class Cloud extends moveableObject {
-   
+class Cloud extends moveableObject {   
     y = 50;   
     width = 500;    
     height = 250;

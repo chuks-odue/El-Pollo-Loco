@@ -1,7 +1,6 @@
 /**
  * Represents a keyboard input handler.
  */
-
 class Keyboard {
     LEFT = false;
     RIGHT = false;

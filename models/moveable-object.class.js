@@ -3,8 +3,7 @@
  * for entities that can move, be affected by gravity, collide, and have health.
  * @extends DrawableObject
  */
-class moveableObject extends DrawableObject{
-   
+class moveableObject extends DrawableObject{   
     speed=0.15;
     otherDirection= false;
     speedY = 0;

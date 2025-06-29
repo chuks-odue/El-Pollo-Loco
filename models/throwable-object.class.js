@@ -4,65 +4,15 @@
  * @class ThrowableObject
  * @extends moveableObject
  */
-class ThrowableObject extends moveableObject {
-    width = 30; 
-    height = 30;
+class ThrowableObject extends moveableObject {   
 
-
-    /**
-     * Speed of the object flying forward.
-     * 
-     * @type {number}
-     */
     speed = 3.5;
-
-    /**
-     * Strength of gravity affecting the object.
-     * 
-     * @type {number}
-     */
-    gravity = 0.5;
-
-    /**
-     * Initial speed of the object falling downward.
-     * 
-     * @type {number}
-     */
-    velocityY = 10;
-
-    /**
-     * Number of bottles collected.
-     * 
-     * @type {number}
-     */
-    bottleCount = 0;
-
-    /**
-     * Flag indicating whether the object is splashing.
-     * 
-     * @type {boolean}
-     */
-    isSplash = false;
-
-    /**
-     * Flag indicating whether the splash animation has started.
-     * 
-     * @type {boolean}
-     */
-    splashStarted = false;
-
-    /**
-     * Flag indicating whether the splash animation has finished.
-     * 
-     * @type {boolean}
-     */
-    finishedSplash = false;
-
-    /**
-     * Flag indicating whether the object has hit something.
-     * 
-     * @type {boolean}
-     */
+    gravity = 0.5;    
+    velocityY = 10;   
+    bottleCount = 0;    
+    isSplash = false;   
+    splashStarted = false;    
+    finishedSplash = false;    
     hasHit = false;     
     
     /**
@@ -106,8 +56,8 @@ class ThrowableObject extends moveableObject {
         this.loadimages(this.SPLASH_BOTTLE);
         this.x = x;
         this.y = y;
-        this.width = 50;
-        this.height = 190;
+        this.width = 70;
+        this.height = 70;
         this.otherDirection = otherDirection;
         this.owner = owner;     
         this.animate();
