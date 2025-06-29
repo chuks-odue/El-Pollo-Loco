@@ -17,6 +17,7 @@ class Character extends moveableObject {
     previousY = 190;
     lastBottleThrowTime = 0;
     bottleCooldownDuration = 1000; 
+    currentAnimation = null;
 
 
     /**
@@ -197,21 +198,21 @@ class Character extends moveableObject {
     /**
      * Updates the character's visual animation based on its current state (dead, hurt, jumping, walking, idle).
      * @returns {void}
-     */
+    */
     updateAnimation() {
-        if (this.isDead()) {
-            this.playAnimation(this.DEAD_IMAGES);
-        } else if (this.isHurt()) {
-            this.playAnimation(this.HURT_IMAGES);
-            if (Date.now() - this.hurtTimestamp > this.hurtDuration) {
-                this.isHurtState = false;
-            }
-        } else if (this.isAboveGround()) {
-            this.playAnimation(this.JUMPING_IMAGES);
+        if (this.isDead()) {this.playAnimation(this.DEAD_IMAGES);
+            this.currentAnimation = 'dead';
+        } else if (this.isHurt()) { this.playAnimation(this.HURT_IMAGES);
+            this.currentAnimation = 'hurt';
+            if (Date.now() - this.hurtTimestamp > this.hurtDuration) { this.isHurtState = false;}
+        } else if (this.isAboveGround()) {this.playAnimation(this.JUMPING_IMAGES);
+            this.currentAnimation = 'jumping';
         } else if ((this.world.keyboard.RIGHT || this.world.keyboard.LEFT) && !this.world.gameOver) {
-            this.playAnimation(this.WALKING_IMAGES);
+            this.playAnimation(this.WALKING_IMAGES); this.currentAnimation = 'walking';
         } else {
-            this.loadimage('img/img/2_character_pepe/1_idle/idle/I-1.png');
+            if (this.currentAnimation !== 'idle') {this.loadimage('img/img/2_character_pepe/1_idle/idle/I-1.png');
+                this.currentAnimation = 'idle';
+            }
         }
     }
 

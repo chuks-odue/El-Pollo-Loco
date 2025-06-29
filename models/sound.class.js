@@ -7,6 +7,6 @@ const allGameSounds = {
     'bottle-hit': new Audio('audio/1.mp3'),
     'lose': new Audio('audio/Game-over.mp3'),
     'coin': new Audio('audio/collect-coin.mp3'),    
-    'stomp': new Audio('audio/stomp.mp3'),    
+    'stomp': new Audio('audio/Stomp-sound.mp3'),    
     
 };
