@@ -129,81 +129,41 @@ class Endboss extends moveableObject {
 
     /**
      * Throws bottles at the character.
-     */
-        throwBottles() {
-        if (this.bottleThrowInterval) {
-            clearInterval(this.bottleThrowInterval);
-        }
+    */
+    throwBottles() {
+        if (this.bottleThrowInterval) { clearInterval(this.bottleThrowInterval); }
         this.bottleThrowInterval = setInterval(() => {
-            if (!this.isDead && this.isActivated && !this.isHurtState) { // Don't throw if dead or hurt
-                // Set attacking state
-                this.isAttacking = true;
-
-                // Determine bottle direction
+            if (!this.isDead && this.isActivated && !this.isHurtState) {                 
+                this.isAttacking = true;               
                 const isCharacterOnLeft = this.world.character.x < this.x;
                 const bottle = new ThrowableObject(this.x, this.y + 250, isCharacterOnLeft, this);
-                this.world.throwableObjects.push(bottle);
-
-                // Reset attacking state after a short duration (e.g., 500ms for attack animation)
-                // This duration should be carefully tuned to match your attack animation
+                this.world.throwableObjects.push(bottle);                
                 setTimeout(() => {
                     this.isAttacking = false;
-                }, 500); // Adjust this value based on how long your attack animation should play
+                }, 500);
             }
-        }, 2000); // This is the interval for throwing bottles
-    }
-
-    /*throwBottles() {
-        if (this.bottleThrowInterval) {
-            clearInterval(this.bottleThrowInterval);
-        }
-        this.bottleThrowInterval = setInterval(() => {
-            if (!this.isDead && this.isActivated) {
-                const isCharacterOnLeft =this.world.character.x < this.x;
-                const bottle = new ThrowableObject(this.x, this.y + 250, isCharacterOnLeft, this);
-                this.world.throwableObjects.push(bottle);
-            }
-        }, 2000);
-    }*/
+        }, 2000); 
+    }   
 
     /**
-     * Animates the endboss.
-     */
-animateMovement() {
+    * Animates the endboss.
+    */
+    animateMovement() {
         if (this.moveInterval) clearInterval(this.moveInterval);
         this.moveInterval = setInterval(() => {
-            if (!this.isDead && !this.world.gameOver && !this.world.paused) {
-                // Determine movement direction (patrolling)
-                if (this.movementDirection === -1) { // Moving left
-                    if (this.x > this.movementLimit) {
-                        this.moveLeft();
-                    } else {
-                        // Reached left limit, turn around and move right
-                        this.movementDirection = 1;
-                    }
-                } else { // Moving right
-                    if (this.x < this.movementRightLimit) {
-                        this.moveRight();
-                    } else {
-                        // Reached right limit, turn around and move left
-                        this.movementDirection = -1;
-                    }
-                }
-
-                // --- NEW LOGIC: Always face the player ---
-                if (this.world.character.x < this.x) {
-                    this.otherDirection = false; // Player is to the left, face left
-                } else {
-                    this.otherDirection = true; // Player is to the right, face right
-                }
-                // ------------------------------------------
-
-            } else if (this.isDead || this.world.gameOver || this.world.paused) {
-                this.speed = 0; // Stop movement if dead, game over, or paused
-            }
-        }, 1000 / 60); // Run at 60 FPS
+            if (!this.isDead && !this.world.gameOver && !this.world.paused) {                
+                if (this.movementDirection === -1) { 
+                    if (this.x > this.movementLimit) {  this.moveLeft();
+                    } else { this.movementDirection = 1; }
+                } else { 
+                    if (this.x < this.movementRightLimit) {this.moveRight();
+                    } else { this.movementDirection = -1; }
+                } if (this.world.character.x < this.x) {
+                    this.otherDirection = false; 
+                } else { this.otherDirection = true; }
+            } else if (this.isDead || this.world.gameOver || this.world.paused) { this.speed = 0;  }
+        }, 1000 / 60); 
     }
-
 
     /**
     * Animates the endboss's images.
