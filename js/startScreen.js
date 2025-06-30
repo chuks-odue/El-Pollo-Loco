@@ -1,7 +1,3 @@
-/**
- * Flag to track the visibility of the info overlay.
- * @type {boolean}
- */
 let isInfoOverlayVisible = false;
 
 /**

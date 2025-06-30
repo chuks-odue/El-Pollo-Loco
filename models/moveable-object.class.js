@@ -197,7 +197,5 @@ class moveableObject extends DrawableObject{
         if (this.fallInterval) {  clearInterval(this.fallInterval);
             this.fallInterval = null;
         }        
-    }       
-       
-   
+    }    
 }

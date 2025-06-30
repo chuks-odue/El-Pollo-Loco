@@ -2,7 +2,6 @@
  * Represents a restart button.
  */
 class RestartButton {
-
     x;    
     y;
     width;

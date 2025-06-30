@@ -86,12 +86,4 @@ class chicken extends moveableObject{
       }
     }, 2000); 
   }
-    
-
-
-
-
-
-
-
 }

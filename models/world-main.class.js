@@ -1,12 +1,10 @@
 /**
  * Represents the game world.
  */
-
 class World {
     soundEnabled = true;
     static imagesToLoad = [];
     gameInitialized = false;
-
     character = new Character();
     level = level1;
     canvas;

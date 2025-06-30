@@ -5,7 +5,6 @@
  * @extends moveableObject
  */
 class ThrowableObject extends moveableObject {   
-
     speed = 3.5;
     gravity = 0.5;    
     velocityY = 10;   

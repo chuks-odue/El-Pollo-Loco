@@ -1,38 +1,8 @@
-
-/**
- * The canvas element.
- * @type {HTMLCanvasElement}
- */
 let canvas;
-
-/**
- * The world object.
- * @type {World}
- */
 let world;
-
-/**
- * The keyboard object.
- * @type {Keyboard}
- */
 let keyboard = new Keyboard();
-
-/**
- * The current start sound.
- * @type {Audio|null}
- */
 let currentStartSound = null;
-
-/**
- * The timeout ID for the start sound.
- * @type {number|null}
- */
 let startSoundTimeoutId = null;
-
-/**
- * Flag to track whether sound is enabled.
- * @type {boolean}
- */
 let soundEnabled = localStorage.getItem('soundEnabled') === 'false' ? false : true;
 
 /**
@@ -102,7 +72,7 @@ function stopCurrentSound() {
  * Plays a new start sound.
  */
 function playNewStartSound() {
-    const startSound = new Audio('audio/S31-Winning the Race.ogg');
+    const startSound = new Audio('audio/01._start.wav');
     startSound.volume = 0.5; currentStartSound = startSound;
     startSound.play().catch(err => {
         if (err.name !== 'AbortError') {
@@ -114,7 +84,7 @@ function playNewStartSound() {
             startSound.pause(); startSound.currentTime = 0;
             currentStartSound = null;startSoundTimeoutId = null;
         }
-    }, 3000);
+    }, 5000);
 }
 
 /**
@@ -170,6 +140,7 @@ function preloadImages(imageUrls) {
     });
   });
 }
+
 /**
  * Updates the in-game menu and help visibility based on window size.
  */
@@ -188,13 +159,10 @@ function updateInGameMenuVisibility() {
         inGameHelp.style.display = 'block';
     }
 }
+
 function handleWindowResize() {
     window.addEventListener('resize', updateInGameMenuVisibility);
 }
-
-
-
-
 
 /**
  * Hides the header.

@@ -4,7 +4,6 @@
  * @class
  */
 class CollisionManager {
-
     /**
      * Creates an instance of CollisionManager.
      * @param {World} world - The game world instance.

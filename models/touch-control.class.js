@@ -1,5 +1,4 @@
 class TouchControls {
-
    /**
      * Creates a new touch controls object.
      * @param {CanvasRenderingContext2D} ctx The 2D drawing context of the canvas.
@@ -125,5 +124,4 @@ class TouchControls {
        keyboard.UP = false;
       });
    }
-
 }

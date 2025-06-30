@@ -1,7 +1,3 @@
-/**
- * The current level.
- * @type {Level}
- */
 let level1;
 
 /**

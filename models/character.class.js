@@ -3,8 +3,7 @@
  * from `moveableObject`.
  * @extends moveableObject
  */
-class Character extends moveableObject {
-   
+class Character extends moveableObject {   
     width = 120;
     height = 240;
     y = 0;   
